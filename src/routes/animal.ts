@@ -1,9 +1,8 @@
 import { Router } from 'express';
-const router = Router();
 
-router.post('/post')
-router.post('/get')
-router.post('/update')
-router.post('/delete')
+const router = Router();
+//router.get('/create')
+//router.get('/update')
+//router.get('/read')
 
 export default router;

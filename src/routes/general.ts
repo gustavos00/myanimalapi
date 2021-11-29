@@ -1,6 +1,7 @@
 import { Router } from 'express';
-const router = Router();
+import pingEndpoint from '../controllers/GeneralController';
 
-router.get('/ping')
+const router = Router();
+router.get('/ping', pingEndpoint)
 
 export default router;

@@ -1,12 +1,9 @@
 import { Router } from 'express';
+import generalRoutes from './general'
+import userRoutes from './user'
 
-const userRoutes = require('./user.ts');
-const generalRoutes = require('./general.ts');
-const animalRoutes = require('./animal.ts');
 const router = Router();
-
 router.use('/general', generalRoutes)
 router.use('/user', userRoutes)
-router.use('/animal', animalRoutes)
 
 export default router;
