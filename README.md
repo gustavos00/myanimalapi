@@ -1,1 +1,1 @@
-# myanimalapi
+# myAnimal API 
