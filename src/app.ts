@@ -4,13 +4,13 @@ import dotenv from 'dotenv';
 import path from 'path';
 import cors from 'cors'
 
-import router from './routes/routes';
+import apiRoutes from './routes/routes';
 
 const server = express();
 server.use(cors())
 server.use(express.static(path.join(__dirname, '../public')));
 server.use(express.urlencoded({extended: true}));
-server.use('/api', router);
+server.use('/api', apiRoutes);
 server.use((req: Request, res: Response) => {
     res.status(404);
     res.json({error: 'Route not found.'})
