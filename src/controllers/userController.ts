@@ -1,5 +1,5 @@
+import * as US from "../schemas/userSchema";
 import { Request, Response } from "express";
-
 import { animal } from "../models/Animal";
 import { user } from "../models/User";
 
@@ -7,8 +7,6 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const Joi = require("joi");
-import * as US from "../schemas/userSchema";
-import { userSchema } from "../schemas/index";
 const JWD = require("jsonwebtoken");
 
 interface CreateUserProps {
@@ -29,38 +27,6 @@ interface AnimalDataProps {
 
   user_idUser: number;
 }
-
-export const test = async (req: Request, res: Response) => {
-  console.log("testing");
-
-  const schema = Joi.object({
-    username: Joi.string().alphanum().min(3).max(30).required(),
-
-    password: Joi.string().pattern(new RegExp("^[a-zA-Z0-9]{3,30}$")),
-  });
-
-  schema.validate({ username: "abc", birth_year: 1994 });
-  // -> { value: { username: 'abc', birth_year: 1994 } }
-
-  schema.validate({});
-  // -> { value: {}, error: '"username" is required' }
-
-  // Also -
-
-  try {
-    const value = await schema.validateAsync({
-      username: "abc",
-      password: "testingPassword",
-    });
-    console.log(value);
-  } catch (err) {
-    console.log(err);
-  }
-
-  res.status(200).send({
-    message: "ok",
-  });
-}; //function end
 
 export const create = async (req: Request, res: Response) => {
   const userAnimalData = [] as Array<AnimalDataProps>;
