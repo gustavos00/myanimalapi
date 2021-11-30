@@ -1,1 +1,1 @@
-export const userSchema = require('./userSchema')
+export const userSchema = require("./userSchema");
