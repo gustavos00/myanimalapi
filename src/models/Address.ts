@@ -1,46 +1,50 @@
-import { Model, DataTypes } from "sequelize";
-import { sequelize } from '../config/pg';
+import { Model, DataTypes } from 'sequelize'
+import { sequelize } from '../config/pg'
 
 export interface AddressInstance extends Model {
-    idAddress: number,
+  idAddress: number
 
-    doorNumber: string,
-    postalCode: string,
-    streetName: string, 
+  doorNumber: string
+  postalCode: string
+  streetName: string
 
-    parish_idParish: number
+  parish_idParish: number
 }
 
-export const address = sequelize.define<AddressInstance>('address', {
+export const address = sequelize.define<AddressInstance>(
+  'address',
+  {
     idAddress: {
-        primaryKey: true,
-        unique: true,
-        autoIncrement: true,
-        type: DataTypes.INTEGER,
+      primaryKey: true,
+      unique: true,
+      autoIncrement: true,
+      type: DataTypes.INTEGER,
     },
 
-    doorName: {
+    doorNumber: {
       allowNull: false,
-      type: DataTypes.STRING(10)
+      type: DataTypes.STRING(10),
     },
     postalCode: {
       allowNull: false,
-      type: DataTypes.STRING(12)
+      type: DataTypes.STRING(12),
     },
     streetName: {
-        allowNull: false,
-        type: DataTypes.STRING(100)
+      allowNull: false,
+      type: DataTypes.STRING(100),
     },
 
     parish_idParish: {
-        type: DataTypes.INTEGER,
-        references: {
-            key: 'parish',
-            model: 'idLocality',
-        }
-    }
-}, {
+      type: DataTypes.INTEGER,
+      references: {
+        key: 'parish',
+        model: 'idLocality',
+      },
+    },
+  },
+  {
     tableName: 'address',
     freezeTableName: true,
-    timestamps: false, 
-});
+    timestamps: false,
+  }
+)

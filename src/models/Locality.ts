@@ -1,27 +1,31 @@
-import { Model, DataTypes } from "sequelize";
-import { sequelize } from '../config/pg';
+import { Model, DataTypes } from 'sequelize'
+import { sequelize } from '../config/pg'
 
 export interface LocalityInstance extends Model {
-    idLocality: number,
+  idLocality: number
 
-    locationName: string,
+  locationName: string
 }
 
-export const Locality = sequelize.define<LocalityInstance>('Locality', {
+export const locality = sequelize.define<LocalityInstance>(
+  'locality',
+  {
     idLocality: {
-        primaryKey: true,
-        unique: true,
-        autoIncrement: true,
-        type: DataTypes.INTEGER,
+      primaryKey: true,
+      unique: true,
+      autoIncrement: true,
+      type: DataTypes.INTEGER,
     },
 
     locationName: {
       allowNull: false,
       unique: true,
-      type: DataTypes.STRING(100)
+      type: DataTypes.STRING(100),
     },
-}, {
+  },
+  {
     tableName: 'locality',
     freezeTableName: true,
-    timestamps: false, 
-});
+    timestamps: false,
+  }
+)
