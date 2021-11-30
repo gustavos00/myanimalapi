@@ -3,7 +3,7 @@ import { Request, Response } from 'express'
 import { animal } from '../models/Animal'
 import { user } from '../models/User'
 
-import { userSchema } from '../schemas/userSchema'
+import { userSchema } from '../schemas/index'
 
 import dotenv from 'dotenv'
 dotenv.config()
