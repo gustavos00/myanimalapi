@@ -1,24 +1,23 @@
-import { Model, DataTypes } from 'sequelize'
-import { sequelize } from '../config/pg'
-import { userTypes } from './UserTypes'
+import { Model, DataTypes } from "sequelize";
+import { sequelize } from "../config/pg";
 
 export interface UserInstance extends Model {
-  idUser: number
+  idUser: number;
 
-  givenName: string
-  familyName: string
-  email: string
-  phoneNumber: string
-  imageUrl: string
-  imageName: string
-  token: string
+  givenName: string;
+  familyName: string;
+  email: string;
+  phoneNumber: string;
+  imageUrl: string;
+  imageName: string;
+  token: string;
 
-  type_idUsertype: number
-  address_idAddress: number
+  type_idUsertype: number;
+  address_idAddress: number;
 }
 
 export const user = sequelize.define<UserInstance>(
-  'user',
+  "user",
   {
     idUser: {
       primaryKey: true,
@@ -51,22 +50,22 @@ export const user = sequelize.define<UserInstance>(
     type_idUsertype: {
       type: DataTypes.INTEGER,
       references: {
-        key: 'userTypes',
-        model: 'idUsertype',
+        key: "userTypes",
+        model: "idUsertype",
       },
     },
 
     address_idAddress: {
       type: DataTypes.INTEGER,
       references: {
-        key: 'address',
-        model: 'idAddress',
+        key: "address",
+        model: "idAddress",
       },
     },
   },
   {
-    tableName: 'user',
+    tableName: "user",
     freezeTableName: true,
     timestamps: false,
   }
-)
+);
