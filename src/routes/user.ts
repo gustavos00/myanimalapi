@@ -1,7 +1,8 @@
-import { Router } from 'express';
+import { Router } from 'express'
+import * as userController from '../controllers/userController'
 
-const router = Router();
-//router.get('/create')
+const router = Router()
+router.post('/create', userController.create)
 //router.get('/update')
 //router.get('/read')
 
@@ -9,4 +10,4 @@ const router = Router();
 //router.get('/payment/create')
 //router.get('/payment/delete')
 
-export default router;
+export default router
