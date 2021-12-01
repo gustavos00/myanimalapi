@@ -1,6 +1,6 @@
 const Joi = require('joi');
 
-export const animalSchema = Joi.object({
+export const createAnimalSchema = Joi.object({
   name: Joi.string().required().max(250),
   age: Joi.string().max(5),
   breed: Joi.string().required().max(250),
@@ -9,4 +9,8 @@ export const animalSchema = Joi.object({
   trackNumber: Joi.string().max(50),
 
   token: Joi.string().required(),
+});
+
+export const deleteAnimalSchema = Joi.object({
+  id: Joi.number().required(),
 });
