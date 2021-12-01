@@ -14,13 +14,17 @@ interface CreateAnimalProps {
   email: string;
 }
 
-export const create = async (req: any, res: any) => {
+interface DeleteAnimalProps {
+  id?: string;
+}
+
+export const createAnimal = async (req: Request, res: Response) => {
   let validatedData;
   let userId;
 
   //Validate data
   try {
-    validatedData = await AS.animalSchema.validateAsync(
+    validatedData = await AS.createAnimalSchema.validateAsync(
       req.body as CreateAnimalProps
     );
 
@@ -84,6 +88,60 @@ export const create = async (req: any, res: any) => {
     res.status(201).send(response);
   } catch (e) {
     console.log('Error creating animal on create animal controller');
+
+    res.status(500).send({ message: 'Something went wrong' });
+    throw new Error(e as string);
+  }
+};
+
+export const deleteAnimal = async (req: Request, res: Response) => {
+  let validatedData;
+
+  //Validate data
+  try {
+    validatedData = await AS.deleteAnimalSchema.validateAsync(
+      req.params as DeleteAnimalProps
+    );
+
+    if (!validatedData) {
+      res.status(400).send({ message: 'Invaid inputs' });
+      return;
+    }
+  } catch (e) {
+    console.log('Error validating data on delete animal controller');
+
+    res.status(400).send({ message: 'Something went wrong' });
+    throw new Error(e as string);
+  }
+
+  //Verifying if animal exist
+  try {
+    const response = await animal.findOne({
+      where: {
+        idAnimal: validatedData.id,
+      },
+    });
+
+    if (!response) {
+      res.status(200).send({ message: 'Animal dont exist' });
+      return;
+    }
+  } catch (e) {
+    console.log('Error verifying if animal exist on delete animal controller');
+
+    res.status(500).send({ message: 'Something went wrong' });
+    throw new Error(e as string);
+  }
+
+  //Deleting animal
+  try {
+    await animal.destroy({
+      where: { idAnimal: validatedData.id },
+    });
+
+    res.status(200).send({ message: 'Animal deleted' });
+  } catch (e) {
+    console.log('Error deleting data on delete animal controller');
 
     res.status(500).send({ message: 'Something went wrong' });
     throw new Error(e as string);
