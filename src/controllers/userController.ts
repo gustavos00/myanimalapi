@@ -1,13 +1,13 @@
-import * as US from "../schemas/userSchema";
-import { Request, Response } from "express";
-import { animal } from "../models/Animal";
-import { user } from "../models/User";
+import * as US from '../schemas/userSchema';
+import { Request, Response } from 'express';
+import { animal } from '../models/Animal';
+import { user } from '../models/User';
 
-import dotenv from "dotenv";
+import dotenv from 'dotenv';
 dotenv.config();
 
-const Joi = require("joi");
-const JWD = require("jsonwebtoken");
+const Joi = require('joi');
+const JWD = require('jsonwebtoken');
 
 interface CreateUserProps {
   givenName: string;
@@ -37,7 +37,7 @@ export const create = async (req: Request, res: Response) => {
     );
 
     if (!validatedData) {
-      res.status(400).send({ message: "Invalid inputs" });
+      res.status(400).send({ message: 'Invalid inputs' });
       return;
     }
     const token = JWD.sign(
@@ -49,12 +49,10 @@ export const create = async (req: Request, res: Response) => {
 
     const response = await user.findOrCreate({
       where: {
-        email: validatedData.email ?? "",
+        email: validatedData.email ?? '',
       },
       defaults: {
-        givenName: validatedData.givenName,
-        familyName: validatedData.familyName,
-        email: validatedData.email,
+        ...validatedData,
         token,
       },
     });
@@ -92,14 +90,12 @@ export const create = async (req: Request, res: Response) => {
     }
 
     res.status(returnStatus).send({
-      givenName: validatedData.givenName,
-      familyName: validatedData.givenName,
-      email: validatedData.email,
+      ...validatedData,
       token: returnToken,
       animalData: userAnimalData,
     });
   } catch (e) {
-    res.status(500).send({ message: "Something went wrong" });
+    res.status(500).send({ message: 'Something went wrong' });
     throw new Error(e as string);
   }
 };
