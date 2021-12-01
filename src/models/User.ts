@@ -1,5 +1,5 @@
-import { Model, DataTypes } from "sequelize";
-import { sequelize } from "../config/pg";
+import { Model, DataTypes } from 'sequelize';
+import { sequelize } from '../config/pg';
 
 export interface UserInstance extends Model {
   idUser: number;
@@ -17,7 +17,7 @@ export interface UserInstance extends Model {
 }
 
 export const user = sequelize.define<UserInstance>(
-  "user",
+  'user',
   {
     idUser: {
       primaryKey: true,
@@ -50,21 +50,21 @@ export const user = sequelize.define<UserInstance>(
     type_idUsertype: {
       type: DataTypes.INTEGER,
       references: {
-        key: "userTypes",
-        model: "idUsertype",
+        key: 'userTypes',
+        model: 'idUsertype',
       },
     },
 
     address_idAddress: {
       type: DataTypes.INTEGER,
       references: {
-        key: "address",
-        model: "idAddress",
+        key: 'address',
+        model: 'idAddress',
       },
     },
   },
   {
-    tableName: "user",
+    tableName: 'user',
     freezeTableName: true,
     timestamps: false,
   }
