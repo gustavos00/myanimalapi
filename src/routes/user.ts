@@ -2,7 +2,7 @@ import { Router } from "express";
 import * as userController from "../controllers/userController";
 
 const router = Router();
-router.post("/create", userController.create);
+router.post("/create", userController.createUser);
 //router.get('/update')
 //router.get('/read')
 
