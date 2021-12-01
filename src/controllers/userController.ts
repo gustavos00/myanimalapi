@@ -28,11 +28,11 @@ interface AnimalDataProps {
   user_idUser: number;
 }
 
-export const create = async (req: Request, res: Response) => {
+export const createUser = async (req: Request, res: Response) => {
   const userAnimalData = [] as Array<AnimalDataProps>;
 
   try {
-    const validatedData = await US.userSchema.validateAsync(
+    const validatedData = await US.createUserSchema.validateAsync(
       req.body as CreateUserProps
     );
 
