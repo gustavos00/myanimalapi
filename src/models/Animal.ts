@@ -1,17 +1,17 @@
-import { Model, DataTypes } from 'sequelize'
-import { sequelize } from '../config/pg'
+import { Model, DataTypes } from 'sequelize';
+import { sequelize } from '../config/pg';
 
 export interface AnimalInstance extends Model {
-  idAnimal: number
+  idAnimal: number;
 
-  name: string
-  age: string
-  breed: string
-  trackNumber: string
-  imageName: string
-  imageUrl: string
+  name: string;
+  age: string;
+  breed: string;
+  trackNumber: string;
+  imageName: string;
+  imageUrl: string;
 
-  user_idUser: number
+  user_idUser: number;
 }
 
 export const animal = sequelize.define<AnimalInstance>(
@@ -37,6 +37,8 @@ export const animal = sequelize.define<AnimalInstance>(
     },
     imageName: DataTypes.STRING,
     imageUrl: DataTypes.STRING,
+    birthday: DataTypes.STRING(2),
+    birthdayMonth: DataTypes.STRING(2),
 
     user_idUser: {
       type: DataTypes.INTEGER,
@@ -51,4 +53,4 @@ export const animal = sequelize.define<AnimalInstance>(
     freezeTableName: true,
     timestamps: false,
   }
-)
+);

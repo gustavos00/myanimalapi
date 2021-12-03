@@ -18,7 +18,12 @@ interface DeleteAnimalProps {
   id?: string;
 }
 
+interface MulterRequest extends Request {
+  file: any;
+}
+
 export const createAnimal = async (req: Request, res: Response) => {
+  const { location, key } = (req as MulterRequest).file;
   let validatedData;
   let userId;
 
@@ -83,6 +88,8 @@ export const createAnimal = async (req: Request, res: Response) => {
     const response = await animal.create({
       ...validatedData,
       user_idUser: userId,
+      imageUrl: location,
+      imageName: key,
     });
 
     res.status(201).send(response);

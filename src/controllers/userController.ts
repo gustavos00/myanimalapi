@@ -28,8 +28,13 @@ interface AnimalDataProps {
   user_idUser: number;
 }
 
+interface MulterRequest extends Request {
+  file: any;
+}
+
 export const createUser = async (req: Request, res: Response) => {
   const userAnimalData = [] as Array<AnimalDataProps>;
+  const { location, key } = (req as MulterRequest).file;
 
   try {
     const validatedData = await US.createUserSchema.validateAsync(
@@ -93,6 +98,8 @@ export const createUser = async (req: Request, res: Response) => {
       ...validatedData,
       token: returnToken,
       animalData: userAnimalData,
+      imageUrl: location,
+      imageKey: key,
     });
   } catch (e) {
     res.status(500).send({ message: 'Something went wrong' });
