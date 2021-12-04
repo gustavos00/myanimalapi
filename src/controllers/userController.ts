@@ -49,7 +49,7 @@ export const createUser = async (req: Request, res: Response) => {
       {
         email: validatedData,
       },
-      (process.env.JWT_SECRET as string) ?? ''
+      (process.env.JWT_SECRET as string) ?? '' 
     );
 
     const response = await user.findOrCreate({
