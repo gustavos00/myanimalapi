@@ -40,7 +40,7 @@ dotenv_1.default.config();
 const Joi = require('joi');
 const JWD = require('jsonwebtoken');
 const createUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
+    var _a, _b;
     const userAnimalData = [];
     const { location, key } = req.file;
     try {
@@ -51,10 +51,10 @@ const createUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         }
         const token = JWD.sign({
             email: validatedData,
-        }, process.env.JWT_SECRET);
+        }, (_a = process.env.JWT_SECRET) !== null && _a !== void 0 ? _a : '');
         const response = yield User_1.user.findOrCreate({
             where: {
-                email: (_a = validatedData.email) !== null && _a !== void 0 ? _a : '',
+                email: (_b = validatedData.email) !== null && _b !== void 0 ? _b : '',
             },
             defaults: Object.assign(Object.assign({}, validatedData), { token }),
         });
