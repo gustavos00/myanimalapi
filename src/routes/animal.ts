@@ -19,6 +19,6 @@ router.post(
 );
 router.delete('/delete/:id', animalController.deleteAnimal);
 
-//router.post('/read')
+router.get('/findMyAnimal/', animalController.findMyAnimal);
 
 export default router;

@@ -26,3 +26,7 @@ export const updateAnimalSchema = Joi.object({
 
   token: Joi.string().required(),
 });
+
+export const findMyAnimalSchema = Joi.object({
+  trackNumber: Joi.string().required(),
+});

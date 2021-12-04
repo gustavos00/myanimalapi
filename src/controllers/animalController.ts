@@ -1,5 +1,6 @@
 import * as AS from '../schemas/animalSchema';
 import { Request, Response } from 'express';
+
 import { animal } from '../models/Animal';
 import { user } from '../models/User';
 
@@ -222,3 +223,61 @@ export const deleteAnimal = async (req: Request, res: Response) => {
   }
 };
 
+export const findMyAnimal = async (req: Request, res: Response) => {
+  let validatedData;
+  let userId;
+
+  //Validate data
+  const tempTrackNumber =
+    req.query.trackNumber === 'undefined' ? undefined : req.query.trackNumber;
+
+  try {
+    validatedData = await AS.findMyAnimalSchema.validateAsync({
+      trackNumber: tempTrackNumber,
+    });
+
+    if (!validatedData) {
+      res.status(400).send({ message: 'Invaid inputs' });
+      return;
+    }
+  } catch (e) {
+    console.log('Error validating data on findMyAnimal animal controller');
+
+    res.status(400).send({ message: 'Something went wrong' });
+    throw new Error(e as string);
+  }
+
+  try {
+    const response = await animal.findOne({
+      where: validatedData,
+    });
+
+    userId = response?.user_idUser;
+  } catch (e) {
+    console.log(
+      'Error finding owner id on animal table on findMyAnimal animal controller'
+    );
+
+    res.status(400).send({ message: 'Something went wrong' });
+    throw new Error(e as string);
+  }
+
+  try {
+    const response = await user.findOne({
+      where: {
+        idUser: userId,
+      },
+    });
+
+    res
+      .status(200)
+      .send({ email: response?.email, phoneNumber: response?.phoneNumber });
+  } catch (e) {
+    console.log(
+      'Error finding owner id on animal table on findMyAnimal animal controller'
+    );
+
+    res.status(400).send({ message: 'Something went wrong' });
+    throw new Error(e as string);
+  }
+};
