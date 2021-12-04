@@ -101,6 +101,73 @@ export const createAnimal = async (req: Request, res: Response) => {
   }
 };
 
+export const updateAnimal = async (req: Request, res: Response) => {
+  let validatedData;
+
+  //Validate data
+  try {
+    validatedData = await AS.updateAnimalSchema.validateAsync(
+      req.body as CreateAnimalProps
+    );
+
+    if (!validatedData) {
+      res.status(400).send({ message: 'Invaid inputs' });
+      return;
+    }
+  } catch (e) {
+    console.log('Error validating data on update animal controller');
+
+    res.status(500).send({ message: 'Something went wrong' });
+    throw new Error(e as string);
+  }
+
+  try {
+    const findResponse = await animal.findOne({
+      where: { trackNumber: validatedData.trackNumber },
+    });
+
+    //Checking if already exist a trackNumber but from another user
+    if (
+      validatedData.trackNumber == findResponse?.trackNumber &&
+      validatedData.id != findResponse?.idAnimal
+    ) {
+      res.status(400).send({ message: 'This track number already exist' });
+      return;
+    }
+  } catch (e) {
+    console.log('Error getting owner data on update animal controller');
+
+    res.status(500).send({ message: 'Something went wrong' });
+    throw new Error(e as string);
+  }
+
+  try {
+    const updateResponse = await animal.update(
+      {
+        name: '',
+        age: '0',
+        breed: '',
+        trackNumber: '',
+        imageUrl: '',
+        imageName: '',
+        birthday: '',
+        birthdayMonth: '',
+      },
+      {
+        where: {
+          idAnimal: validatedData.id,
+        },
+      }
+    );
+
+    console.log(updateResponse);
+    res.status(200).send(updateResponse);
+  } catch (e) {
+    console.log(e);
+    res.status(400).send({ message: 'errr' });
+  }
+};
+
 export const deleteAnimal = async (req: Request, res: Response) => {
   let validatedData;
 
@@ -154,3 +221,4 @@ export const deleteAnimal = async (req: Request, res: Response) => {
     throw new Error(e as string);
   }
 };
+
