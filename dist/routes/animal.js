@@ -25,7 +25,8 @@ const multer = require('multer');
 const multerConfig = require('../config/multer');
 const router = (0, express_1.Router)();
 router.post('/create', multer(multerConfig).single('animalPhoto'), animalController.createAnimal);
+router.post('/update/', multer(multerConfig).single('animalPhoto'), animalController.updateAnimal);
 router.delete('/delete/:id', animalController.deleteAnimal);
-router.post('/update');
+router.get('/findMyAnimal/', animalController.findMyAnimal);
 //router.post('/read')
 exports.default = router;
