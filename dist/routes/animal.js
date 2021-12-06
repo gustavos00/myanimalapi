@@ -28,4 +28,5 @@ router.post('/create', multer(multerConfig).single('animalPhoto'), animalControl
 router.post('/update/', multer(multerConfig).single('animalPhoto'), animalController.updateAnimal);
 router.delete('/delete/:id', animalController.deleteAnimal);
 router.get('/findMyAnimal/', animalController.findMyAnimal);
+//router.post('/read')
 exports.default = router;

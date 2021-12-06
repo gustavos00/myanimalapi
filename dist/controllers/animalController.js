@@ -93,6 +93,7 @@ const createAnimal = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     }
 });
 exports.createAnimal = createAnimal;
+
 const updateAnimal = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     let validatedData;
     //Validate data
@@ -147,6 +148,7 @@ const updateAnimal = (req, res) => __awaiter(void 0, void 0, void 0, function* (
         res.status(400).send({ message: 'errr' });
     }
 });
+
 exports.updateAnimal = updateAnimal;
 const deleteAnimal = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     let validatedData;

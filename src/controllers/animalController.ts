@@ -20,7 +20,7 @@ interface DeleteAnimalProps {
 }
 
 interface MulterRequest extends Request {
-  file: any;
+  file: any; 
 }
 
 export const createAnimal = async (req: Request, res: Response) => {
