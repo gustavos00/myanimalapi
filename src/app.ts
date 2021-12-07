@@ -1,9 +1,9 @@
+import { sequelize } from './config/pg';
 import express, {
   Request,
-  Response,
-  NextFunction,
-  ErrorRequestHandler,
+  Response
 } from 'express';
+
 import rateLimit from 'express-rate-limit';
 import dotenv from 'dotenv';
 import path from 'path';
