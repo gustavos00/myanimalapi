@@ -1,8 +1,12 @@
-import * as AS from '../schemas/animalSchema';
+import { sequelize } from './../config/pg';
+
 import { Request, Response } from 'express';
 
-import { animal } from '../models/Animal';
-import { user } from '../models/User';
+import * as AS from '../schemas/animalSchema';
+
+import animal from '../models/Animal';
+import user from '../models/User';
+import users from '../models/User';
 
 interface CreateAnimalProps {
   name: string;

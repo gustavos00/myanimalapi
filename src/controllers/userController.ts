@@ -1,7 +1,8 @@
 import * as US from '../schemas/userSchema';
 import { Request, Response } from 'express';
-import { animal } from '../models/Animal';
-import { user } from '../models/User';
+
+import animal from '../models/Animal';
+import user from '../models/User'
 
 import dotenv from 'dotenv';
 dotenv.config();
