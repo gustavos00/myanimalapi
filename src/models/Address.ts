@@ -1,5 +1,8 @@
+import { locality } from './Locality';
 import { Model, DataTypes } from 'sequelize'
 import { sequelize } from '../config/pg'
+import users from './User';
+import parish from './Parish';
 
 export interface AddressInstance extends Model {
   idAddress: number
@@ -11,7 +14,7 @@ export interface AddressInstance extends Model {
   parish_idParish: number
 }
 
-export const address = sequelize.define<AddressInstance>(
+const address = sequelize.define<AddressInstance>(
   'address',
   {
     idAddress: {
@@ -33,14 +36,6 @@ export const address = sequelize.define<AddressInstance>(
       allowNull: false,
       type: DataTypes.STRING(100),
     },
-
-    parish_idParish: {
-      type: DataTypes.INTEGER,
-      references: {
-        key: 'parish',
-        model: 'idLocality',
-      },
-    },
   },
   {
     tableName: 'address',
@@ -48,3 +43,8 @@ export const address = sequelize.define<AddressInstance>(
     timestamps: false,
   }
 )
+
+address.hasMany(parish)
+parish.belongsTo(address)
+
+export default address

@@ -1,7 +1,11 @@
 import { Model, DataTypes } from 'sequelize';
+import { userTypes } from './UserTypes';
 import { sequelize } from '../config/pg';
 
-export interface UserInstance extends Model {
+import address from './Address';
+import animal from './Animal';
+
+export interface UsersInstance extends Model {
   idUser: number;
 
   givenName: string;
@@ -11,13 +15,10 @@ export interface UserInstance extends Model {
   imageUrl: string;
   imageName: string;
   token: string;
-
-  type_idUsertype: number;
-  address_idAddress: number;
 }
 
-export const user = sequelize.define<UserInstance>(
-  'user',
+const users = sequelize.define<UsersInstance>(
+  'users',
   {
     idUser: {
       primaryKey: true,
@@ -46,26 +47,21 @@ export const user = sequelize.define<UserInstance>(
       type: DataTypes.STRING,
       unique: true,
     },
-
-    type_idUsertype: {
-      type: DataTypes.INTEGER,
-      references: {
-        key: 'userTypes',
-        model: 'idUsertype',
-      },
-    },
-
-    address_idAddress: {
-      type: DataTypes.INTEGER,
-      references: {
-        key: 'address',
-        model: 'idAddress',
-      },
-    },
   },
   {
-    tableName: 'user',
+    tableName: 'users',
     freezeTableName: true,
     timestamps: false,
   }
 );
+
+users.hasMany(userTypes)
+userTypes.belongsTo(users)
+
+users.hasMany(address)
+address.belongsTo(users)
+
+users.hasMany(animal)
+animal.belongsTo(users)
+
+export default users

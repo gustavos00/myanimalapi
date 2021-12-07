@@ -1,6 +1,5 @@
 import { Model, DataTypes } from 'sequelize'
 import { sequelize } from '../config/pg'
-import { user } from './User'
 
 export interface UserTypesInstance extends Model {
   idUsertype: number
