@@ -16,7 +16,7 @@ interface CreateUserProps {
   email: string;
 }
 
-interface AnimalDataProps {
+export interface AnimalDataProps{
   idAnimal: number;
 
   name: string;
@@ -26,7 +26,7 @@ interface AnimalDataProps {
   imageName: string;
   imageUrl: string;
 
-  user_idUser: number;
+  userIdUser: number;
 }
 
 interface MulterRequest extends Request {
