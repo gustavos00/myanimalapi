@@ -1,4 +1,3 @@
-import { locality } from './Locality';
 import { Model, DataTypes } from 'sequelize'
 import { sequelize } from '../config/pg'
 
@@ -34,8 +33,5 @@ const parish = sequelize.define<ParishInstance>(
     timestamps: false,
   }
 )
-
-parish.hasMany(locality)
-locality.belongsTo(parish)
 
 export default parish
