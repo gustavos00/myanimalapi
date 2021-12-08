@@ -14,7 +14,7 @@ export interface AnimalInstance extends Model {
   imageName: string;
   imageUrl: string;
 
-  user_idUser: number;
+  userIdUser: number;
 }
 
 const animal = sequelize.define<AnimalInstance>(
