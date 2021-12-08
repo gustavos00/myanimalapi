@@ -1,8 +1,6 @@
 import { Model, DataTypes } from 'sequelize';
-import { userTypes } from './UserTypes';
 import { sequelize } from '../config/pg';
 
-import address from './Address';
 import animal from './Animal';
 
 export interface UsersInstance extends Model {
@@ -15,6 +13,8 @@ export interface UsersInstance extends Model {
   imageUrl: string;
   imageName: string;
   token: string;
+
+  address?: object
 }
 
 const users = sequelize.define<UsersInstance>(
@@ -54,12 +54,6 @@ const users = sequelize.define<UsersInstance>(
     timestamps: false,
   }
 );
-
-users.hasMany(userTypes)
-userTypes.belongsTo(users)
-
-users.hasMany(address)
-address.belongsTo(users)
 
 users.hasMany(animal)
 animal.belongsTo(users)
