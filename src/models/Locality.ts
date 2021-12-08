@@ -1,5 +1,6 @@
 import { Model, DataTypes } from 'sequelize'
 import { sequelize } from '../config/pg'
+import parish from './Parish'
 
 export interface LocalityInstance extends Model {
   idLocality: number
@@ -7,7 +8,7 @@ export interface LocalityInstance extends Model {
   locationName: string
 }
 
-export const locality = sequelize.define<LocalityInstance>(
+const locality = sequelize.define<LocalityInstance>(
   'locality',
   {
     idLocality: {
@@ -29,3 +30,8 @@ export const locality = sequelize.define<LocalityInstance>(
     timestamps: false,
   }
 )
+
+locality.hasMany(parish)
+parish.belongsTo(locality)
+
+export default locality

@@ -1,8 +1,13 @@
-import * as AS from '../schemas/animalSchema';
 import { Request, Response } from 'express';
 
-import { animal } from '../models/Animal';
-import { user } from '../models/User';
+import * as AS from '../schemas/animalSchema';
+
+import locality from './../models/Locality';
+import animal from '../models/Animal';
+import user from '../models/User';
+import users from '../models/User';
+import address from '../models/Address';
+import parish from '../models/Parish';
 
 interface CreateAnimalProps {
   name: string;
@@ -20,7 +25,7 @@ interface DeleteAnimalProps {
 }
 
 interface MulterRequest extends Request {
-  file: any; 
+  file: any;
 }
 
 export const createAnimal = async (req: Request, res: Response) => {
@@ -252,7 +257,9 @@ export const findMyAnimal = async (req: Request, res: Response) => {
       where: validatedData,
     });
 
-    userId = response?.user_idUser;
+    console.log(response);
+
+    userId = response?.userIdUser;
   } catch (e) {
     console.log(
       'Error finding owner id on animal table on findMyAnimal animal controller'
@@ -267,11 +274,31 @@ export const findMyAnimal = async (req: Request, res: Response) => {
       where: {
         idUser: userId,
       },
+      include: [
+        {
+          model: address,
+          required: false,
+          include: [
+            {
+              model: parish,
+              required: false,
+              include: [
+                {
+                  model: locality,
+                  required: false,
+                },
+              ],
+            },
+          ],
+        },
+      ],
     });
 
-    res
-      .status(200)
-      .send({ email: response?.email, phoneNumber: response?.phoneNumber });
+    res.status(200).send({
+      email: response?.email,
+      phoneNumber: response?.phoneNumber,
+      address: response?.address,
+    });
   } catch (e) {
     console.log(
       'Error finding owner id on animal table on findMyAnimal animal controller'

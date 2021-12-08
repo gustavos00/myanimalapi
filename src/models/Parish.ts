@@ -11,7 +11,7 @@ export interface ParishInstance extends Model {
   parish_idParish: number
 }
 
-export const parish = sequelize.define<ParishInstance>(
+const parish = sequelize.define<ParishInstance>(
   'parish',
   {
     idParish: {
@@ -26,14 +26,6 @@ export const parish = sequelize.define<ParishInstance>(
       unique: true,
       type: DataTypes.STRING(100),
     },
-
-    location_idLocation: {
-      type: DataTypes.INTEGER,
-      references: {
-        key: 'locality',
-        model: 'type',
-      },
-    },
   },
   {
     tableName: 'parish',
@@ -42,4 +34,4 @@ export const parish = sequelize.define<ParishInstance>(
   }
 )
 
-
+export default parish

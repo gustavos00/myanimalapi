@@ -1,14 +1,14 @@
 import express, {
   Request,
-  Response,
-  NextFunction,
-  ErrorRequestHandler,
+  Response
 } from 'express';
+
 import rateLimit from 'express-rate-limit';
 import dotenv from 'dotenv';
 import path from 'path';
 import cors from 'cors';
 
+import { sequelize } from './config/pg';
 import routes from './routes/index';
 
 const server = express();
@@ -29,6 +29,8 @@ server.use(
     headers: true,
   })
 );
+
+// sequelize.sync({force: true})
 
 dotenv.config();
 server.listen(process.env.PORT);

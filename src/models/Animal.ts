@@ -1,5 +1,8 @@
 import { Model, DataTypes } from 'sequelize';
 import { sequelize } from '../config/pg';
+import users from './User';
+
+import user from './User';
 
 export interface AnimalInstance extends Model {
   idAnimal: number;
@@ -11,10 +14,10 @@ export interface AnimalInstance extends Model {
   imageName: string;
   imageUrl: string;
 
-  user_idUser: number;
+  userIdUser: number;
 }
 
-export const animal = sequelize.define<AnimalInstance>(
+const animal = sequelize.define<AnimalInstance>(
   'animal',
   {
     idAnimal: {
@@ -39,14 +42,6 @@ export const animal = sequelize.define<AnimalInstance>(
     imageUrl: DataTypes.STRING,
     birthday: DataTypes.STRING(2),
     birthdayMonth: DataTypes.STRING(2),
-
-    user_idUser: {
-      type: DataTypes.INTEGER,
-      references: {
-        key: 'user',
-        model: 'idUser',
-      },
-    },
   },
   {
     tableName: 'animal',
@@ -54,3 +49,5 @@ export const animal = sequelize.define<AnimalInstance>(
     timestamps: false,
   }
 );
+
+export default animal

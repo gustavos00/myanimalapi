@@ -1,4 +1,5 @@
 import { Router } from 'express';
+
 import generalRoutes from './general';
 import userRoutes from './user';
 import animalRoutes from './animal';
