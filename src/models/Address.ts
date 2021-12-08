@@ -1,6 +1,6 @@
-import { locality } from './Locality';
 import { Model, DataTypes } from 'sequelize'
 import { sequelize } from '../config/pg'
+
 import users from './User';
 import parish from './Parish';
 
@@ -44,7 +44,10 @@ const address = sequelize.define<AddressInstance>(
   }
 )
 
-address.hasMany(parish)
-parish.belongsTo(address)
+address.hasMany(users)
+users.belongsTo(address)
+
+parish.hasMany(address)
+address.belongsTo(parish)
 
 export default address
