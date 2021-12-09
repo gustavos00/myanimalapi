@@ -72,7 +72,7 @@ export const createUser = async (req: Request, res: Response) => {
       //Find all animals from user
       const response = await animal.findAll({
         where: {
-          user_idUser: data.idUser,
+          userIdUser: data.idUser,
         },
       });
 

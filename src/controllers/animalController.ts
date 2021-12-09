@@ -5,9 +5,34 @@ import * as AS from '../schemas/animalSchema';
 import locality from './../models/Locality';
 import animal from '../models/Animal';
 import user from '../models/User';
-import users from '../models/User';
 import address from '../models/Address';
 import parish from '../models/Parish';
+
+let nodeGeocoder = require('node-geocoder');
+let options = {
+  provider: 'openstreetmap',
+};
+
+interface UserAddressProps {
+  idAddress: number;
+  doorNumber: string;
+  postalCode: string;
+  streetName: string;
+  parishIdParish: number;
+  parish: object;
+}
+
+interface UserAddressParishProps {
+  idParish: number;
+  parishName: string;
+  localityIdLocality: number;
+  locality: object;
+}
+
+interface UserAddressLocalityProps {
+  idLocality: number;
+  locationName: string;
+}
 
 interface CreateAnimalProps {
   name: string;
@@ -231,6 +256,9 @@ export const deleteAnimal = async (req: Request, res: Response) => {
 export const findMyAnimal = async (req: Request, res: Response) => {
   let validatedData;
   let userId;
+  let responseData;
+  let addressData;
+  let geographicCoordinates;
 
   //Validate data
   const tempTrackNumber =
@@ -242,7 +270,7 @@ export const findMyAnimal = async (req: Request, res: Response) => {
     });
 
     if (!validatedData) {
-      res.status(400).send({ message: 'Invaid inputs' });
+      res.status(400).send({ message: 'Invalid inputs' });
       return;
     }
   } catch (e) {
@@ -294,11 +322,12 @@ export const findMyAnimal = async (req: Request, res: Response) => {
       ],
     });
 
-    res.status(200).send({
+    addressData = response?.address as UserAddressProps;
+
+    responseData = {
       email: response?.email,
       phoneNumber: response?.phoneNumber,
-      address: response?.address,
-    });
+    };
   } catch (e) {
     console.log(
       'Error finding owner id on animal table on findMyAnimal animal controller'
@@ -307,4 +336,45 @@ export const findMyAnimal = async (req: Request, res: Response) => {
     res.status(400).send({ message: 'Something went wrong' });
     throw new Error(e as string);
   }
+
+  try {
+    const { streetName, postalCode, parish } = addressData;
+    const geoCoder = nodeGeocoder(options);
+
+    const res = await geoCoder.geocode(`${streetName} ${postalCode}`);
+
+    if (res) {
+      const latitude = res[0].latitude;
+      const longitude = res[0].longitude;
+
+      const tempObj = {
+        ...responseData,
+        latitude,
+        longitude,
+      };
+
+      responseData = tempObj;
+    } else {
+      const { parishName, locality } = parish as UserAddressParishProps;
+      const { locationName } = locality as UserAddressLocalityProps;
+      const tempObj = {
+        ...responseData,
+        streetName,
+        postalCode,
+        parishName,
+        locationName,
+      };
+
+      responseData = tempObj
+    }
+  } catch (e) {
+    console.log(
+      'Error getting address geographic coordinates on findMyAnimal animal controller'
+    );
+
+    res.status(400).send({ message: 'Something went wrong' });
+    throw new Error(e as string);
+  }
+
+  res.status(200).send(responseData);
 };
