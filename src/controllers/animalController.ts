@@ -65,7 +65,7 @@ export const createAnimal = async (req: Request, res: Response) => {
     );
 
     if (!validatedData) {
-      res.status(400).send({ message: 'Invaid inputs' });
+      res.status(400).send({ message: 'Invalid inputs' });
       return;
     }
   } catch (e) {
@@ -142,7 +142,7 @@ export const updateAnimal = async (req: Request, res: Response) => {
     );
 
     if (!validatedData) {
-      res.status(400).send({ message: 'Invaid inputs' });
+      res.status(400).send({ message: 'Invalid inputs' });
       return;
     }
   } catch (e) {
@@ -209,7 +209,7 @@ export const deleteAnimal = async (req: Request, res: Response) => {
     );
 
     if (!validatedData) {
-      res.status(400).send({ message: 'Invaid inputs' });
+      res.status(400).send({ message: 'Invalid inputs' });
       return;
     }
   } catch (e) {

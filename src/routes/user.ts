@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import * as userController from '../controllers/userController';
+import * as UC from '../controllers/userController';
 
 const multer = require('multer');
 const multerConfig = require('../config/multer');
@@ -8,8 +8,9 @@ const router = Router();
 router.post(
   '/create',
   multer(multerConfig).single('userPhoto'),
-  userController.createUser
+  UC.createUser
 );
+router.post('/createAddress', UC.createAddress)
 //router.get('/update')
 //router.get('/read')
 

@@ -2,12 +2,12 @@ import * as US from '../schemas/userSchema';
 import { Request, Response } from 'express';
 
 import animal from '../models/Animal';
-import user from '../models/User'
+import user from '../models/User';
+import address from '../models/Address';
 
 import dotenv from 'dotenv';
 dotenv.config();
 
-const Joi = require('joi');
 const JWD = require('jsonwebtoken');
 
 interface CreateUserProps {
@@ -16,7 +16,7 @@ interface CreateUserProps {
   email: string;
 }
 
-export interface AnimalDataProps{
+export interface AnimalDataProps {
   idAnimal: number;
 
   name: string;
@@ -27,6 +27,12 @@ export interface AnimalDataProps{
   imageUrl: string;
 
   userIdUser: number;
+}
+
+interface AddressOwnerProps {
+  streetName: string;
+  doorNumber: string;
+  postalCode: string;
 }
 
 interface MulterRequest extends Request {
@@ -106,4 +112,39 @@ export const createUser = async (req: Request, res: Response) => {
     res.status(500).send({ message: 'Something went wrong' });
     throw new Error(e as string);
   }
+};
+
+export const createAddress = async (req: Request, res: Response) => {
+  let validatedData;
+
+  //Validate data
+  try {
+    validatedData = await US.createAddressSchema.validateAsync(
+      req.body as AddressOwnerProps
+    );
+
+    if (!validatedData) {
+      res.status(400).send({ message: 'Invalid inputs' });
+      return;
+    }
+  } catch (e) {
+    console.log('Error validating data on create user address controller');
+
+    res.status(500).send({ message: 'Something went wrong' });
+    throw new Error(e as string);
+  }
+
+  try { 
+    const addressResponse = await address.create(validatedData);
+
+    res.status(201).send(addressResponse)
+  } catch(e) {
+    console.log(
+      'Error creating user address on user controller'
+    );
+
+    res.status(500).send({ message: 'Something went wrong' });
+    throw new Error(e as string);
+  }
+  
 };
