@@ -111,6 +111,7 @@ export const createAnimal = async (req: Request, res: Response) => {
     );
 
     res.status(500).send({ message: 'Something went wrong' });
+
     throw new Error(e as string);
   }
 
@@ -215,7 +216,7 @@ export const deleteAnimal = async (req: Request, res: Response) => {
   } catch (e) {
     console.log('Error validating data on delete animal controller');
 
-    res.status(400).send({ message: 'Something went wrong' });
+    res.status(500).send({ message: 'Something went wrong' });
     throw new Error(e as string);
   }
 
@@ -258,7 +259,6 @@ export const findMyAnimal = async (req: Request, res: Response) => {
   let userId;
   let responseData;
   let addressData;
-  let geographicCoordinates;
 
   //Validate data
   const tempTrackNumber =
@@ -276,7 +276,7 @@ export const findMyAnimal = async (req: Request, res: Response) => {
   } catch (e) {
     console.log('Error validating data on findMyAnimal animal controller');
 
-    res.status(400).send({ message: 'Something went wrong' });
+    res.status(500).send({ message: 'Something went wrong' });
     throw new Error(e as string);
   }
 
@@ -285,15 +285,13 @@ export const findMyAnimal = async (req: Request, res: Response) => {
       where: validatedData,
     });
 
-    console.log(response);
-
     userId = response?.userIdUser;
   } catch (e) {
     console.log(
       'Error finding owner id on animal table on findMyAnimal animal controller'
     );
 
-    res.status(400).send({ message: 'Something went wrong' });
+    res.status(500).send({ message: 'Something went wrong' });
     throw new Error(e as string);
   }
 
@@ -333,7 +331,7 @@ export const findMyAnimal = async (req: Request, res: Response) => {
       'Error finding owner id on animal table on findMyAnimal animal controller'
     );
 
-    res.status(400).send({ message: 'Something went wrong' });
+    res.status(500).send({ message: 'Something went wrong' });
     throw new Error(e as string);
   }
 
@@ -372,7 +370,7 @@ export const findMyAnimal = async (req: Request, res: Response) => {
       'Error getting address geographic coordinates on findMyAnimal animal controller'
     );
 
-    res.status(400).send({ message: 'Something went wrong' });
+    res.status(500).send({ message: 'Something went wrong' });
     throw new Error(e as string);
   }
 
