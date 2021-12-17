@@ -111,6 +111,7 @@ export const createAnimal = async (req: Request, res: Response) => {
     );
 
     res.status(500).send({ message: 'Something went wrong' });
+
     throw new Error(e as string);
   }
 
@@ -118,7 +119,7 @@ export const createAnimal = async (req: Request, res: Response) => {
   try {
     const response = await animal.create({
       ...validatedData,
-      user_idUser: userId,
+      userIdUser: userId,
       imageUrl: location,
       imageName: key,
     });
@@ -133,6 +134,7 @@ export const createAnimal = async (req: Request, res: Response) => {
 };
 
 export const updateAnimal = async (req: Request, res: Response) => {
+  const { location, key } = (req as MulterRequest).file;
   let validatedData;
 
   //Validate data
@@ -175,14 +177,9 @@ export const updateAnimal = async (req: Request, res: Response) => {
   try {
     const updateResponse = await animal.update(
       {
-        name: '',
-        age: '0',
-        breed: '',
-        trackNumber: '',
-        imageUrl: '',
-        imageName: '',
-        birthday: '',
-        birthdayMonth: '',
+        ...validatedData,
+        imageUrl: location,
+        imageName: key,
       },
       {
         where: {
@@ -215,7 +212,7 @@ export const deleteAnimal = async (req: Request, res: Response) => {
   } catch (e) {
     console.log('Error validating data on delete animal controller');
 
-    res.status(400).send({ message: 'Something went wrong' });
+    res.status(500).send({ message: 'Something went wrong' });
     throw new Error(e as string);
   }
 
@@ -258,7 +255,6 @@ export const findMyAnimal = async (req: Request, res: Response) => {
   let userId;
   let responseData;
   let addressData;
-  let geographicCoordinates;
 
   //Validate data
   const tempTrackNumber =
@@ -276,7 +272,7 @@ export const findMyAnimal = async (req: Request, res: Response) => {
   } catch (e) {
     console.log('Error validating data on findMyAnimal animal controller');
 
-    res.status(400).send({ message: 'Something went wrong' });
+    res.status(500).send({ message: 'Something went wrong' });
     throw new Error(e as string);
   }
 
@@ -285,15 +281,13 @@ export const findMyAnimal = async (req: Request, res: Response) => {
       where: validatedData,
     });
 
-    console.log(response);
-
     userId = response?.userIdUser;
   } catch (e) {
     console.log(
       'Error finding owner id on animal table on findMyAnimal animal controller'
     );
 
-    res.status(400).send({ message: 'Something went wrong' });
+    res.status(500).send({ message: 'Something went wrong' });
     throw new Error(e as string);
   }
 
@@ -333,7 +327,7 @@ export const findMyAnimal = async (req: Request, res: Response) => {
       'Error finding owner id on animal table on findMyAnimal animal controller'
     );
 
-    res.status(400).send({ message: 'Something went wrong' });
+    res.status(500).send({ message: 'Something went wrong' });
     throw new Error(e as string);
   }
 
@@ -365,14 +359,14 @@ export const findMyAnimal = async (req: Request, res: Response) => {
         locationName,
       };
 
-      responseData = tempObj
+      responseData = tempObj;
     }
   } catch (e) {
     console.log(
       'Error getting address geographic coordinates on findMyAnimal animal controller'
     );
 
-    res.status(400).send({ message: 'Something went wrong' });
+    res.status(500).send({ message: 'Something went wrong' });
     throw new Error(e as string);
   }
 
