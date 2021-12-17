@@ -119,7 +119,7 @@ export const createAnimal = async (req: Request, res: Response) => {
   try {
     const response = await animal.create({
       ...validatedData,
-      user_idUser: userId,
+      userIdUser: userId,
       imageUrl: location,
       imageName: key,
     });
@@ -173,17 +173,15 @@ export const updateAnimal = async (req: Request, res: Response) => {
     throw new Error(e as string);
   }
 
+  const { location, key } = (req as MulterRequest).file;
+  console.log(location)
+
   try {
     const updateResponse = await animal.update(
       {
-        name: '',
-        age: '0',
-        breed: '',
-        trackNumber: '',
+        ...validatedData,
         imageUrl: '',
         imageName: '',
-        birthday: '',
-        birthdayMonth: '',
       },
       {
         where: {
