@@ -134,6 +134,7 @@ export const createAnimal = async (req: Request, res: Response) => {
 };
 
 export const updateAnimal = async (req: Request, res: Response) => {
+  const { location, key } = (req as MulterRequest).file;
   let validatedData;
 
   //Validate data
@@ -173,15 +174,12 @@ export const updateAnimal = async (req: Request, res: Response) => {
     throw new Error(e as string);
   }
 
-  const { location, key } = (req as MulterRequest).file;
-  console.log(location)
-
   try {
     const updateResponse = await animal.update(
       {
         ...validatedData,
-        imageUrl: '',
-        imageName: '',
+        imageUrl: location,
+        imageName: key,
       },
       {
         where: {
@@ -361,7 +359,7 @@ export const findMyAnimal = async (req: Request, res: Response) => {
         locationName,
       };
 
-      responseData = tempObj
+      responseData = tempObj;
     }
   } catch (e) {
     console.log(
