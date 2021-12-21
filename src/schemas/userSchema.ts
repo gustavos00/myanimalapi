@@ -11,3 +11,7 @@ export const createAddressSchema = Joi.object({
   postalCode: Joi.string().required().min(1).max(12),
   doorNumber: Joi.string().required().min(1).max(10),
 })
+
+export const statusSchema = Joi.object({
+  status: Joi.string().required().min(1).max(100),
+})
