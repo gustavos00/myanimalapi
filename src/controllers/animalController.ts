@@ -45,6 +45,10 @@ interface CreateAnimalProps {
   email: string;
 }
 
+interface UserAddressFindMyAnimalProps {
+  addressData: object;
+}
+
 interface DeleteAnimalProps {
   id?: string;
 }
@@ -291,6 +295,11 @@ export const findMyAnimal = async (req: Request, res: Response) => {
     throw new Error(e as string);
   }
 
+  if (userId === undefined) {
+    res.status(200).send({ message: 'Cannot find animal owner' });
+    return;
+  }
+
   try {
     const response = await user.findOne({
       where: {
@@ -316,7 +325,7 @@ export const findMyAnimal = async (req: Request, res: Response) => {
       ],
     });
 
-    addressData = response?.address as UserAddressProps;
+    console.log(response);
 
     responseData = {
       email: response?.email,
@@ -331,7 +340,7 @@ export const findMyAnimal = async (req: Request, res: Response) => {
     throw new Error(e as string);
   }
 
-  try {
+  /*try {
     const { streetName, postalCode, parish } = addressData;
     const geoCoder = nodeGeocoder(options);
 
@@ -368,7 +377,7 @@ export const findMyAnimal = async (req: Request, res: Response) => {
 
     res.status(500).send({ message: 'Something went wrong' });
     throw new Error(e as string);
-  }
+  }*/
 
   res.status(200).send(responseData);
 };
