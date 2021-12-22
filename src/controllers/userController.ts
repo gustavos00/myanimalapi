@@ -6,6 +6,8 @@ import user from '../models/User';
 import address from '../models/Address';
 
 import dotenv from 'dotenv';
+import parish from '../models/Parish';
+import locality from '../models/Locality';
 dotenv.config();
 
 const JWD = require('jsonwebtoken');
@@ -29,10 +31,30 @@ export interface AnimalDataProps {
   userIdUser: number;
 }
 
-interface AddressOwnerProps {
+interface AddressUserProps {
   streetName: string;
   doorNumber: string;
   postalCode: string;
+}
+
+interface FullAddressUserProps {
+  doorNumber: string;
+  postalCode: string;
+  streetName: string;
+  parish: ParishAddressUserProps;
+}
+
+interface ParishAddressUserProps {
+  parishName: string;
+  locality: LocalityAddressUserProps;
+}
+
+interface LocalityAddressUserProps {
+  locationName: string;
+}
+
+interface StatusProps {
+  status: string;
 }
 
 interface MulterRequest extends Request {
@@ -42,6 +64,10 @@ interface MulterRequest extends Request {
 export const createUser = async (req: Request, res: Response) => {
   const userAnimalData = [] as Array<AnimalDataProps>;
   const { location, key } = (req as MulterRequest).file;
+
+  let returnStatus;
+  let returnToken;
+  let userAddressTempObj = {};
 
   try {
     const validatedData = await US.createUserSchema.validateAsync(
@@ -65,16 +91,19 @@ export const createUser = async (req: Request, res: Response) => {
       },
       defaults: {
         ...validatedData,
+        imageUrl: location,
+        imageName: key,
         token,
       },
     });
 
     const [data, created] = response;
-    const returnStatus = created ? 201 : 200;
-    const returnToken = created ? token : data.token;
+    returnStatus = created ? 201 : 200;
+    returnToken = created ? token : data.token;
 
     //Check if wasnt create
     if (!created) {
+      console.log('aaa');
       //Find all animals from user
       const response = await animal.findAll({
         where: {
@@ -86,27 +115,48 @@ export const createUser = async (req: Request, res: Response) => {
         userAnimalData.push(item);
       });
 
-      /*Find user address - Need make the relations on models
-      const addressResponse = await address.findOne({
-        where: { idAddress: data.address_idAddress },
-        include: [
-          {
-            model: parish,
-          },
-          {
-            model: locality,
-          },
-        ],
-      })
-      */
+      if (data.addressIdAddress) {
+        const addressResponse = await address.findOne({
+          where: { idAddress: data.addressIdAddress },
+          include: [
+            {
+              model: parish,
+              include: [
+                {
+                  model: locality,
+                },
+              ],
+            },
+          ],
+        });
+
+        const {
+          doorNumber,
+          postalCode,
+          streetName,
+          parish: parishData,
+        } = addressResponse as unknown as FullAddressUserProps;
+
+        const { parishName, locality: localityData } = parishData;
+        const { locationName } = localityData;
+
+        userAddressTempObj = {
+          doorNumber,
+          postalCode,
+          streetName,
+          parishName,
+          locationName,
+        };
+      }
     }
 
     res.status(returnStatus).send({
       ...validatedData,
       token: returnToken,
-      animalData: userAnimalData,
       imageUrl: location,
       imageKey: key,
+      animalData: userAnimalData,
+      userAddress: userAddressTempObj,
     });
   } catch (e) {
     res.status(500).send({ message: 'Something went wrong' });
@@ -120,7 +170,7 @@ export const createAddress = async (req: Request, res: Response) => {
   //Validate data
   try {
     validatedData = await US.createAddressSchema.validateAsync(
-      req.body as AddressOwnerProps
+      req.body as AddressUserProps
     );
 
     if (!validatedData) {
@@ -134,17 +184,48 @@ export const createAddress = async (req: Request, res: Response) => {
     throw new Error(e as string);
   }
 
-  try { 
+  try {
     const addressResponse = await address.create(validatedData);
 
-    res.status(201).send(addressResponse)
-  } catch(e) {
-    console.log(
-      'Error creating user address on user controller'
-    );
+    res.status(201).send(addressResponse);
+  } catch (e) {
+    console.log('Error creating user address on user controller');
 
     res.status(500).send({ message: 'Something went wrong' });
     throw new Error(e as string);
   }
-  
+};
+
+export const status = async (req: Request, res: Response) => {
+  let validatedData;
+  let createResponse;
+
+  //Validate data
+  try {
+    validatedData = await US.statusSchema.validateAsync(
+      req.query as unknown as StatusProps
+    );
+
+    if (!validatedData) {
+      res.status(400).send({ message: 'Invalid inputs' });
+      return;
+    }
+  } catch (e) {
+    console.log('Error validating data on create user address controller');
+
+    res.status(500).send({ message: 'Something went wrong' });
+    throw new Error(e as string);
+  }
+
+  try {
+    const createResponse = await user.create(validatedData);
+    res.status(200).send(createResponse);
+  } catch (e) {
+    console.log('Error creating data on create user address controller');
+
+    res.status(500).send({ message: 'Something went wrong' });
+    throw new Error(e as string);
+  }
+
+
 };

@@ -11,11 +11,7 @@ router.post(
   UC.createUser
 );
 router.post('/createAddress', UC.createAddress)
-//router.get('/update')
-//router.get('/read')
-
-//router.get('/payment/pin')
-//router.get('/payment/create')
-//router.get('/payment/delete')
+router.post('/update')
+router.get('/status', UC.status)
 
 export default router;

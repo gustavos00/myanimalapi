@@ -13,8 +13,10 @@ export interface UsersInstance extends Model {
   imageUrl: string;
   imageName: string;
   token: string;
+  status: string;
 
-  address?: object
+
+  addressIdAddress: number
 }
 
 const users = sequelize.define<UsersInstance>(
@@ -43,10 +45,12 @@ const users = sequelize.define<UsersInstance>(
     phoneNumber: DataTypes.STRING(15),
     imageUrl: DataTypes.STRING,
     imageName: DataTypes.STRING,
+    status: DataTypes.STRING(100),
     token: {
       type: DataTypes.STRING,
       unique: true,
     },
+    
   },
   {
     tableName: 'users',
