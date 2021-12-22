@@ -67,8 +67,7 @@ export const createUser = async (req: Request, res: Response) => {
 
   let returnStatus;
   let returnToken;
-  let userAddressResponse;
-  let userAddressTempObj;
+  let userAddressTempObj = {};
 
   try {
     const validatedData = await US.createUserSchema.validateAsync(
