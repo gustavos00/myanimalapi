@@ -10,6 +10,7 @@ export const createAddressSchema = Joi.object({
   streetName: Joi.string().required().min(1).max(100),
   postalCode: Joi.string().required().min(1).max(12),
   doorNumber: Joi.string().required().min(1).max(10),
+  email: Joi.string().email().required(),
 })
 
 export const statusSchema = Joi.object({
