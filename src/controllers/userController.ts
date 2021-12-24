@@ -166,6 +166,7 @@ export const createUser = async (req: Request, res: Response) => {
 
 export const createAddress = async (req: Request, res: Response) => {
   let validatedData;
+  let addressResponse;
 
   //Validate data
   try {
@@ -185,15 +186,28 @@ export const createAddress = async (req: Request, res: Response) => {
   }
 
   try {
-    const addressResponse = await address.create(validatedData);
-
-    res.status(201).send(addressResponse);
+    addressResponse = await address.create(validatedData);
   } catch (e) {
     console.log('Error creating user address on user controller');
 
     res.status(500).send({ message: 'Something went wrong' });
     throw new Error(e as string);
   }
+
+  try {
+     await user.update(
+      { addressIdAddress: addressResponse.idAddress },
+      { where: { email: validatedData.email } }
+    );
+
+  } catch (e) {
+    console.log('Error updating user address fk on user controller');
+
+    res.status(500).send({ message: 'Something went wrong' });
+    throw new Error(e as string);
+  }
+
+  res.status(200).send(validatedData);
 };
 
 export const status = async (req: Request, res: Response) => {
@@ -226,6 +240,4 @@ export const status = async (req: Request, res: Response) => {
     res.status(500).send({ message: 'Something went wrong' });
     throw new Error(e as string);
   }
-
-
 };
