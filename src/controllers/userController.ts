@@ -103,7 +103,6 @@ export const createUser = async (req: Request, res: Response) => {
 
     //Check if wasnt create
     if (!created) {
-      console.log('aaa');
       //Find all animals from user
       const response = await animal.findAll({
         where: {
@@ -130,23 +129,25 @@ export const createUser = async (req: Request, res: Response) => {
           ],
         });
 
-        const {
-          doorNumber,
-          postalCode,
-          streetName,
-          parish: parishData,
-        } = addressResponse as unknown as FullAddressUserProps;
-
-        const { parishName, locality: localityData } = parishData;
-        const { locationName } = localityData;
-
-        userAddressTempObj = {
-          doorNumber,
-          postalCode,
-          streetName,
-          parishName,
-          locationName,
-        };
+        if(addressResponse) {
+          const {
+            doorNumber,
+            postalCode,
+            streetName,
+            parish: parishData,
+          } = addressResponse as unknown as FullAddressUserProps;
+  
+          const { parishName, locality: localityData } = parishData;
+          const { locationName } = localityData;
+  
+          userAddressTempObj = {
+            doorNumber,
+            postalCode,
+            streetName,
+            parishName,
+            locationName,
+          };
+        }
       }
     }
 

@@ -27,11 +27,21 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.findMyAnimal = exports.deleteAnimal = exports.updateAnimal = exports.createAnimal = void 0;
 const AS = __importStar(require("../schemas/animalSchema"));
-const Animal_1 = require("../models/Animal");
-const User_1 = require("../models/User");
+const Locality_1 = __importDefault(require("./../models/Locality"));
+const Animal_1 = __importDefault(require("../models/Animal"));
+const User_1 = __importDefault(require("../models/User"));
+const Address_1 = __importDefault(require("../models/Address"));
+const Parish_1 = __importDefault(require("../models/Parish"));
+let nodeGeocoder = require('node-geocoder');
+let options = {
+    provider: 'openstreetmap',
+};
 const createAnimal = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { location, key } = req.file;
     let validatedData;
@@ -40,7 +50,7 @@ const createAnimal = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     try {
         validatedData = yield AS.createAnimalSchema.validateAsync(req.body);
         if (!validatedData) {
-            res.status(400).send({ message: 'Invaid inputs' });
+            res.status(400).send({ message: 'Invalid inputs' });
             return;
         }
     }
@@ -51,7 +61,7 @@ const createAnimal = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     }
     //Find user id
     try {
-        const response = yield User_1.user.findOne({
+        const response = yield User_1.default.findOne({
             where: { token: validatedData.token },
         });
         if (!response) {
@@ -66,7 +76,7 @@ const createAnimal = (req, res) => __awaiter(void 0, void 0, void 0, function* (
         throw new Error(e);
     }
     try {
-        const response = yield Animal_1.animal.findOne({
+        const response = yield Animal_1.default.findOne({
             where: {
                 trackNumber: validatedData.trackNumber,
             },
@@ -83,7 +93,7 @@ const createAnimal = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     }
     //Create animal
     try {
-        const response = yield Animal_1.animal.create(Object.assign(Object.assign({}, validatedData), { user_idUser: userId, imageUrl: location, imageName: key }));
+        const response = yield Animal_1.default.create(Object.assign(Object.assign({}, validatedData), { userIdUser: userId, imageUrl: location, imageName: key }));
         res.status(201).send(response);
     }
     catch (e) {
@@ -93,14 +103,14 @@ const createAnimal = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     }
 });
 exports.createAnimal = createAnimal;
-
 const updateAnimal = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { location, key } = req.file;
     let validatedData;
     //Validate data
     try {
         validatedData = yield AS.updateAnimalSchema.validateAsync(req.body);
         if (!validatedData) {
-            res.status(400).send({ message: 'Invaid inputs' });
+            res.status(400).send({ message: 'Invalid inputs' });
             return;
         }
     }
@@ -110,7 +120,7 @@ const updateAnimal = (req, res) => __awaiter(void 0, void 0, void 0, function* (
         throw new Error(e);
     }
     try {
-        const findResponse = yield Animal_1.animal.findOne({
+        const findResponse = yield Animal_1.default.findOne({
             where: { trackNumber: validatedData.trackNumber },
         });
         //Checking if already exist a trackNumber but from another user
@@ -126,16 +136,7 @@ const updateAnimal = (req, res) => __awaiter(void 0, void 0, void 0, function* (
         throw new Error(e);
     }
     try {
-        const updateResponse = yield Animal_1.animal.update({
-            name: '',
-            age: '0',
-            breed: '',
-            trackNumber: '',
-            imageUrl: '',
-            imageName: '',
-            birthday: '',
-            birthdayMonth: '',
-        }, {
+        const updateResponse = yield Animal_1.default.update(Object.assign(Object.assign({}, validatedData), { imageUrl: location, imageName: key }), {
             where: {
                 idAnimal: validatedData.id,
             },
@@ -148,7 +149,6 @@ const updateAnimal = (req, res) => __awaiter(void 0, void 0, void 0, function* (
         res.status(400).send({ message: 'errr' });
     }
 });
-
 exports.updateAnimal = updateAnimal;
 const deleteAnimal = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     let validatedData;
@@ -156,18 +156,18 @@ const deleteAnimal = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     try {
         validatedData = yield AS.deleteAnimalSchema.validateAsync(req.params);
         if (!validatedData) {
-            res.status(400).send({ message: 'Invaid inputs' });
+            res.status(400).send({ message: 'Invalid inputs' });
             return;
         }
     }
     catch (e) {
         console.log('Error validating data on delete animal controller');
-        res.status(400).send({ message: 'Something went wrong' });
+        res.status(500).send({ message: 'Something went wrong' });
         throw new Error(e);
     }
     //Verifying if animal exist
     try {
-        const response = yield Animal_1.animal.findOne({
+        const response = yield Animal_1.default.findOne({
             where: {
                 idAnimal: validatedData.id,
             },
@@ -184,7 +184,7 @@ const deleteAnimal = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     }
     //Deleting animal
     try {
-        yield Animal_1.animal.destroy({
+        yield Animal_1.default.destroy({
             where: { idAnimal: validatedData.id },
         });
         res.status(200).send({ message: 'Animal deleted' });
@@ -199,6 +199,8 @@ exports.deleteAnimal = deleteAnimal;
 const findMyAnimal = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     let validatedData;
     let userId;
+    let responseData;
+    let addressData;
     //Validate data
     const tempTrackNumber = req.query.trackNumber === 'undefined' ? undefined : req.query.trackNumber;
     try {
@@ -206,40 +208,103 @@ const findMyAnimal = (req, res) => __awaiter(void 0, void 0, void 0, function* (
             trackNumber: tempTrackNumber,
         });
         if (!validatedData) {
-            res.status(400).send({ message: 'Invaid inputs' });
+            res.status(400).send({ message: 'Invalid inputs' });
             return;
         }
     }
     catch (e) {
         console.log('Error validating data on findMyAnimal animal controller');
-        res.status(400).send({ message: 'Something went wrong' });
+        res.status(500).send({ message: 'Something went wrong' });
         throw new Error(e);
     }
     try {
-        const response = yield Animal_1.animal.findOne({
+        const response = yield Animal_1.default.findOne({
             where: validatedData,
         });
-        userId = response === null || response === void 0 ? void 0 : response.user_idUser;
+        userId = response === null || response === void 0 ? void 0 : response.userIdUser;
     }
     catch (e) {
         console.log('Error finding owner id on animal table on findMyAnimal animal controller');
-        res.status(400).send({ message: 'Something went wrong' });
+        res.status(500).send({ message: 'Something went wrong' });
         throw new Error(e);
     }
+    if (userId === undefined) {
+        res.status(200).send({ message: 'Cannot find animal owner' });
+        return;
+    }
     try {
-        const response = yield User_1.user.findOne({
+        const response = yield User_1.default.findOne({
             where: {
                 idUser: userId,
             },
+            include: [
+                {
+                    model: Address_1.default,
+                    required: false,
+                    include: [
+                        {
+                            model: Parish_1.default,
+                            required: false,
+                            include: [
+                                {
+                                    model: Locality_1.default,
+                                    required: false,
+                                },
+                            ],
+                        },
+                    ],
+                },
+            ],
         });
-        res
-            .status(200)
-            .send({ email: response === null || response === void 0 ? void 0 : response.email, phoneNumber: response === null || response === void 0 ? void 0 : response.phoneNumber });
+        console.log(response);
+        responseData = {
+            email: response === null || response === void 0 ? void 0 : response.email,
+            phoneNumber: response === null || response === void 0 ? void 0 : response.phoneNumber,
+        };
     }
     catch (e) {
         console.log('Error finding owner id on animal table on findMyAnimal animal controller');
-        res.status(400).send({ message: 'Something went wrong' });
+        res.status(500).send({ message: 'Something went wrong' });
         throw new Error(e);
     }
+    /*try {
+      const { streetName, postalCode, parish } = addressData;
+      const geoCoder = nodeGeocoder(options);
+  
+      const res = await geoCoder.geocode(`${streetName} ${postalCode}`);
+  
+      if (res) {
+        const latitude = res[0].latitude;
+        const longitude = res[0].longitude;
+  
+        const tempObj = {
+          ...responseData,
+          latitude,
+          longitude,
+        };
+  
+        responseData = tempObj;
+      } else {
+        const { parishName, locality } = parish as UserAddressParishProps;
+        const { locationName } = locality as UserAddressLocalityProps;
+        const tempObj = {
+          ...responseData,
+          streetName,
+          postalCode,
+          parishName,
+          locationName,
+        };
+  
+        responseData = tempObj;
+      }
+    } catch (e) {
+      console.log(
+        'Error getting address geographic coordinates on findMyAnimal animal controller'
+      );
+  
+      res.status(500).send({ message: 'Something went wrong' });
+      throw new Error(e as string);
+    }*/
+    res.status(200).send(responseData);
 });
 exports.findMyAnimal = findMyAnimal;

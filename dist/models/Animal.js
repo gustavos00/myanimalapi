@@ -1,9 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.animal = void 0;
 const sequelize_1 = require("sequelize");
 const pg_1 = require("../config/pg");
-exports.animal = pg_1.sequelize.define('animal', {
+const animal = pg_1.sequelize.define('animal', {
     idAnimal: {
         primaryKey: true,
         unique: true,
@@ -24,15 +23,9 @@ exports.animal = pg_1.sequelize.define('animal', {
     imageUrl: sequelize_1.DataTypes.STRING,
     birthday: sequelize_1.DataTypes.STRING(2),
     birthdayMonth: sequelize_1.DataTypes.STRING(2),
-    user_idUser: {
-        type: sequelize_1.DataTypes.INTEGER,
-        references: {
-            key: 'user',
-            model: 'idUser',
-        },
-    },
 }, {
     tableName: 'animal',
     freezeTableName: true,
     timestamps: false,
 });
+exports.default = animal;

@@ -5,24 +5,23 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const sequelize_1 = require("sequelize");
 const pg_1 = require("../config/pg");
-const Parish_1 = __importDefault(require("./Parish"));
-const locality = pg_1.sequelize.define('locality', {
-    idLocality: {
+const User_1 = __importDefault(require("./User"));
+const usersTypes = pg_1.sequelize.define('usersTypes', {
+    idUsertype: {
         primaryKey: true,
         unique: true,
         autoIncrement: true,
         type: sequelize_1.DataTypes.INTEGER,
     },
-    locationName: {
+    type: {
         allowNull: false,
-        unique: true,
-        type: sequelize_1.DataTypes.STRING(100),
+        type: sequelize_1.DataTypes.STRING(50),
     },
 }, {
-    tableName: 'locality',
+    tableName: 'usersTypes',
     freezeTableName: true,
     timestamps: false,
 });
-locality.hasMany(Parish_1.default);
-Parish_1.default.belongsTo(locality);
-exports.default = locality;
+usersTypes.hasMany(User_1.default);
+User_1.default.belongsTo(usersTypes);
+exports.default = usersTypes;

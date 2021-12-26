@@ -1,9 +1,12 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.user = void 0;
 const sequelize_1 = require("sequelize");
 const pg_1 = require("../config/pg");
-exports.user = pg_1.sequelize.define('user', {
+const Animal_1 = __importDefault(require("./Animal"));
+const users = pg_1.sequelize.define('users', {
     idUser: {
         primaryKey: true,
         unique: true,
@@ -26,26 +29,16 @@ exports.user = pg_1.sequelize.define('user', {
     phoneNumber: sequelize_1.DataTypes.STRING(15),
     imageUrl: sequelize_1.DataTypes.STRING,
     imageName: sequelize_1.DataTypes.STRING,
+    status: sequelize_1.DataTypes.STRING(100),
     token: {
         type: sequelize_1.DataTypes.STRING,
         unique: true,
     },
-    type_idUsertype: {
-        type: sequelize_1.DataTypes.INTEGER,
-        references: {
-            key: 'userTypes',
-            model: 'idUsertype',
-        },
-    },
-    address_idAddress: {
-        type: sequelize_1.DataTypes.INTEGER,
-        references: {
-            key: 'address',
-            model: 'idAddress',
-        },
-    },
 }, {
-    tableName: 'user',
+    tableName: 'users',
     freezeTableName: true,
     timestamps: false,
 });
+users.hasMany(Animal_1.default);
+Animal_1.default.belongsTo(users);
+exports.default = users;
