@@ -26,14 +26,14 @@ const users = pg_1.sequelize.define('users', {
         allowNull: false,
         type: sequelize_1.DataTypes.STRING(255),
     },
-    phoneNumber: sequelize_1.DataTypes.STRING(15),
-    imageUrl: sequelize_1.DataTypes.STRING,
-    imageName: sequelize_1.DataTypes.STRING,
-    status: sequelize_1.DataTypes.STRING(100),
     token: {
         type: sequelize_1.DataTypes.STRING,
         unique: true,
     },
+    phoneNumber: sequelize_1.DataTypes.STRING(15),
+    imageUrl: sequelize_1.DataTypes.STRING,
+    imageName: sequelize_1.DataTypes.STRING,
+    status: sequelize_1.DataTypes.STRING(100),
 }, {
     tableName: 'users',
     freezeTableName: true,

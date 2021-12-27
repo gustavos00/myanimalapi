@@ -31,7 +31,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.status = exports.createAddress = exports.createUser = void 0;
+exports.generateToken = exports.status = exports.createAddress = exports.createUser = void 0;
 const US = __importStar(require("../schemas/userSchema"));
 const Animal_1 = __importDefault(require("../models/Animal"));
 const User_1 = __importDefault(require("../models/User"));
@@ -175,3 +175,28 @@ const status = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.status = status;
+const generateToken = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    let validatedData;
+    try {
+        validatedData = yield US.generateTokenSchema.validateAsync(req.query);
+        if (!validatedData) {
+            res.status(400).send({ message: 'Invalid inputs' });
+            return;
+        }
+    }
+    catch (e) {
+        console.log(e);
+        res.status(200).send({ message: 'Something went wrong' });
+    }
+    try {
+        const token = yield JWD.sign({
+            email: validatedData,
+        }, process.env.JWT_SECRET);
+        res.status(200).send({ token });
+    }
+    catch (e) {
+        console.log(e);
+        res.status(200).send({ message: 'Something went wrong' });
+    }
+});
+exports.generateToken = generateToken;
