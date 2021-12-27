@@ -304,6 +304,7 @@ export const verifyToken = async (req: Request, res: Response) => {
       process.env.JWT_SECRET as string
     );
   } catch (e) {
+    console.log(e)
     console.log('Error verifing token on verifyToken controller');
     res.status(200).send({ message: 'Something went wrong' });
   }
@@ -314,6 +315,7 @@ export const verifyToken = async (req: Request, res: Response) => {
     });
 
   } catch (e) {
+    console.log(e)
     console.log('Error finding user by token on verifyToken controller');
     res.status(200).send({ message: 'Something went wrong' });
   }
@@ -326,6 +328,7 @@ export const verifyToken = async (req: Request, res: Response) => {
 
     res.status(200).send(response);
   } catch (e) {
+    console.log(e)
     console.log('Error finding user by token on verifyToken controller');
     res.status(200).send({ message: 'Something went wrong' });
   }
