@@ -16,5 +16,6 @@ router.post('/update')
 router.get('/status', UC.status)
 
 router.get('/friend/token/', UC.generateToken)
+router.get('/friend/verifyToken/', UC.verifyToken)
 
 export default router;
