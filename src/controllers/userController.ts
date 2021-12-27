@@ -8,6 +8,7 @@ import address from '../models/Address';
 import dotenv from 'dotenv';
 import parish from '../models/Parish';
 import locality from '../models/Locality';
+import friendRequest from '../models/FriendRequest';
 dotenv.config();
 
 const JWT = require('jsonwebtoken');
@@ -160,6 +161,7 @@ export const createUser = async (req: Request, res: Response) => {
 
     res.status(returnStatus).send({
       ...validatedData,
+      id: data.idUser,
       token: returnToken,
       imageUrl: location,
       imageKey: key,
@@ -267,7 +269,7 @@ export const generateToken = async (req: Request, res: Response) => {
 
   try {
     const token = await JWT.sign(
-      validatedData.email,
+      validatedData,
       process.env.JWT_SECRET as string
     );
     res.status(200).send({ token });
@@ -279,7 +281,9 @@ export const generateToken = async (req: Request, res: Response) => {
 
 export const verifyToken = async (req: Request, res: Response) => {
   let validatedData;
-  let userEmail;
+  let userData;
+  let tokenData;
+
   try {
     validatedData = await US.verifyTokenSchema.validateAsync(
       req.query as unknown as VerifyToken
@@ -290,26 +294,39 @@ export const verifyToken = async (req: Request, res: Response) => {
       return;
     }
   } catch (e) {
-    console.log(e);
+    console.log('Error validating data on verifyToken controller');
     res.status(200).send({ message: 'Something went wrong' });
   }
 
   try {
-    userEmail = JWT.verify(
+    tokenData = JWT.verify(
       validatedData.token,
       process.env.JWT_SECRET as string
     );
   } catch (e) {
-    console.log(e);
+    console.log('Error verifing token on verifyToken controller');
     res.status(200).send({ message: 'Something went wrong' });
   }
 
   try {
-    const response = await user.findOne({ where: { email: userEmail } });
-    console.log(validatedData.fromWho);
-    res.status(200).send({ message: response?.idUser });
+    userData = await user.findOne({
+      where: { email: tokenData.email, idUser: tokenData.id },
+    });
+
   } catch (e) {
-    console.log(e);
+    console.log('Error finding user by token on verifyToken controller');
+    res.status(200).send({ message: 'Something went wrong' });
+  }
+
+  try {
+    const response = await friendRequest.create({
+      fromWho: validatedData.fromWho,
+      toWhom: userData?.idUser,
+    });
+
+    res.status(200).send(response);
+  } catch (e) {
+    console.log('Error finding user by token on verifyToken controller');
     res.status(200).send({ message: 'Something went wrong' });
   }
 };

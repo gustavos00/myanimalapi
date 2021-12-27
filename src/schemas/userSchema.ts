@@ -18,7 +18,8 @@ export const statusSchema = Joi.object({
 })
 
 export const generateTokenSchema = Joi.object({
-  email: Joi.string().required().email()
+  email: Joi.string().required().email(),
+  id: Joi.string().required().min(1)
 })
 
 export const verifyTokenSchema = Joi.object({
