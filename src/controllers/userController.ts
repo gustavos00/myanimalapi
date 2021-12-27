@@ -10,7 +10,7 @@ import parish from '../models/Parish';
 import locality from '../models/Locality';
 dotenv.config();
 
-const JWD = require('jsonwebtoken');
+const JWT = require('jsonwebtoken');
 
 interface CreateUserProps {
   givenName: string;
@@ -61,6 +61,11 @@ interface GenerateToken {
   id: string;
 }
 
+interface VerifyToken {
+  token: string;
+  fromWho: string;
+}
+
 interface MulterRequest extends Request {
   file: any;
 }
@@ -82,10 +87,8 @@ export const createUser = async (req: Request, res: Response) => {
       res.status(400).send({ message: 'Invalid inputs' });
       return;
     }
-    const token = JWD.sign(
-      {
-        email: validatedData,
-      },
+    const token = JWT.sign(
+      validatedData.email,
       process.env.JWT_SECRET as string
     );
 
@@ -263,13 +266,48 @@ export const generateToken = async (req: Request, res: Response) => {
   }
 
   try {
-    const token = await JWD.sign(
-      {
-        email: validatedData,
-      },
+    const token = await JWT.sign(
+      validatedData.email,
       process.env.JWT_SECRET as string
     );
     res.status(200).send({ token });
+  } catch (e) {
+    console.log(e);
+    res.status(200).send({ message: 'Something went wrong' });
+  }
+};
+
+export const verifyToken = async (req: Request, res: Response) => {
+  let validatedData;
+  let userEmail;
+  try {
+    validatedData = await US.verifyTokenSchema.validateAsync(
+      req.query as unknown as VerifyToken
+    );
+
+    if (!validatedData) {
+      res.status(400).send({ message: 'Invalid inputs' });
+      return;
+    }
+  } catch (e) {
+    console.log(e);
+    res.status(200).send({ message: 'Something went wrong' });
+  }
+
+  try {
+    userEmail = JWT.verify(
+      validatedData.token,
+      process.env.JWT_SECRET as string
+    );
+  } catch (e) {
+    console.log(e);
+    res.status(200).send({ message: 'Something went wrong' });
+  }
+
+  try {
+    const response = await user.findOne({ where: { email: userEmail } });
+    console.log(validatedData.fromWho);
+    res.status(200).send({ message: response?.idUser });
   } catch (e) {
     console.log(e);
     res.status(200).send({ message: 'Something went wrong' });
