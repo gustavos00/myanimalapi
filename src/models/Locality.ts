@@ -27,7 +27,7 @@ const locality = sequelize.define<LocalityInstance>(
   {
     tableName: 'locality',
     freezeTableName: true,
-    timestamps: false,
+    timestamps: true,
   }
 )
 

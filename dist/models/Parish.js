@@ -17,6 +17,6 @@ const parish = pg_1.sequelize.define('parish', {
 }, {
     tableName: 'parish',
     freezeTableName: true,
-    timestamps: false,
+    timestamps: true,
 });
 exports.default = parish;

@@ -26,6 +26,6 @@ const animal = pg_1.sequelize.define('animal', {
 }, {
     tableName: 'animal',
     freezeTableName: true,
-    timestamps: false,
+    timestamps: true,
 });
 exports.default = animal;

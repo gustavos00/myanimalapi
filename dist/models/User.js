@@ -37,7 +37,7 @@ const users = pg_1.sequelize.define('users', {
 }, {
     tableName: 'users',
     freezeTableName: true,
-    timestamps: false,
+    timestamps: true,
 });
 users.hasMany(Animal_1.default);
 Animal_1.default.belongsTo(users);

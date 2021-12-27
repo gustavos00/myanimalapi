@@ -29,7 +29,7 @@ const address = pg_1.sequelize.define('address', {
 }, {
     tableName: 'address',
     freezeTableName: true,
-    timestamps: false,
+    timestamps: true,
 });
 address.hasMany(User_1.default);
 User_1.default.belongsTo(address);

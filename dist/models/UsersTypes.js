@@ -20,7 +20,7 @@ const usersTypes = pg_1.sequelize.define('usersTypes', {
 }, {
     tableName: 'usersTypes',
     freezeTableName: true,
-    timestamps: false,
+    timestamps: true,
 });
 usersTypes.hasMany(User_1.default);
 User_1.default.belongsTo(usersTypes);

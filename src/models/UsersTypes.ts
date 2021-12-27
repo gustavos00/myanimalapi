@@ -26,7 +26,7 @@ const usersTypes = sequelize.define<UsersTypesInstance>(
   {
     tableName: 'usersTypes',
     freezeTableName: true,
-    timestamps: false,
+    timestamps: true,
   }
 )
 

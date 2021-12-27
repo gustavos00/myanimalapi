@@ -30,7 +30,7 @@ const parish = sequelize.define<ParishInstance>(
   {
     tableName: 'parish',
     freezeTableName: true,
-    timestamps: false,
+    timestamps: true,
   }
 )
 

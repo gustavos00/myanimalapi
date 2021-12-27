@@ -21,7 +21,7 @@ const locality = pg_1.sequelize.define('locality', {
 }, {
     tableName: 'locality',
     freezeTableName: true,
-    timestamps: false,
+    timestamps: true,
 });
 locality.hasMany(Parish_1.default);
 Parish_1.default.belongsTo(locality);
