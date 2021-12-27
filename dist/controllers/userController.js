@@ -31,7 +31,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.generateToken = exports.status = exports.createAddress = exports.createUser = void 0;
+exports.verifyToken = exports.generateToken = exports.status = exports.createAddress = exports.createUser = void 0;
 const US = __importStar(require("../schemas/userSchema"));
 const Animal_1 = __importDefault(require("../models/Animal"));
 const User_1 = __importDefault(require("../models/User"));
@@ -39,8 +39,9 @@ const Address_1 = __importDefault(require("../models/Address"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const Parish_1 = __importDefault(require("../models/Parish"));
 const Locality_1 = __importDefault(require("../models/Locality"));
+const FriendRequest_1 = __importDefault(require("../models/FriendRequest"));
 dotenv_1.default.config();
-const JWD = require('jsonwebtoken');
+const JWT = require('jsonwebtoken');
 const createUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     const userAnimalData = [];
@@ -54,9 +55,7 @@ const createUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
             res.status(400).send({ message: 'Invalid inputs' });
             return;
         }
-        const token = JWD.sign({
-            email: validatedData,
-        }, process.env.JWT_SECRET);
+        const token = JWT.sign(validatedData.email, process.env.JWT_SECRET);
         const response = yield User_1.default.findOrCreate({
             where: {
                 email: (_a = validatedData.email) !== null && _a !== void 0 ? _a : '',
@@ -105,7 +104,7 @@ const createUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
                 }
             }
         }
-        res.status(returnStatus).send(Object.assign(Object.assign({}, validatedData), { token: returnToken, imageUrl: location, imageKey: key, animalData: userAnimalData, userAddress: userAddressTempObj }));
+        res.status(returnStatus).send(Object.assign(Object.assign({}, validatedData), { id: data.idUser, token: returnToken, imageUrl: location, imageKey: key, animalData: userAnimalData, userAddress: userAddressTempObj }));
     }
     catch (e) {
         res.status(500).send({ message: 'Something went wrong' });
@@ -189,9 +188,7 @@ const generateToken = (req, res) => __awaiter(void 0, void 0, void 0, function* 
         res.status(200).send({ message: 'Something went wrong' });
     }
     try {
-        const token = yield JWD.sign({
-            email: validatedData,
-        }, process.env.JWT_SECRET);
+        const token = yield JWT.sign(validatedData, process.env.JWT_SECRET);
         res.status(200).send({ token });
     }
     catch (e) {
@@ -200,3 +197,47 @@ const generateToken = (req, res) => __awaiter(void 0, void 0, void 0, function* 
     }
 });
 exports.generateToken = generateToken;
+const verifyToken = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    let validatedData;
+    let userData;
+    let tokenData;
+    try {
+        validatedData = yield US.verifyTokenSchema.validateAsync(req.query);
+        if (!validatedData) {
+            res.status(400).send({ message: 'Invalid inputs' });
+            return;
+        }
+    }
+    catch (e) {
+        console.log('Error validating data on verifyToken controller');
+        res.status(200).send({ message: 'Something went wrong' });
+    }
+    try {
+        tokenData = JWT.verify(validatedData.token, process.env.JWT_SECRET);
+    }
+    catch (e) {
+        console.log('Error verifing token on verifyToken controller');
+        res.status(200).send({ message: 'Something went wrong' });
+    }
+    try {
+        userData = yield User_1.default.findOne({
+            where: { email: tokenData.email, idUser: tokenData.id },
+        });
+    }
+    catch (e) {
+        console.log('Error finding user by token on verifyToken controller');
+        res.status(200).send({ message: 'Something went wrong' });
+    }
+    try {
+        const response = yield FriendRequest_1.default.create({
+            fromWho: validatedData.fromWho,
+            toWhom: userData === null || userData === void 0 ? void 0 : userData.idUser,
+        });
+        res.status(200).send(response);
+    }
+    catch (e) {
+        console.log('Error finding user by token on verifyToken controller');
+        res.status(200).send({ message: 'Something went wrong' });
+    }
+});
+exports.verifyToken = verifyToken;
