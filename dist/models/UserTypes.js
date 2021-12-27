@@ -17,5 +17,5 @@ exports.userTypes = pg_1.sequelize.define('userTypes', {
 }, {
     tableName: 'userTypes',
     freezeTableName: true,
-    timestamps: false,
+    timestamps: true,
 });

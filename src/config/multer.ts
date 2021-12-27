@@ -47,7 +47,6 @@ module.exports = {
     fileSize: 2 * 1024 * 1024,
   },
   fileFilter: (req: Request, file: any, cb: Function) => {
-    console.log('tes');
     const allowedMimes = [
       'image/jpeg',
       'image/pjpeg',

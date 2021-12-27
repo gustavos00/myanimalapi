@@ -31,18 +31,23 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createUser = void 0;
+exports.status = exports.createAddress = exports.createUser = void 0;
 const US = __importStar(require("../schemas/userSchema"));
-const Animal_1 = require("../models/Animal");
-const User_1 = require("../models/User");
+const Animal_1 = __importDefault(require("../models/Animal"));
+const User_1 = __importDefault(require("../models/User"));
+const Address_1 = __importDefault(require("../models/Address"));
 const dotenv_1 = __importDefault(require("dotenv"));
+const Parish_1 = __importDefault(require("../models/Parish"));
+const Locality_1 = __importDefault(require("../models/Locality"));
 dotenv_1.default.config();
-const Joi = require('joi');
 const JWD = require('jsonwebtoken');
 const createUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     const userAnimalData = [];
     const { location, key } = req.file;
+    let returnStatus;
+    let returnToken;
+    let userAddressTempObj = {};
     try {
         const validatedData = yield US.createUserSchema.validateAsync(req.body);
         if (!validatedData) {
@@ -52,41 +57,55 @@ const createUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         const token = JWD.sign({
             email: validatedData,
         }, process.env.JWT_SECRET);
-        const response = yield User_1.user.findOrCreate({
+        const response = yield User_1.default.findOrCreate({
             where: {
                 email: (_a = validatedData.email) !== null && _a !== void 0 ? _a : '',
             },
-            defaults: Object.assign(Object.assign({}, validatedData), { token }),
+            defaults: Object.assign(Object.assign({}, validatedData), { imageUrl: location, imageName: key, token }),
         });
         const [data, created] = response;
-        const returnStatus = created ? 201 : 200;
-        const returnToken = created ? token : data.token;
+        returnStatus = created ? 201 : 200;
+        returnToken = created ? token : data.token;
         //Check if wasnt create
         if (!created) {
             //Find all animals from user
-            const response = yield Animal_1.animal.findAll({
+            const response = yield Animal_1.default.findAll({
                 where: {
-                    user_idUser: data.idUser,
+                    userIdUser: data.idUser,
                 },
             });
             response.forEach((item) => {
                 userAnimalData.push(item);
             });
-            /*Find user address - Need make the relations on models
-            const addressResponse = await address.findOne({
-              where: { idAddress: data.address_idAddress },
-              include: [
-                {
-                  model: parish,
-                },
-                {
-                  model: locality,
-                },
-              ],
-            })
-            */
+            if (data.addressIdAddress) {
+                const addressResponse = yield Address_1.default.findOne({
+                    where: { idAddress: data.addressIdAddress },
+                    include: [
+                        {
+                            model: Parish_1.default,
+                            include: [
+                                {
+                                    model: Locality_1.default,
+                                },
+                            ],
+                        },
+                    ],
+                });
+                if (addressResponse) {
+                    const { doorNumber, postalCode, streetName, parish: parishData, } = addressResponse;
+                    const { parishName, locality: localityData } = parishData;
+                    const { locationName } = localityData;
+                    userAddressTempObj = {
+                        doorNumber,
+                        postalCode,
+                        streetName,
+                        parishName,
+                        locationName,
+                    };
+                }
+            }
         }
-        res.status(returnStatus).send(Object.assign(Object.assign({}, validatedData), { token: returnToken, animalData: userAnimalData, imageUrl: location, imageKey: key }));
+        res.status(returnStatus).send(Object.assign(Object.assign({}, validatedData), { token: returnToken, imageUrl: location, imageKey: key, animalData: userAnimalData, userAddress: userAddressTempObj }));
     }
     catch (e) {
         res.status(500).send({ message: 'Something went wrong' });
@@ -94,3 +113,65 @@ const createUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     }
 });
 exports.createUser = createUser;
+const createAddress = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    let validatedData;
+    let addressResponse;
+    //Validate data
+    try {
+        validatedData = yield US.createAddressSchema.validateAsync(req.body);
+        if (!validatedData) {
+            res.status(400).send({ message: 'Invalid inputs' });
+            return;
+        }
+    }
+    catch (e) {
+        console.log('Error validating data on create user address controller');
+        res.status(500).send({ message: 'Something went wrong' });
+        throw new Error(e);
+    }
+    try {
+        addressResponse = yield Address_1.default.create(validatedData);
+    }
+    catch (e) {
+        console.log('Error creating user address on user controller');
+        res.status(500).send({ message: 'Something went wrong' });
+        throw new Error(e);
+    }
+    try {
+        yield User_1.default.update({ addressIdAddress: addressResponse.idAddress }, { where: { email: validatedData.email } });
+    }
+    catch (e) {
+        console.log('Error updating user address fk on user controller');
+        res.status(500).send({ message: 'Something went wrong' });
+        throw new Error(e);
+    }
+    res.status(200).send(validatedData);
+});
+exports.createAddress = createAddress;
+const status = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    let validatedData;
+    let createResponse;
+    //Validate data
+    try {
+        validatedData = yield US.statusSchema.validateAsync(req.query);
+        if (!validatedData) {
+            res.status(400).send({ message: 'Invalid inputs' });
+            return;
+        }
+    }
+    catch (e) {
+        console.log('Error validating data on create user address controller');
+        res.status(500).send({ message: 'Something went wrong' });
+        throw new Error(e);
+    }
+    try {
+        const createResponse = yield User_1.default.create(validatedData);
+        res.status(200).send(createResponse);
+    }
+    catch (e) {
+        console.log('Error creating data on create user address controller');
+        res.status(500).send({ message: 'Something went wrong' });
+        throw new Error(e);
+    }
+});
+exports.status = status;

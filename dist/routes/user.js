@@ -20,14 +20,12 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
-const userController = __importStar(require("../controllers/userController"));
+const UC = __importStar(require("../controllers/userController"));
 const multer = require('multer');
 const multerConfig = require('../config/multer');
 const router = (0, express_1.Router)();
-router.post('/create', multer(multerConfig).single('userPhoto'), userController.createUser);
-//router.get('/update')
-//router.get('/read')
-//router.get('/payment/pin')
-//router.get('/payment/create')
-//router.get('/payment/delete')
+router.post('/create', multer(multerConfig).single('userPhoto'), UC.createUser);
+router.post('/createAddress', UC.createAddress);
+router.post('/update');
+router.get('/status', UC.status);
 exports.default = router;

@@ -46,7 +46,7 @@ const animal = sequelize.define<AnimalInstance>(
   {
     tableName: 'animal',
     freezeTableName: true,
-    timestamps: false,
+    timestamps: true,
   }
 );
 

@@ -57,6 +57,10 @@ interface StatusProps {
   status: string;
 }
 
+interface GenerateToken {
+  id: string;
+}
+
 interface MulterRequest extends Request {
   file: any;
 }
@@ -103,7 +107,6 @@ export const createUser = async (req: Request, res: Response) => {
 
     //Check if wasnt create
     if (!created) {
-      console.log('aaa');
       //Find all animals from user
       const response = await animal.findAll({
         where: {
@@ -130,23 +133,25 @@ export const createUser = async (req: Request, res: Response) => {
           ],
         });
 
-        const {
-          doorNumber,
-          postalCode,
-          streetName,
-          parish: parishData,
-        } = addressResponse as unknown as FullAddressUserProps;
+        if (addressResponse) {
+          const {
+            doorNumber,
+            postalCode,
+            streetName,
+            parish: parishData,
+          } = addressResponse as unknown as FullAddressUserProps;
 
-        const { parishName, locality: localityData } = parishData;
-        const { locationName } = localityData;
+          const { parishName, locality: localityData } = parishData;
+          const { locationName } = localityData;
 
-        userAddressTempObj = {
-          doorNumber,
-          postalCode,
-          streetName,
-          parishName,
-          locationName,
-        };
+          userAddressTempObj = {
+            doorNumber,
+            postalCode,
+            streetName,
+            parishName,
+            locationName,
+          };
+        }
       }
     }
 
@@ -195,11 +200,10 @@ export const createAddress = async (req: Request, res: Response) => {
   }
 
   try {
-     await user.update(
+    await user.update(
       { addressIdAddress: addressResponse.idAddress },
       { where: { email: validatedData.email } }
     );
-
   } catch (e) {
     console.log('Error updating user address fk on user controller');
 
@@ -239,5 +243,35 @@ export const status = async (req: Request, res: Response) => {
 
     res.status(500).send({ message: 'Something went wrong' });
     throw new Error(e as string);
+  }
+};
+
+export const generateToken = async (req: Request, res: Response) => {
+  let validatedData;
+  try {
+    validatedData = await US.generateTokenSchema.validateAsync(
+      req.query as unknown as GenerateToken
+    );
+
+    if (!validatedData) {
+      res.status(400).send({ message: 'Invalid inputs' });
+      return;
+    }
+  } catch (e) {
+    console.log(e);
+    res.status(200).send({ message: 'Something went wrong' });
+  }
+
+  try {
+    const token = await JWD.sign(
+      {
+        email: validatedData,
+      },
+      process.env.JWT_SECRET as string
+    );
+    res.status(200).send({ token });
+  } catch (e) {
+    console.log(e);
+    res.status(200).send({ message: 'Something went wrong' });
   }
 };

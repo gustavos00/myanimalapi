@@ -12,6 +12,9 @@ router.post(
 );
 router.post('/createAddress', UC.createAddress)
 router.post('/update')
+
 router.get('/status', UC.status)
+
+router.get('/friend/token/', UC.generateToken)
 
 export default router;
