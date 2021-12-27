@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.generateTokenSchema = exports.statusSchema = exports.createAddressSchema = exports.createUserSchema = void 0;
+exports.verifyTokenSchema = exports.generateTokenSchema = exports.statusSchema = exports.createAddressSchema = exports.createUserSchema = void 0;
 const Joi = require("joi");
 exports.createUserSchema = Joi.object({
     givenName: Joi.string().required().min(1).max(60),
@@ -17,5 +17,10 @@ exports.statusSchema = Joi.object({
     status: Joi.string().required().min(1).max(100),
 });
 exports.generateTokenSchema = Joi.object({
-    email: Joi.string().required().email()
+    email: Joi.string().required().email(),
+    id: Joi.string().required().min(1)
+});
+exports.verifyTokenSchema = Joi.object({
+    token: Joi.string().required().min(1),
+    fromWho: Joi.string().required().min(1),
 });
