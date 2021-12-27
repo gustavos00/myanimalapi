@@ -16,3 +16,7 @@ export const createAddressSchema = Joi.object({
 export const statusSchema = Joi.object({
   status: Joi.string().required().min(1).max(100),
 })
+
+export const generateTokenSchema = Joi.object({
+  email: Joi.string().required().email()
+})
