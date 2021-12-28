@@ -1,6 +1,6 @@
 const Joi = require("joi");
 
-export const createUserSchema = Joi.object({
+export const findOrCreateUserSchema = Joi.object({
   givenName: Joi.string().required().min(1).max(60),
   familyName: Joi.string().required().min(1).max(60),
   email: Joi.string().required().min(1).email(),

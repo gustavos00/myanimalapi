@@ -216,6 +216,7 @@ const verifyToken = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         tokenData = JWT.verify(validatedData.token, process.env.JWT_SECRET);
     }
     catch (e) {
+        console.log(e);
         console.log('Error verifing token on verifyToken controller');
         res.status(200).send({ message: 'Something went wrong' });
     }
@@ -225,6 +226,7 @@ const verifyToken = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         });
     }
     catch (e) {
+        console.log(e);
         console.log('Error finding user by token on verifyToken controller');
         res.status(200).send({ message: 'Something went wrong' });
     }
@@ -236,6 +238,7 @@ const verifyToken = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         res.status(200).send(response);
     }
     catch (e) {
+        console.log(e);
         console.log('Error finding user by token on verifyToken controller');
         res.status(200).send({ message: 'Something went wrong' });
     }
