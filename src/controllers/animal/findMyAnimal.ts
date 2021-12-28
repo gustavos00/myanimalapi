@@ -103,8 +103,6 @@ const findMyAnimal = async (req: Request, res: Response) => {
       ],
     });
 
-    console.log(response);
-
     responseData = {
       email: response?.email,
       phoneNumber: response?.phoneNumber,
