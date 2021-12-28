@@ -1,21 +1,18 @@
-import { Router } from 'express';
-import * as UC from '../controllers/userController';
 
+import { Router } from 'express';
 const multer = require('multer');
 const multerConfig = require('../config/multer');
 
+import findOrCreate from '../controllers/user/findOrCreateUser';
+import createAddress from './../controllers/user/createAddress';
+import { generateToken, verifyToken}  from './../controllers/user/generateAndVerifyQRToken';
+
+
 const router = Router();
-router.post(
-  '/create',
-  multer(multerConfig).single('userPhoto'),
-  UC.createUser
-);
-router.post('/createAddress', UC.createAddress)
-router.post('/update')
+router.post('/create', multer(multerConfig).single('userPhoto'), findOrCreate);
+router.post('/createAddress', createAddress);
 
-router.get('/status', UC.status)
-
-router.get('/friend/token/', UC.generateToken)
-router.get('/friend/verifyToken/', UC.verifyToken)
+router.get('/friend/token/', generateToken);
+router.get('/friend/verifyToken/', verifyToken);
 
 export default router;
