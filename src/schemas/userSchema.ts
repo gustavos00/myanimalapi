@@ -7,6 +7,18 @@ export const findOrCreateUserSchema = Joi.object({
   salt: Joi.string().required().min(1),
 });
 
+export const UpdateUserSchema = Joi.object({
+  streetName: Joi.string().required(),
+  doorNumber: Joi.string().required(),
+  postalCode: Joi.string().required(),
+  parish: Joi.string().required(),
+  locality: Joi.string().required(),
+  givenName: Joi.string().required(),
+  familyName: Joi.string().required(),
+  phoneNumber: Joi.string().empty('').optional(null),
+  email: Joi.string().required().email()
+});
+
 export const createAddressSchema = Joi.object({
   streetName: Joi.string().required().min(1).max(100),
   postalCode: Joi.string().required().min(1).max(12),
