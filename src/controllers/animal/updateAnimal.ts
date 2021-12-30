@@ -66,8 +66,8 @@ const updateAnimal = async (req: Request, res: Response) => {
     updateResponse = await animal.update(
       {
         ...validatedData,
-        imageUrl: location,
-        imageName: key,
+        photoUrl: location,
+        photoName: key,
       },
       {
         where: {

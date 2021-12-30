@@ -10,8 +10,8 @@ export interface UsersInstance extends Model {
   familyName: string;
   email: string;
   phoneNumber: string;
-  imageUrl: string;
-  imageName: string;
+  photoUrl: string;
+  photoName: string;
   token: string;
   status: string;
 
@@ -46,8 +46,8 @@ const users = sequelize.define<UsersInstance>(
       unique: true,
     },
     phoneNumber: DataTypes.STRING(15),
-    imageUrl: DataTypes.STRING,
-    imageName: DataTypes.STRING,
+    photoUrl: DataTypes.STRING,
+    photoName: DataTypes.STRING,
     status: DataTypes.STRING(100),
   },
   {

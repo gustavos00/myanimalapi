@@ -105,8 +105,8 @@ const createAnimal = async (req: Request, res: Response) => {
     createAnimalResponse = await animal.create({
       ...validatedData,
       userIdUser: userId,
-      imageUrl: location,
-      imageName: key,
+      photoUrl: location,
+      photoName: key,
     });
   } catch (e) {
     console.log('Error creating animal on create animal controller');

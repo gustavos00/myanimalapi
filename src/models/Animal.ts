@@ -11,8 +11,8 @@ export interface AnimalInstance extends Model {
   age: string;
   breed: string;
   trackNumber: string;
-  imageName: string;
-  imageUrl: string;
+  photoName: string;
+  photoUrl: string;
 
   userIdUser: number;
 }
@@ -38,8 +38,8 @@ const animal = sequelize.define<AnimalInstance>(
       type: DataTypes.STRING(15),
       unique: true,
     },
-    imageName: DataTypes.STRING,
-    imageUrl: DataTypes.STRING,
+    photoName: DataTypes.STRING,
+    photoUrl: DataTypes.STRING,
     birthday: DataTypes.STRING(2),
     birthdayMonth: DataTypes.STRING(2),
   },
