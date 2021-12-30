@@ -20,12 +20,17 @@ interface objectWithoutKeyProps {
   key: keyof object;
 }
 
+interface MulterRequest extends Request {
+  file: any;
+}
+
 const removeSpecificKey = ({ object, key }: objectWithoutKeyProps) => {
   const { [key]: deletedKey, ...otherKeys } = object;
   return otherKeys;
 };
 
 const UpdateUser = async (req: Request, res: Response) => {
+  const { location, key } = (req as MulterRequest).file;
   let validatedData;
 
   //Validate data
@@ -51,7 +56,7 @@ const UpdateUser = async (req: Request, res: Response) => {
     });
 
     await users.update(
-      { ...validatedDataWithoutEmail },
+      { ...validatedDataWithoutEmail, photoName: key, photoLocation: location },
       { where: { email: validatedData.email } }
     );
 
@@ -68,6 +73,8 @@ const UpdateUser = async (req: Request, res: Response) => {
       givenName: validatedData.givenName,
       email: validatedData.email,
       phoneNumber: validatedData.phoneNumber,
+      photoName: key,
+      photoUrl: location 
     };
 
     res.status(200).send({ ...userObject, userAddress: addressObject });
