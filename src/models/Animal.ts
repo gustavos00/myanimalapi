@@ -1,8 +1,5 @@
 import { Model, DataTypes } from 'sequelize';
 import { sequelize } from '../config/pg';
-import users from './User';
-
-import user from './User';
 
 export interface AnimalInstance extends Model {
   idAnimal: number;
