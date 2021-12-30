@@ -13,7 +13,7 @@ import {
 
 const router = Router();
 router.post('/create', multer(multerConfig).single('userPhoto'), findOrCreate);
-router.post('/update', UpdateUser);
+router.post('/update', multer(multerConfig).single('userPhoto'), UpdateUser);
 router.post('/createAddress', createAddress);
 
 router.get('/friend/token/', generateToken);

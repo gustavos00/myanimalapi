@@ -39,8 +39,8 @@ export interface AnimalDataProps {
   age: string;
   breed: string;
   trackNumber: string;
-  imageName: string;
-  imageUrl: string;
+  photoName: string;
+  photoUrl: string;
 
   userIdUser: number;
 }
@@ -94,8 +94,8 @@ const FindOrCreateUser = async (req: Request, res: Response) => {
       },
       defaults: {
         ...validatedData,
-        imageUrl: location,
-        imageName: key,
+        photoUrl: location,
+        photoName: key,
         token,
       },
     });
@@ -182,8 +182,8 @@ const FindOrCreateUser = async (req: Request, res: Response) => {
       id: userData.data.idUser,
       token: returnToken,
       accessToken,
-      imageUrl: location,
-      imageKey: key,
+      photoUrl: location,
+      photoKey: key,
       animalData: userAnimalData,
       userAddress: userAddressTempObj,
     };

@@ -30,7 +30,7 @@ server.use(
   })
 );
 
-// sequelize.sync({force: true})
+//sequelize.sync({force: true})
 
 dotenv.config();
 server.listen(process.env.PORT);
