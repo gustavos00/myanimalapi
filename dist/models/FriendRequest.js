@@ -1,21 +1,25 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.userTypes = void 0;
 const sequelize_1 = require("sequelize");
 const pg_1 = require("../config/pg");
-exports.userTypes = pg_1.sequelize.define('userTypes', {
-    idUsertype: {
+const friendRequest = pg_1.sequelize.define('friendRequest', {
+    idFriendRequest: {
         primaryKey: true,
         unique: true,
         autoIncrement: true,
         type: sequelize_1.DataTypes.INTEGER,
     },
-    type: {
+    fromWho: {
         allowNull: false,
-        type: sequelize_1.DataTypes.STRING(50),
+        type: sequelize_1.DataTypes.STRING(10),
+    },
+    toWhom: {
+        allowNull: false,
+        type: sequelize_1.DataTypes.STRING(10),
     },
 }, {
-    tableName: 'userTypes',
+    tableName: 'friendRequest',
     freezeTableName: true,
-    timestamps: false,
+    timestamps: true,
 });
+exports.default = friendRequest;

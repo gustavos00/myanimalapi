@@ -1,4 +1,4 @@
-import { Model, DataTypes } from 'sequelize';
+import { Model, DataTypes, Sequelize } from 'sequelize';
 import { sequelize } from '../config/pg';
 
 import animal from './Animal';
@@ -10,13 +10,12 @@ export interface UsersInstance extends Model {
   familyName: string;
   email: string;
   phoneNumber: string;
-  imageUrl: string;
-  imageName: string;
+  photoUrl: string;
+  photoName: string;
   token: string;
   status: string;
 
-
-  addressIdAddress: number
+  addressIdAddress: number;
 }
 
 const users = sequelize.define<UsersInstance>(
@@ -42,24 +41,23 @@ const users = sequelize.define<UsersInstance>(
       allowNull: false,
       type: DataTypes.STRING(255),
     },
-    phoneNumber: DataTypes.STRING(15),
-    imageUrl: DataTypes.STRING,
-    imageName: DataTypes.STRING,
-    status: DataTypes.STRING(100),
     token: {
       type: DataTypes.STRING,
       unique: true,
     },
-    
+    phoneNumber: DataTypes.STRING(15),
+    photoUrl: DataTypes.STRING,
+    photoName: DataTypes.STRING,
+    status: DataTypes.STRING(100),
   },
   {
     tableName: 'users',
     freezeTableName: true,
-    timestamps: false,
+    timestamps: true,
   }
 );
 
-users.hasMany(animal)
-animal.belongsTo(users)
+users.hasMany(animal);
+animal.belongsTo(users);
 
-export default users
+export default users;

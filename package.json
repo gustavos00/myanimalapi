@@ -8,7 +8,7 @@
   },
   "scripts": {
     "start": "node dist/app.js",
-    "deploy": "tsc && git add . && git commit -m Heroku && git push heroku main"
+    "deploy": "tsc && git add . && git commit -m Heroku && git push origin heroku"
   },
   "author": "",
   "license": "ISC",

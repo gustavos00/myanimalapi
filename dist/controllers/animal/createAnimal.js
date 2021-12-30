@@ -31,66 +31,69 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createUser = void 0;
-const US = __importStar(require("../schemas/userSchema"));
-const Animal_1 = require("../models/Animal");
-const User_1 = require("../models/User");
-const dotenv_1 = __importDefault(require("dotenv"));
-dotenv_1.default.config();
-const Joi = require('joi');
-const JWD = require('jsonwebtoken');
-const createUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
-    const userAnimalData = [];
+const AS = __importStar(require("../../schemas/animalSchema"));
+const Animal_1 = __importDefault(require("../../models/Animal"));
+const User_1 = __importDefault(require("../../models/User"));
+const createAnimal = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { location, key } = req.file;
+    let validatedData;
+    let userId;
+    let createAnimalResponse;
+    //Validate data
     try {
-        const validatedData = yield US.createUserSchema.validateAsync(req.body);
+        validatedData = yield AS.createAnimalSchema.validateAsync(req.body);
         if (!validatedData) {
             res.status(400).send({ message: 'Invalid inputs' });
             return;
         }
-        const token = JWD.sign({
-            email: validatedData,
-        }, process.env.JWT_SECRET);
-        const response = yield User_1.user.findOrCreate({
-            where: {
-                email: (_a = validatedData.email) !== null && _a !== void 0 ? _a : '',
-            },
-            defaults: Object.assign(Object.assign({}, validatedData), { token }),
-        });
-        const [data, created] = response;
-        const returnStatus = created ? 201 : 200;
-        const returnToken = created ? token : data.token;
-        //Check if wasnt create
-        if (!created) {
-            //Find all animals from user
-            const response = yield Animal_1.animal.findAll({
-                where: {
-                    user_idUser: data.idUser,
-                },
-            });
-            response.forEach((item) => {
-                userAnimalData.push(item);
-            });
-            /*Find user address - Need make the relations on models
-            const addressResponse = await address.findOne({
-              where: { idAddress: data.address_idAddress },
-              include: [
-                {
-                  model: parish,
-                },
-                {
-                  model: locality,
-                },
-              ],
-            })
-            */
-        }
-        res.status(returnStatus).send(Object.assign(Object.assign({}, validatedData), { token: returnToken, animalData: userAnimalData, imageUrl: location, imageKey: key }));
     }
     catch (e) {
+        console.log('Error validating data on create animal controller');
         res.status(500).send({ message: 'Something went wrong' });
         throw new Error(e);
     }
+    //Find user id
+    try {
+        const response = yield User_1.default.findOne({
+            where: { token: validatedData.token },
+        });
+        if (!response) {
+            res.status(404).send({ message: 'Cannot find owner data' });
+            return;
+        }
+        userId = response.idUser;
+    }
+    catch (e) {
+        console.log('Error getting owner data on create animal controller');
+        res.status(500).send({ message: 'Something went wrong' });
+        throw new Error(e);
+    }
+    //Finding if tracknumber already exist
+    try {
+        const response = yield Animal_1.default.findOne({
+            where: {
+                trackNumber: validatedData.trackNumber,
+            },
+        });
+        if (response) {
+            res.status(400).send({ message: 'This track number already exist' });
+            return;
+        }
+    }
+    catch (e) {
+        console.log('Error verifying if trackCode is on use on create animal controller');
+        res.status(500).send({ message: 'Something went wrong' });
+        throw new Error(e);
+    }
+    //Create animal
+    try {
+        createAnimalResponse = yield Animal_1.default.create(Object.assign(Object.assign({}, validatedData), { userIdUser: userId, imageUrl: location, imageName: key }));
+    }
+    catch (e) {
+        console.log('Error creating animal on create animal controller');
+        res.status(500).send({ message: 'Something went wrong' });
+        throw new Error(e);
+    }
+    res.status(201).send(createAnimalResponse);
 });
-exports.createUser = createUser;
+exports.default = createAnimal;

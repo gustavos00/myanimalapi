@@ -22,7 +22,7 @@ exports.updateAnimalSchema = Joi.object({
     birthday: Joi.string().max(2),
     birthdayMonth: Joi.string().max(2),
     trackNumber: Joi.string().max(50),
-    token: Joi.string().required(),
+    idUser: Joi.string().required(),
 });
 exports.findMyAnimalSchema = Joi.object({
     trackNumber: Joi.string().required(),

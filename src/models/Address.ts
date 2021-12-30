@@ -40,7 +40,7 @@ const address = sequelize.define<AddressInstance>(
   {
     tableName: 'address',
     freezeTableName: true,
-    timestamps: false,
+    timestamps: true,
   }
 )
 
