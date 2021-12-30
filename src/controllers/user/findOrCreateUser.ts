@@ -124,7 +124,7 @@ const FindOrCreateUser = async (req: Request, res: Response) => {
       });
 
       response.forEach((item) => {
-        userAnimalData.push(item);
+        userAnimalData.push(item as AnimalDataProps);
       });
     } catch (e: any) {
       console.log('Error finding animals from user on create user controller');
