@@ -31,8 +31,8 @@ const users = pg_1.sequelize.define('users', {
         unique: true,
     },
     phoneNumber: sequelize_1.DataTypes.STRING(15),
-    imageUrl: sequelize_1.DataTypes.STRING,
-    imageName: sequelize_1.DataTypes.STRING,
+    photoUrl: sequelize_1.DataTypes.STRING,
+    photoName: sequelize_1.DataTypes.STRING,
     status: sequelize_1.DataTypes.STRING(100),
 }, {
     tableName: 'users',

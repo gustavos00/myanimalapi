@@ -68,7 +68,7 @@ const updateAnimal = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     }
     //Updating animal
     try {
-        updateResponse = yield Animal_1.default.update(Object.assign(Object.assign({}, validatedData), { imageUrl: location, imageName: key }), {
+        updateResponse = yield Animal_1.default.update(Object.assign(Object.assign({}, validatedData), { photoUrl: location, photoName: key }), {
             where: {
                 idAnimal: validatedData.id,
             },

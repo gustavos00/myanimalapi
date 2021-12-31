@@ -27,73 +27,68 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __rest = (this && this.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
+    return t;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const AS = __importStar(require("../../schemas/animalSchema"));
-const Animal_1 = __importDefault(require("../../models/Animal"));
+const US = __importStar(require("../../schemas/userSchema"));
 const User_1 = __importDefault(require("../../models/User"));
-const createAnimal = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const removeSpecificKey = ({ object, key }) => {
+    const _a = object, _b = key, deletedKey = _a[_b], otherKeys = __rest(_a, [typeof _b === "symbol" ? _b : _b + ""]);
+    return otherKeys;
+};
+const UpdateUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { location, key } = req.file;
     let validatedData;
-    let userId;
-    let createAnimalResponse;
     //Validate data
     try {
-        validatedData = yield AS.createAnimalSchema.validateAsync(req.body);
+        validatedData = yield US.UpdateUserSchema.validateAsync(req.body);
         if (!validatedData) {
             res.status(400).send({ message: 'Invalid inputs' });
             return;
         }
     }
     catch (e) {
-        console.log('Error validating data on create animal controller');
+        console.log('Error validating user data on update user controller');
         res.status(500).send({ message: 'Something went wrong' });
         throw new Error(e);
     }
-    //Find user id
     try {
-        const response = yield User_1.default.findOne({
-            where: { token: validatedData.token },
+        const validatedDataWithoutEmail = removeSpecificKey({
+            object: validatedData,
+            key: 'email',
         });
-        if (!response) {
-            res.status(404).send({ message: 'Cannot find owner data' });
-            return;
-        }
-        userId = response.idUser;
+        yield User_1.default.update(Object.assign(Object.assign({}, validatedDataWithoutEmail), { photoName: key, photoLocation: location }), { where: { email: validatedData.email } });
+        const addressObject = {
+            doorNumber: validatedData.doorNumber,
+            postalCode: validatedData.postalCode,
+            streetName: validatedData.streetName,
+            parishName: validatedData.parish,
+            locationName: validatedData.locality,
+        };
+        const userObject = {
+            familyName: validatedData.familyName,
+            givenName: validatedData.givenName,
+            email: validatedData.email,
+            phoneNumber: validatedData.phoneNumber,
+            photoName: key,
+            photoUrl: location
+        };
+        res.status(200).send(Object.assign(Object.assign({}, userObject), { userAddress: addressObject }));
     }
     catch (e) {
-        console.log('Error getting owner data on create animal controller');
-        res.status(500).send({ message: 'Something went wrong' });
-        throw new Error(e);
+        console.log(e);
     }
-    //Finding if tracknumber already exist
-    try {
-        const response = yield Animal_1.default.findOne({
-            where: {
-                trackNumber: validatedData.trackNumber,
-            },
-        });
-        if (response) {
-            res.status(400).send({ message: 'This track number already exist' });
-            return;
-        }
-    }
-    catch (e) {
-        console.log('Error verifying if trackCode is on use on create animal controller');
-        res.status(500).send({ message: 'Something went wrong' });
-        throw new Error(e);
-    }
-    //Create animal
-    try {
-        createAnimalResponse = yield Animal_1.default.create(Object.assign(Object.assign({}, validatedData), { userIdUser: userId, photoUrl: location, photoName: key }));
-    }
-    catch (e) {
-        console.log('Error creating animal on create animal controller');
-        res.status(500).send({ message: 'Something went wrong' });
-        throw new Error(e);
-    }
-    res.status(201).send(createAnimalResponse);
 });
-exports.default = createAnimal;
+exports.default = UpdateUser;
