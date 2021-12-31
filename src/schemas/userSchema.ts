@@ -44,3 +44,7 @@ export const verifyAccessToken = Joi.object({
   token: Joi.string().required().min(1),
   salt: Joi.string().required().min(1),
 });
+
+export const getAllFriendsRequest = Joi.object({
+  id: Joi.string().required().min(1)
+})
