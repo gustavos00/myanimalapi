@@ -18,7 +18,6 @@ const getAllFriendsRequest = async (req: Request, res: Response) => {
       res.status(400).send({ message: 'Invalid inputs' });
       return;
     }
-    res.status(200).send({ message: true });
   } catch (e: any) {
     console.log(
       'Error validating user data on generate and verify QR controller'
@@ -29,7 +28,7 @@ const getAllFriendsRequest = async (req: Request, res: Response) => {
 
   try {
     const response = await friendRequest.findAll({ where: { toWhom: validatedData.id } });
-    console.log(response)
+    res.status(200).send(response)
   } catch (e) {
     console.log(e);
   }
