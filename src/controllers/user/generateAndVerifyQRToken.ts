@@ -102,8 +102,8 @@ export const verifyToken = async (req: Request, res: Response) => {
   //Creating a friend request
   try {
     friendsResponse = await friends.create({
-      fromWho: validatedData.fromWho,
-      toWhom: userData?.idUser,
+      userToWhom: validatedData.toWhom,
+      userFromWho: validatedData.fromWho,
     });
   } catch (e: any) {
     console.log('Error finding user by token on verifyToken controller');

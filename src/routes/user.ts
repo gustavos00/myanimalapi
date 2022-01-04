@@ -1,9 +1,7 @@
 import { Router } from 'express';
-
 const multer = require('multer');
 const multerConfig = require('../config/multer');
 
-import createFriendsRequest from '../controllers/user/createFriendRequest';
 import findOrCreate from '../controllers/user/findOrCreateUser';
 import getAllFriendsRequest from '../controllers/user/getAllFriendsRequests';
 import UpdateUser from '../controllers/user/updateUser';
@@ -22,7 +20,6 @@ router.post('/createAddress', createAddress);
 
 router.get('/friend/token/', generateToken);
 router.get('/friend/get/', getAllFriendsRequest);
-router.get('/friend/create/', createFriendsRequest);
 router.get('/friend/verifyToken/', verifyToken);
 
 router.post('/access/verify/', verifyAccessToken);
