@@ -1,8 +1,9 @@
 import { Router } from 'express';
-import createFriendsRequest from '../controllers/user/createFriendRequest';
+
 const multer = require('multer');
 const multerConfig = require('../config/multer');
 
+import createFriendsRequest from '../controllers/user/createFriendRequest';
 import findOrCreate from '../controllers/user/findOrCreateUser';
 import getAllFriendsRequest from '../controllers/user/getAllFriendsRequests';
 import UpdateUser from '../controllers/user/updateUser';
