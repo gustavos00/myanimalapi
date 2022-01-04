@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 
 import user from '../../models/User';
-import friendRequest from '../../models/FriendRequest';
+import friends from '../../models/Friends';
 
 import * as US from '../../schemas/userSchema';
 
@@ -58,7 +58,7 @@ export const verifyToken = async (req: Request, res: Response) => {
   let validatedData;
   let userData;
   let tokenData;
-  let friendRequestResponse;
+  let friendsResponse;
 
   //Validate data
   try {
@@ -101,7 +101,7 @@ export const verifyToken = async (req: Request, res: Response) => {
 
   //Creating a friend request
   try {
-    friendRequestResponse = await friendRequest.create({
+    friendsResponse = await friends.create({
       fromWho: validatedData.fromWho,
       toWhom: userData?.idUser,
     });
@@ -111,6 +111,6 @@ export const verifyToken = async (req: Request, res: Response) => {
     throw new Error(e);
   }
 
-  res.status(200).send(friendRequestResponse);
+  res.status(200).send(friendsResponse);
 };
 
