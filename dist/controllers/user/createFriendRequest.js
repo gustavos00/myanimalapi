@@ -33,30 +33,31 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const Friends_1 = __importDefault(require("../../models/Friends"));
 const US = __importStar(require("../../schemas/userSchema"));
-const getAllFriendsRequest = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const createFriendsRequest = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     let validatedData;
     try {
-        validatedData = yield US.getAllFriendsDataSchema.validateAsync(req.query);
+        validatedData = yield US.createFriendsRequestSchema.validateAsync(req.query);
         if (!validatedData) {
             res.status(400).send({ message: 'Invalid inputs' });
             return;
         }
     }
     catch (e) {
-        console.log('Error validating user data on get all friends requests controller');
-
+        console.log('Error validating user data on create friends request controller');
         res.status(500).send({ message: 'Something went wrong' });
         throw new Error(e);
     }
     try {
-        const response = yield Friends_1.default.findAll({
-            where: { userToWhom: validatedData.id, status: 'Pending' },
+        const response = yield Friends_1.default.create({
+            userToWhom: validatedData.toWhom,
+            userFromWho: validatedData.fromWho,
         });
-        console.log(response);
         res.status(200).send(response);
     }
     catch (e) {
-        console.log(e);
+        console.log('Error creating friend request on create friends request controller');
+        res.status(500).send({ message: 'Something went wrong' });
+        throw new Error(e);
     }
 });
-exports.default = getAllFriendsRequest;
+exports.default = createFriendsRequest;

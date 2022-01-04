@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const multer = require('multer');
 const multerConfig = require('../config/multer');
+const createFriendRequest_1 = __importDefault(require("../controllers/user/createFriendRequest"));
 const findOrCreateUser_1 = __importDefault(require("../controllers/user/findOrCreateUser"));
 const getAllFriendsRequests_1 = __importDefault(require("../controllers/user/getAllFriendsRequests"));
 const updateUser_1 = __importDefault(require("../controllers/user/updateUser"));
@@ -18,6 +19,7 @@ router.post('/update', multer(multerConfig).single('userPhoto'), updateUser_1.de
 router.post('/createAddress', createAddress_1.default);
 router.get('/friend/token/', generateAndVerifyQRToken_1.generateToken);
 router.get('/friend/get/', getAllFriendsRequests_1.default);
+router.get('/friend/create/', createFriendRequest_1.default);
 router.get('/friend/verifyToken/', generateAndVerifyQRToken_1.verifyToken);
 router.post('/access/verify/', verifyAccessToken_1.default);
 exports.default = router;

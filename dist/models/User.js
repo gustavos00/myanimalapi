@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const sequelize_1 = require("sequelize");
 const pg_1 = require("../config/pg");
 const Animal_1 = __importDefault(require("./Animal"));
+const Friends_1 = __importDefault(require("./Friends"));
 const users = pg_1.sequelize.define('users', {
     idUser: {
         primaryKey: true,
@@ -41,4 +42,6 @@ const users = pg_1.sequelize.define('users', {
 });
 users.hasMany(Animal_1.default);
 Animal_1.default.belongsTo(users);
+users.belongsToMany(users, { as: 'UsersFromWho', through: Friends_1.default, foreignKey: 'userFromWho' });
+users.belongsToMany(users, { as: 'UsersToWhomFK', through: Friends_1.default, foreignKey: 'userToWhom' });
 exports.default = users;
