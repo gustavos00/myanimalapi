@@ -100,9 +100,11 @@ export const verifyToken = async (req: Request, res: Response) => {
   }
 
   //Creating a friend request
+  console.log(userData)
+  console.log(validatedData)
   try {
     friendsResponse = await friends.create({
-      userToWhom: validatedData.toWhom,
+      userToWhom: userData?.idUser,
       userFromWho: validatedData.fromWho,
     });
   } catch (e: any) {
