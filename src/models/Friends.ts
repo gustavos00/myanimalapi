@@ -1,7 +1,7 @@
 import { Model, DataTypes } from 'sequelize'
 import { sequelize } from '../config/pg'
 
-export interface FriendRequestInstance extends Model {
+export interface FriendsInstance extends Model {
   idAddress: number
 
   doorNumber: string
@@ -11,30 +11,27 @@ export interface FriendRequestInstance extends Model {
   parish_idParish: number
 }
 
-const friendRequest = sequelize.define<FriendRequestInstance>(
-  'friendRequest',
+const friends = sequelize.define<FriendsInstance>(
+  'friends',
   {
-    idFriendRequest: {
+    idfriends: {
       primaryKey: true,
       unique: true,
       autoIncrement: true,
       type: DataTypes.INTEGER,
     },
 
-    fromWho: {
+    status: {
       allowNull: false,
-      type: DataTypes.STRING(10),
-    },
-    toWhom: {
-      allowNull: false,
-      type: DataTypes.STRING(10),
+      type: DataTypes.STRING(100),
+      defaultValue: 'Pending'
     },
   },
   {
-    tableName: 'friendRequest',
+    tableName: 'friends',
     freezeTableName: true,
     timestamps: true,
   }
 )
 
-export default friendRequest
+export default friends
