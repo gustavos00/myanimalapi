@@ -42,7 +42,7 @@ exports.verifyAccessTokenSchema = Joi.object({
 });
 exports.getAllFriendsDataSchema = Joi.object({
     id: Joi.string().required().min(1),
-});
+})
 exports.createFriendsRequestSchema = Joi.object({
     fromWho: Joi.string().required().min(1),
     toWhom: Joi.string().required().min(1),
