@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import createFriendsRequest from '../controllers/user/createFriendRequest';
 const multer = require('multer');
 const multerConfig = require('../config/multer');
 
@@ -20,6 +21,7 @@ router.post('/createAddress', createAddress);
 
 router.get('/friend/token/', generateToken);
 router.get('/friend/get/', getAllFriendsRequest);
+router.get('/friend/create/', createFriendsRequest);
 router.get('/friend/verifyToken/', verifyToken);
 
 router.post('/access/verify/', verifyAccessToken);
