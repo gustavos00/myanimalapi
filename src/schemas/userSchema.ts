@@ -16,7 +16,7 @@ export const UpdateUserSchema = Joi.object({
   givenName: Joi.string().required(),
   familyName: Joi.string().required(),
   phoneNumber: Joi.string().empty('').optional(null),
-  email: Joi.string().required().email()
+  email: Joi.string().required().email(),
 });
 
 export const createAddressSchema = Joi.object({
@@ -40,11 +40,16 @@ export const verifyTokenSchema = Joi.object({
   fromWho: Joi.string().required().min(1),
 });
 
-export const verifyAccessToken = Joi.object({
+export const verifyAccessTokenSchema = Joi.object({
   token: Joi.string().required().min(1),
   salt: Joi.string().required().min(1),
 });
 
-export const getAllFriendsRequest = Joi.object({
-  id: Joi.string().required().min(1)
-})
+export const getAllFriendsDataSchema = Joi.object({
+  id: Joi.string().required().min(1),
+});
+
+export const createFriendsRequestSchema = Joi.object({
+  fromWho: Joi.string().required().min(1),
+  toWhom: Joi.string().required().min(1),
+});

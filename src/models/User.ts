@@ -2,6 +2,7 @@ import { Model, DataTypes, Sequelize } from 'sequelize';
 import { sequelize } from '../config/pg';
 
 import animal from './Animal';
+import friends from './Friends';
 
 export interface UsersInstance extends Model {
   idUser: number;
@@ -59,5 +60,7 @@ const users = sequelize.define<UsersInstance>(
 
 users.hasMany(animal);
 animal.belongsTo(users);
+users.belongsToMany(users, { as: 'UsersFromWho', through: friends, foreignKey: 'userFromWho' });
+users.belongsToMany(users, { as: 'UsersToWhomFK', through: friends, foreignKey: 'userToWhom' });
 
 export default users;

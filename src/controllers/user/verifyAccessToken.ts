@@ -15,7 +15,7 @@ const verifyAccessToken = async (req: Request, res: Response) => {
 
   //Validate data
   try {
-    validatedData = await US.verifyAccessToken.validateAsync(
+    validatedData = await US.verifyAccessTokenSchema.validateAsync(
       req.body as unknown as ValidateAccessTokenProps
     );
 
