@@ -48,8 +48,3 @@ export const verifyAccessTokenSchema = Joi.object({
 export const getAllFriendsDataSchema = Joi.object({
   id: Joi.string().required().min(1),
 });
-
-export const createFriendsRequestSchema = Joi.object({
-  fromWho: Joi.string().required().min(1),
-  toWhom: Joi.string().required().min(1),
-});
