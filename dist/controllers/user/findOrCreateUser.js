@@ -77,7 +77,7 @@ const FindOrCreateUser = (req, res) => __awaiter(void 0, void 0, void 0, functio
             where: {
                 email: (_a = validatedData.email) !== null && _a !== void 0 ? _a : '',
             },
-            defaults: Object.assign(Object.assign({}, validatedData), { imageUrl: location, imageName: key, token }),
+            defaults: Object.assign(Object.assign({}, validatedData), { photoUrl: location, photoName: key, token }),
         });
         const [data, created] = response;
         userData = {
@@ -145,7 +145,7 @@ const FindOrCreateUser = (req, res) => __awaiter(void 0, void 0, void 0, functio
                 throw new Error(e);
             }
         }
-        const userCompleteData = Object.assign(Object.assign({}, validatedData), { id: userData.data.idUser, token: returnToken, accessToken, imageUrl: location, imageKey: key, animalData: userAnimalData, userAddress: userAddressTempObj });
+        const userCompleteData = Object.assign(Object.assign({}, validatedData), { id: userData.data.idUser, token: returnToken, accessToken, photoUrl: location, photoKey: key, animalData: userAnimalData, userAddress: userAddressTempObj });
         //Generate access user token
         try {
             accessToken = JWT.sign(userCompleteData, validatedData.salt);

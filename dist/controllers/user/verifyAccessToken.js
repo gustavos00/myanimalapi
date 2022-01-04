@@ -35,7 +35,7 @@ const verifyAccessToken = (req, res) => __awaiter(void 0, void 0, void 0, functi
     let userData;
     //Validate data
     try {
-        validatedData = yield US.verifyAccessToken.validateAsync(req.body);
+        validatedData = yield US.verifyAccessTokenSchema.validateAsync(req.body);
         if (!validatedData) {
             res.status(400).send({ message: 'Invalid inputs' });
             return;

@@ -1,12 +1,23 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.verifyAccessToken = exports.verifyTokenSchema = exports.generateTokenSchema = exports.statusSchema = exports.createAddressSchema = exports.findOrCreateUserSchema = void 0;
+exports.createFriendsRequestSchema = exports.getAllFriendsDataSchema = exports.verifyAccessTokenSchema = exports.verifyTokenSchema = exports.generateTokenSchema = exports.statusSchema = exports.createAddressSchema = exports.UpdateUserSchema = exports.findOrCreateUserSchema = void 0;
 const Joi = require('joi');
 exports.findOrCreateUserSchema = Joi.object({
     givenName: Joi.string().required().min(1).max(60),
     familyName: Joi.string().required().min(1).max(60),
     email: Joi.string().required().min(1).email(),
     salt: Joi.string().required().min(1),
+});
+exports.UpdateUserSchema = Joi.object({
+    streetName: Joi.string().required(),
+    doorNumber: Joi.string().required(),
+    postalCode: Joi.string().required(),
+    parish: Joi.string().required(),
+    locality: Joi.string().required(),
+    givenName: Joi.string().required(),
+    familyName: Joi.string().required(),
+    phoneNumber: Joi.string().empty('').optional(null),
+    email: Joi.string().required().email(),
 });
 exports.createAddressSchema = Joi.object({
     streetName: Joi.string().required().min(1).max(100),
@@ -25,7 +36,14 @@ exports.verifyTokenSchema = Joi.object({
     token: Joi.string().required().min(1),
     fromWho: Joi.string().required().min(1),
 });
-exports.verifyAccessToken = Joi.object({
+exports.verifyAccessTokenSchema = Joi.object({
     token: Joi.string().required().min(1),
     salt: Joi.string().required().min(1),
+});
+exports.getAllFriendsDataSchema = Joi.object({
+    id: Joi.string().required().min(1),
+});
+exports.createFriendsRequestSchema = Joi.object({
+    fromWho: Joi.string().required().min(1),
+    toWhom: Joi.string().required().min(1),
 });

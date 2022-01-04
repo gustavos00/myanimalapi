@@ -33,7 +33,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.verifyToken = exports.generateToken = void 0;
 const User_1 = __importDefault(require("../../models/User"));
-const FriendRequest_1 = __importDefault(require("../../models/FriendRequest"));
+const Friends_1 = __importDefault(require("../../models/Friends"));
 const US = __importStar(require("../../schemas/userSchema"));
 const JWT = require('jsonwebtoken');
 const generateToken = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -68,7 +68,7 @@ const verifyToken = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     let validatedData;
     let userData;
     let tokenData;
-    let friendRequestResponse;
+    let friendsResponse;
     //Validate data
     try {
         validatedData = yield US.verifyTokenSchema.validateAsync(req.query);
@@ -104,7 +104,7 @@ const verifyToken = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     }
     //Creating a friend request
     try {
-        friendRequestResponse = yield FriendRequest_1.default.create({
+        friendsResponse = yield Friends_1.default.create({
             fromWho: validatedData.fromWho,
             toWhom: userData === null || userData === void 0 ? void 0 : userData.idUser,
         });
@@ -114,6 +114,6 @@ const verifyToken = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         res.status(500).send({ message: 'Something went wrong' });
         throw new Error(e);
     }
-    res.status(200).send(friendRequestResponse);
+    res.status(200).send(friendsResponse);
 });
 exports.verifyToken = verifyToken;

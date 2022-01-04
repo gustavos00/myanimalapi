@@ -19,8 +19,8 @@ const animal = pg_1.sequelize.define('animal', {
         type: sequelize_1.DataTypes.STRING(15),
         unique: true,
     },
-    imageName: sequelize_1.DataTypes.STRING,
-    imageUrl: sequelize_1.DataTypes.STRING,
+    photoName: sequelize_1.DataTypes.STRING,
+    photoUrl: sequelize_1.DataTypes.STRING,
     birthday: sequelize_1.DataTypes.STRING(2),
     birthdayMonth: sequelize_1.DataTypes.STRING(2),
 }, {

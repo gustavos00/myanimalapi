@@ -31,69 +31,31 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const AS = __importStar(require("../../schemas/animalSchema"));
-const Animal_1 = __importDefault(require("../../models/Animal"));
-const User_1 = __importDefault(require("../../models/User"));
-const createAnimal = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { location, key } = req.file;
+const Friends_1 = __importDefault(require("../../models/Friends"));
+const US = __importStar(require("../../schemas/userSchema"));
+const getAllFriendsRequest = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     let validatedData;
-    let userId;
-    let createAnimalResponse;
-    //Validate data
     try {
-        validatedData = yield AS.createAnimalSchema.validateAsync(req.body);
+        validatedData = yield US.getAllFriendsDataSchema.validateAsync(req.query);
         if (!validatedData) {
             res.status(400).send({ message: 'Invalid inputs' });
             return;
         }
     }
     catch (e) {
-        console.log('Error validating data on create animal controller');
+        console.log('Error validating user data on get all friends requests controller');
         res.status(500).send({ message: 'Something went wrong' });
         throw new Error(e);
     }
-    //Find user id
     try {
-        const response = yield User_1.default.findOne({
-            where: { token: validatedData.token },
+        const response = yield Friends_1.default.findAll({
+            where: { userToWhom: validatedData.id, status: 'Pending' },
         });
-        if (!response) {
-            res.status(404).send({ message: 'Cannot find owner data' });
-            return;
-        }
-        userId = response.idUser;
+        console.log(response);
+        res.status(200).send(response);
     }
     catch (e) {
-        console.log('Error getting owner data on create animal controller');
-        res.status(500).send({ message: 'Something went wrong' });
-        throw new Error(e);
+        console.log(e);
     }
-    //Finding if tracknumber already exist
-    try {
-        const response = yield Animal_1.default.findOne({
-            where: {
-                trackNumber: validatedData.trackNumber,
-            },
-        });
-        if (response) {
-            res.status(400).send({ message: 'This track number already exist' });
-            return;
-        }
-    }
-    catch (e) {
-        console.log('Error verifying if trackCode is on use on create animal controller');
-        res.status(500).send({ message: 'Something went wrong' });
-        throw new Error(e);
-    }
-    //Create animal
-    try {
-        createAnimalResponse = yield Animal_1.default.create(Object.assign(Object.assign({}, validatedData), { userIdUser: userId, photoUrl: location, photoName: key }));
-    }
-    catch (e) {
-        console.log('Error creating animal on create animal controller');
-        res.status(500).send({ message: 'Something went wrong' });
-        throw new Error(e);
-    }
-    res.status(201).send(createAnimalResponse);
 });
-exports.default = createAnimal;
+exports.default = getAllFriendsRequest;

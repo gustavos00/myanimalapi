@@ -2,24 +2,21 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const sequelize_1 = require("sequelize");
 const pg_1 = require("../config/pg");
-const friendRequest = pg_1.sequelize.define('friendRequest', {
-    idFriendRequest: {
+const friends = pg_1.sequelize.define('friends', {
+    idfriends: {
         primaryKey: true,
         unique: true,
         autoIncrement: true,
         type: sequelize_1.DataTypes.INTEGER,
     },
-    fromWho: {
+    status: {
         allowNull: false,
-        type: sequelize_1.DataTypes.STRING(10),
-    },
-    toWhom: {
-        allowNull: false,
-        type: sequelize_1.DataTypes.STRING(10),
+        type: sequelize_1.DataTypes.STRING(100),
+        defaultValue: 'Pending'
     },
 }, {
-    tableName: 'friendRequest',
+    tableName: 'friends',
     freezeTableName: true,
     timestamps: true,
 });
-exports.default = friendRequest;
+exports.default = friends;
