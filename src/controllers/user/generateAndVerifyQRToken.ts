@@ -91,28 +91,30 @@ export const verifyToken = async (req: Request, res: Response) => {
   //Finding user
   try {
     userData = await user.findOne({
-      where: { email: tokenData.email, idUser: tokenData.id },
+      where: { email: tokenData.email },
     });
   } catch (e: any) {
     console.log('Error finding user by token on verifyToken controller');
     res.status(500).send({ message: 'Something went wrong' });
     throw new Error(e);
   }
-
   //Creating a friend request
-  console.log(userData)
-  console.log(validatedData)
   try {
-    friendsResponse = await friends.create({
-      userToWhom: userData?.idUser,
-      userFromWho: validatedData.fromWho,
+    await friends.findOrCreate({
+      where: {
+        userToWhom: userData?.idUser,
+        userFromWho: validatedData.fromWho,
+      },
+      defaults: {
+        userToWhom: userData?.idUser,
+        userFromWho: validatedData.fromWho,
+      },
     });
+
+    res.status(200).send({ message: true });
   } catch (e: any) {
-    console.log('Error finding user by token on verifyToken controller');
+    console.log('Error creating friends request on verifyToken controller');
     res.status(500).send({ message: 'Something went wrong' });
     throw new Error(e);
   }
-
-  res.status(200).send(friendsResponse);
 };
-

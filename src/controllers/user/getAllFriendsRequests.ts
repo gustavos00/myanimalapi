@@ -29,11 +29,16 @@ const getAllFriendsRequest = async (req: Request, res: Response) => {
   try {
     const response = await friends.findAll({
       where: { userToWhom: validatedData.id, status: 'Pending' },
+      //include: [{model: users, as: 'UsersToWhomFK'}]
     });
     console.log(response);
     res.status(200).send(response);
-  } catch (e) {
-    console.log(e);
+  } catch (e: any) {
+    console.log(
+      'Error finding all friends request on get all friends requests controller'
+    );
+    res.status(500).send({ message: 'Something went wrong' });
+    throw new Error(e);
   }
 };
 

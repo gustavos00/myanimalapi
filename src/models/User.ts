@@ -60,7 +60,15 @@ const users = sequelize.define<UsersInstance>(
 
 users.hasMany(animal);
 animal.belongsTo(users);
-users.belongsToMany(users, { as: 'UsersFromWho', through: friends, foreignKey: 'userFromWho' });
-users.belongsToMany(users, { as: 'UsersToWhomFK', through: friends, foreignKey: 'userToWhom' });
+users.belongsToMany(users, {
+  as: 'UsersFromWho',
+  through: { model: friends, unique: false },
+  foreignKey: 'userFromWho',
+});
+users.belongsToMany(users, {
+  as: 'UsersToWhomFK',
+  through: { model: friends, unique: false },
+  foreignKey: 'userToWhom',
+});
 
 export default users;

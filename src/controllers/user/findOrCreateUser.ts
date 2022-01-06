@@ -176,31 +176,31 @@ const FindOrCreateUser = async (req: Request, res: Response) => {
         throw new Error(e);
       }
     }
-
-    const userCompleteData = {
-      ...validatedData,
-      id: userData.data.idUser,
-      token: returnToken,
-      accessToken,
-      photoUrl: location,
-      photoKey: key,
-      animalData: userAnimalData,
-      userAddress: userAddressTempObj,
-    };
-
-    //Generate access user token
-    try {
-      accessToken = JWT.sign(userCompleteData, validatedData.salt as string);
-    } catch (e: any) {
-      console.log(
-        'Error generating access user token on create user controller'
-      );
-      res.status(500).send({ message: 'Something went wrong' });
-      throw new Error(e);
-    }
-
-    res.status(returnStatus).send({...userCompleteData, accessToken});
   }
+  
+  const userCompleteData = {
+    ...validatedData,
+    id: userData.data.idUser,
+    token: returnToken,
+    accessToken,
+    photoUrl: location,
+    photoKey: key,
+    animalData: userAnimalData,
+    userAddress: userAddressTempObj,
+  };
+
+  console.log(userCompleteData);
+
+  //Generate access user token
+  try {
+    accessToken = JWT.sign(userCompleteData, validatedData.salt as string);
+  } catch (e: any) {
+    console.log('Error generating access user token on create user controller');
+    res.status(500).send({ message: 'Something went wrong' });
+    throw new Error(e);
+  }
+
+  res.status(returnStatus).send({ ...userCompleteData, accessToken });
 };
 
 export default FindOrCreateUser;
