@@ -145,17 +145,18 @@ const FindOrCreateUser = (req, res) => __awaiter(void 0, void 0, void 0, functio
                 throw new Error(e);
             }
         }
-        const userCompleteData = Object.assign(Object.assign({}, validatedData), { id: userData.data.idUser, token: returnToken, accessToken, photoUrl: location, photoKey: key, animalData: userAnimalData, userAddress: userAddressTempObj });
-        //Generate access user token
-        try {
-            accessToken = JWT.sign(userCompleteData, validatedData.salt);
-        }
-        catch (e) {
-            console.log('Error generating access user token on create user controller');
-            res.status(500).send({ message: 'Something went wrong' });
-            throw new Error(e);
-        }
-        res.status(returnStatus).send(Object.assign(Object.assign({}, userCompleteData), { accessToken }));
     }
+    const userCompleteData = Object.assign(Object.assign({}, validatedData), { id: userData.data.idUser, token: returnToken, accessToken, photoUrl: location, photoKey: key, animalData: userAnimalData, userAddress: userAddressTempObj });
+    console.log(userCompleteData);
+    //Generate access user token
+    try {
+        accessToken = JWT.sign(userCompleteData, validatedData.salt);
+    }
+    catch (e) {
+        console.log('Error generating access user token on create user controller');
+        res.status(500).send({ message: 'Something went wrong' });
+        throw new Error(e);
+    }
+    res.status(returnStatus).send(Object.assign(Object.assign({}, userCompleteData), { accessToken }));
 });
 exports.default = FindOrCreateUser;

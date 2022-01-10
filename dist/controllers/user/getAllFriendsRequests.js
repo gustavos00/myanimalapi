@@ -32,6 +32,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const Friends_1 = __importDefault(require("../../models/Friends"));
+const User_1 = __importDefault(require("../../models/User"));
 const US = __importStar(require("../../schemas/userSchema"));
 const getAllFriendsRequest = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     let validatedData;
@@ -51,12 +52,15 @@ const getAllFriendsRequest = (req, res) => __awaiter(void 0, void 0, void 0, fun
     try {
         const response = yield Friends_1.default.findAll({
             where: { userToWhom: validatedData.id, status: 'Pending' },
+            include: [{ model: User_1.default, as: 'UsersToWhomFK' }]
         });
         console.log(response);
         res.status(200).send(response);
     }
     catch (e) {
-        console.log(e);
+        console.log('Error finding all friends request on get all friends requests controller');
+        res.status(500).send({ message: 'Something went wrong' });
+        throw new Error(e);
     }
 });
 exports.default = getAllFriendsRequest;

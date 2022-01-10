@@ -31,6 +31,7 @@ const users = pg_1.sequelize.define('users', {
         type: sequelize_1.DataTypes.STRING,
         unique: true,
     },
+    expoToken: sequelize_1.DataTypes.STRING,
     phoneNumber: sequelize_1.DataTypes.STRING(15),
     photoUrl: sequelize_1.DataTypes.STRING,
     photoName: sequelize_1.DataTypes.STRING,
@@ -42,6 +43,14 @@ const users = pg_1.sequelize.define('users', {
 });
 users.hasMany(Animal_1.default);
 Animal_1.default.belongsTo(users);
-users.belongsToMany(users, { as: 'UsersFromWho', through: Friends_1.default, foreignKey: 'userFromWho' });
-users.belongsToMany(users, { as: 'UsersToWhomFK', through: Friends_1.default, foreignKey: 'userToWhom' });
+users.belongsToMany(users, {
+    as: 'UsersFromWho',
+    through: { model: Friends_1.default, unique: false },
+    foreignKey: 'userFromWho',
+});
+users.belongsToMany(users, {
+    as: 'UsersToWhomFK',
+    through: { model: Friends_1.default, unique: false },
+    foreignKey: 'userToWhom',
+});
 exports.default = users;
