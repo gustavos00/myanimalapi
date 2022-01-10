@@ -46,6 +46,7 @@ const users = sequelize.define<UsersInstance>(
       type: DataTypes.STRING,
       unique: true,
     },
+    expoToken: DataTypes.STRING,
     phoneNumber: DataTypes.STRING(15),
     photoUrl: DataTypes.STRING,
     photoName: DataTypes.STRING,

@@ -23,6 +23,7 @@
     "dotenv": "^10.0.0",
     "dotenv-safe": "^8.2.0",
     "download-file": "^0.1.5",
+    "expo-server-sdk": "^3.6.0",
     "express": "^4.17.1",
     "express-rate-limit": "^5.3.0",
     "joi": "^17.4.2",
@@ -35,7 +36,7 @@
     "prettier": "^2.4.1",
     "sequelize": "^6.6.5",
     "stripe": "^8.191.0",
-    "update": "^0.7.4",
+    "update": "^0.4.2",
     "validator": "^13.6.0"
   },
   "devDependencies": {
