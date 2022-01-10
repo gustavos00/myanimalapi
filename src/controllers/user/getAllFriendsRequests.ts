@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import friends from '../../models/Friends';
+import users from '../../models/User';
 import * as US from '../../schemas/userSchema';
 
 interface getAllFriendsDataProps {
@@ -29,7 +30,7 @@ const getAllFriendsRequest = async (req: Request, res: Response) => {
   try {
     const response = await friends.findAll({
       where: { userToWhom: validatedData.id, status: 'Pending' },
-      //include: [{model: users, as: 'UsersToWhomFK'}]
+      include: [{model: users, as: 'UsersToWhomFK'}]
     });
     console.log(response);
     res.status(200).send(response);
