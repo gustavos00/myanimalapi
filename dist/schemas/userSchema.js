@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createFriendsRequestSchema = exports.getAllFriendsDataSchema = exports.verifyAccessTokenSchema = exports.verifyTokenSchema = exports.generateTokenSchema = exports.statusSchema = exports.createAddressSchema = exports.UpdateUserSchema = exports.findOrCreateUserSchema = void 0;
+exports.storeExpoTokenSchema = exports.getAllFriendsDataSchema = exports.verifyAccessTokenSchema = exports.verifyTokenSchema = exports.generateTokenSchema = exports.statusSchema = exports.createAddressSchema = exports.UpdateUserSchema = exports.findOrCreateUserSchema = void 0;
 const Joi = require('joi');
 exports.findOrCreateUserSchema = Joi.object({
     givenName: Joi.string().required().min(1).max(60),
@@ -43,7 +43,7 @@ exports.verifyAccessTokenSchema = Joi.object({
 exports.getAllFriendsDataSchema = Joi.object({
     id: Joi.string().required().min(1),
 });
-exports.createFriendsRequestSchema = Joi.object({
-    fromWho: Joi.string().required().min(1),
-    toWhom: Joi.string().required().min(1),
+exports.storeExpoTokenSchema = Joi.object({
+    expoToken: Joi.string().required().min(1),
+    token: Joi.string().required().min(1),
 });

@@ -31,33 +31,38 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const Friends_1 = __importDefault(require("../../models/Friends"));
+const expo_server_sdk_1 = __importDefault(require("expo-server-sdk"));
 const US = __importStar(require("../../schemas/userSchema"));
-const createFriendsRequest = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const User_1 = __importDefault(require("../../models/User"));
+const storeExpoToken = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     let validatedData;
+    //Validate data
     try {
-        validatedData = yield US.createFriendsRequestSchema.validateAsync(req.query);
-        if (!validatedData) {
+        validatedData = yield US.storeExpoTokenSchema.validateAsync(req.body);
+        const expoTokenIsValid = expo_server_sdk_1.default.isExpoPushToken(validatedData.expoToken);
+        if (!validatedData || !expoTokenIsValid) {
+            console.log(validatedData);
             res.status(400).send({ message: 'Invalid inputs' });
             return;
         }
     }
     catch (e) {
-        console.log('Error validating user data on create friends request controller');
+        console.log('Error validating user data on store expo token controller');
         res.status(500).send({ message: 'Something went wrong' });
         throw new Error(e);
     }
     try {
-        const response = yield Friends_1.default.create({
-            userToWhom: validatedData.toWhom,
-            userFromWho: validatedData.fromWho,
+        yield User_1.default.update({ expoToken: validatedData.expoToken }, {
+            where: {
+                token: validatedData.token,
+            },
         });
-        res.status(200).send(response);
     }
     catch (e) {
-        console.log('Error creating friend request on create friends request controller');
+        console.log('Error finding user data on store expo token controller');
         res.status(500).send({ message: 'Something went wrong' });
         throw new Error(e);
     }
+    res.status(200).send(validatedData);
 });
-exports.default = createFriendsRequest;
+exports.default = storeExpoToken;

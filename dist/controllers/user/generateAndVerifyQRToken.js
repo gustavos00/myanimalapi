@@ -94,7 +94,7 @@ const verifyToken = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     //Finding user
     try {
         userData = yield User_1.default.findOne({
-            where: { email: tokenData.email, idUser: tokenData.id },
+            where: { email: tokenData.email },
         });
     }
     catch (e) {
@@ -104,16 +104,22 @@ const verifyToken = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     }
     //Creating a friend request
     try {
-        friendsResponse = yield Friends_1.default.create({
-            fromWho: validatedData.fromWho,
-            toWhom: userData === null || userData === void 0 ? void 0 : userData.idUser,
+        yield Friends_1.default.findOrCreate({
+            where: {
+                userToWhom: userData === null || userData === void 0 ? void 0 : userData.idUser,
+                userFromWho: validatedData.fromWho,
+            },
+            defaults: {
+                userToWhom: userData === null || userData === void 0 ? void 0 : userData.idUser,
+                userFromWho: validatedData.fromWho,
+            },
         });
+        res.status(200).send({ message: true });
     }
     catch (e) {
-        console.log('Error finding user by token on verifyToken controller');
+        console.log('Error creating friends request on verifyToken controller');
         res.status(500).send({ message: 'Something went wrong' });
         throw new Error(e);
     }
-    res.status(200).send(friendsResponse);
 });
 exports.verifyToken = verifyToken;
