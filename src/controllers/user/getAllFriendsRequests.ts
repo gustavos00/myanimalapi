@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import { Sequelize } from 'sequelize';
 import friends from '../../models/Friends';
 import users from '../../models/User';
 import * as US from '../../schemas/userSchema';
@@ -29,8 +30,8 @@ const getAllFriendsRequest = async (req: Request, res: Response) => {
 
   try {
     const response = await friends.findAll({
-      where: { userToWhom: validatedData.id, status: 'Pending' },
-      include: [{model: users, as: 'UsersToWhomFK'}]
+      where: { toWhom: validatedData.id, status: 'Pending' },
+      include: [{ model: users, as: 'fromWhoFk'}],
     });
     console.log(response);
     res.status(200).send(response);
