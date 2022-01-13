@@ -2,13 +2,10 @@ import { Model, DataTypes } from 'sequelize'
 import { sequelize } from '../config/pg'
 
 export interface FriendsInstance extends Model {
-  idAddress: number
-
-  doorNumber: string
-  postalCode: string
-  streetName: string
-
-  parish_idParish: number
+  idfriends: number;
+  status: string;
+  userfromWho: number;
+  usertoWhom: number;
 }
 
 const friends = sequelize.define<FriendsInstance>(
