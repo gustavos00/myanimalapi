@@ -8,6 +8,8 @@ import storeExpoToken from '../controllers/user/storeExpoToken';
 import UpdateUser from '../controllers/user/updateUser';
 import verifyAccessToken from '../controllers/user/verifyAccessToken';
 import createAddress from './../controllers/user/createAddress';
+import acceptFriendRequest from '../controllers/user/acceptFriendsRequest';
+import getAllFriends from '../controllers/user/getAllFriends';
 
 import {
   generateToken,
@@ -20,10 +22,11 @@ router.post('/update', multer(multerConfig).single('userPhoto'), UpdateUser);
 router.post('/createAddress', createAddress);
 router.post('/expoToken', storeExpoToken);
 
-
-router.get('/friend/token/', generateToken);
-router.get('/friend/get/', getAllFriendsRequest);
-router.get('/friend/verifyToken/', verifyToken);
+router.get('/friends/token/', generateToken);
+router.get('/friends/getPending/', getAllFriendsRequest);
+router.get('/friends/getAccepted/', getAllFriends);
+router.get('/friends/verifyToken/', verifyToken);
+router.get('/friends/accept/', acceptFriendRequest);
 
 router.post('/access/verify/', verifyAccessToken);
 
