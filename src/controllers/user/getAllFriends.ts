@@ -20,19 +20,21 @@ const getAllFriends = async (req: Request, res: Response) => {
       return;
     }
   } catch (e: any) {
-    console.log(
-      'Error validating user data on get all friends controller'
-    );
+    console.log('Error validating user data on get all friends controller');
     res.status(500).send({ message: 'Something went wrong' });
     throw new Error(e);
   }
 
+  //TO-DO CREATE A OR CONDITIONAL ON FIND ALL FRIENDS
   try {
     const response = await friends.findAll({
-      where: { toWhom: validatedData.id, status: 'Accepted' },
+      where: {
+        toWhom: validatedData.id,
+        status: 'Accepted',
+      },
       include: [{ model: users, as: 'fromWhoFk' }],
     });
-    console.log(response);
+
     res.status(200).send(response);
   } catch (e: any) {
     console.log(
