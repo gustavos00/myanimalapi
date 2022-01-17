@@ -189,8 +189,6 @@ const FindOrCreateUser = async (req: Request, res: Response) => {
     userAddress: userAddressTempObj,
   };
 
-  console.log(userCompleteData);
-
   //Generate access user token
   try {
     accessToken = JWT.sign(userCompleteData, validatedData.salt as string);

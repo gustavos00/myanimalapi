@@ -10,6 +10,7 @@ import verifyAccessToken from '../controllers/user/verifyAccessToken';
 import createAddress from './../controllers/user/createAddress';
 import acceptFriendRequest from '../controllers/user/acceptFriendsRequest';
 import getAllFriends from '../controllers/user/getAllFriends';
+import declineFriendsRequest from '../controllers/user/declineFriendsRequest';
 
 import {
   generateToken,
@@ -27,6 +28,7 @@ router.get('/friends/getPending/', getAllFriendsRequest);
 router.get('/friends/getAccepted/', getAllFriends);
 router.get('/friends/verifyToken/', verifyToken);
 router.get('/friends/accept/', acceptFriendRequest);
+router.get('/friends/decline/', declineFriendsRequest);
 
 router.post('/access/verify/', verifyAccessToken);
 

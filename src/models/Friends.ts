@@ -1,5 +1,5 @@
-import { Model, DataTypes } from 'sequelize'
-import { sequelize } from '../config/pg'
+import { Model, DataTypes } from 'sequelize';
+import { sequelize } from '../config/pg';
 
 export interface FriendsInstance extends Model {
   idfriends: number;
@@ -18,10 +18,12 @@ const friends = sequelize.define<FriendsInstance>(
       type: DataTypes.INTEGER,
     },
 
+    fingerprint: DataTypes.STRING(),
+
     status: {
       allowNull: false,
       type: DataTypes.STRING(100),
-      defaultValue: 'Pending'
+      defaultValue: 'Pending',
     },
   },
   {
@@ -29,6 +31,6 @@ const friends = sequelize.define<FriendsInstance>(
     freezeTableName: true,
     timestamps: true,
   }
-)
+);
 
-export default friends
+export default friends;
