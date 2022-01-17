@@ -33,7 +33,7 @@ const getAllFriendsRequest = async (req: Request, res: Response) => {
       where: { toWhom: validatedData.id, status: 'Pending' },
       include: [{ model: users, as: 'fromWhoFk'}],
     });
-    console.log(response);
+
     res.status(200).send(response);
   } catch (e: any) {
     console.log(
