@@ -55,5 +55,5 @@ export const storeExpoTokenSchema = Joi.object({
 });
 
 export const acceptFriendsSchema = Joi.object({
-  id: Joi.string().required().min(1)
-})
+  id: Joi.string().required().min(1),
+});
