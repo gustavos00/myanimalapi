@@ -27,7 +27,7 @@ router.get('/friends/token/', generateToken);
 router.get('/friends/getPending/', getAllFriendsRequest);
 router.get('/friends/getAccepted/', getAllFriends);
 router.get('/friends/verifyToken/', verifyToken);
-router.post('/friends/accept/', acceptFriendRequest);
+router.get('/friends/accept/', acceptFriendRequest);
 router.get('/friends/decline/', declineFriendsRequest);
 
 router.post('/access/verify/', verifyAccessToken);
