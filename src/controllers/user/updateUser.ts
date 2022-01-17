@@ -74,12 +74,14 @@ const UpdateUser = async (req: Request, res: Response) => {
       email: validatedData.email,
       phoneNumber: validatedData.phoneNumber,
       photoName: key,
-      photoUrl: location 
+      photoUrl: location,
     };
 
     res.status(200).send({ ...userObject, userAddress: addressObject });
-  } catch (e) {
-    console.log(e);
+  } catch (e: any) {
+    console.log('Error updating user data on update user controller');
+    res.status(500).send({ message: 'Something went wrong' });
+    throw new Error(e);
   }
 };
 
