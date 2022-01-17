@@ -11,10 +11,6 @@ interface GenerateToken {
   id: string;
 }
 
-interface StatusProps {
-  status: string;
-}
-
 interface VerifyToken {
   token: string;
   fromWho: string;
