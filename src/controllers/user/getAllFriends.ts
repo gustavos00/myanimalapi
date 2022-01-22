@@ -65,9 +65,6 @@ const getAllFriends = async (req: Request, res: Response) => {
 
       friendArray.push(friendObj);
     });
-
-    if (friendArray.length === 0) {
-    }
   } catch (e: any) {
     console.log(
       'Error finding all friends request on get all friends controller'
@@ -76,7 +73,6 @@ const getAllFriends = async (req: Request, res: Response) => {
     throw new Error(e);
   }
 
-  console.log(friendArray);
   res.status(200).send(friendArray);
 };
 
