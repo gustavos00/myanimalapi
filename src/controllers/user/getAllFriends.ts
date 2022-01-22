@@ -1,4 +1,6 @@
 import { Request, Response } from 'express';
+import { object } from 'joi';
+import { Op } from 'sequelize';
 import friends from '../../models/Friends';
 import users from '../../models/User';
 import * as US from '../../schemas/userSchema';
@@ -8,7 +10,10 @@ interface getAllFriendsDataProps {
 }
 
 const getAllFriends = async (req: Request, res: Response) => {
-  let validatedData;
+  let validatedData: getAllFriendsDataProps;
+  let friendsData: any;
+  let friendArray: any[] = [];
+  //TODO -> FIX ANY
 
   try {
     validatedData = await US.getAllFriendsDataSchema.validateAsync(
@@ -25,17 +30,44 @@ const getAllFriends = async (req: Request, res: Response) => {
     throw new Error(e);
   }
 
-  //TO-DO CREATE A OR CONDITIONAL ON FIND ALL FRIENDS
   try {
-    const response = await friends.findAll({
+    friendsData = await friends.findAll({
+      nest: true,
+      raw: true,
       where: {
-        toWhom: validatedData.id,
         status: 'Accepted',
+        [Op.or]: [{ fromWho: validatedData.id }, { toWhom: validatedData.id }],
       },
-      include: [{ model: users, as: 'fromWhoFk' }],
+      include: [
+        { model: users, as: 'fromWhoFk' },
+        { model: users, as: 'toWhomFk' },
+      ],
     });
 
-    res.status(200).send(response);
+    friendsData.forEach((element: any) => {
+      let friendData;
+
+      if (element.fromWhoFk.idUser == validatedData.id) {
+        friendData = element.toWhomFk;
+      }
+
+      if (element.toWhomFk.idUser == validatedData.id) {
+        friendData = element.fromWhoFk;
+      }
+
+      delete element.toWhomFk;
+      delete element.fromWhoFk;
+
+      const friendObj = {
+        ...element,
+        friendData,
+      };
+
+      friendArray.push(friendObj);
+    });
+
+    if (friendArray.length === 0) {
+    }
   } catch (e: any) {
     console.log(
       'Error finding all friends request on get all friends controller'
@@ -43,6 +75,9 @@ const getAllFriends = async (req: Request, res: Response) => {
     res.status(500).send({ message: 'Something went wrong' });
     throw new Error(e);
   }
+
+  console.log(friendArray);
+  res.status(200).send(friendArray);
 };
 
 export default getAllFriends;
