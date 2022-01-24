@@ -147,7 +147,6 @@ const FindOrCreateUser = (req, res) => __awaiter(void 0, void 0, void 0, functio
         }
     }
     const userCompleteData = Object.assign(Object.assign({}, validatedData), { id: userData.data.idUser, token: returnToken, accessToken, photoUrl: location, photoKey: key, animalData: userAnimalData, userAddress: userAddressTempObj });
-    console.log(userCompleteData);
     //Generate access user token
     try {
         accessToken = JWT.sign(userCompleteData, validatedData.salt);

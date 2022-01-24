@@ -31,11 +31,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const sequelize_1 = require("sequelize");
 const Friends_1 = __importDefault(require("../../models/Friends"));
 const User_1 = __importDefault(require("../../models/User"));
 const US = __importStar(require("../../schemas/userSchema"));
-const getAllFriendsRequest = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const getAllFriends = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     let validatedData;
+    let friendsData;
+    let friendArray = [];
+    //TODO -> FIX ANY
     try {
         validatedData = yield US.getAllFriendsDataSchema.validateAsync(req.query);
         if (!validatedData) {
@@ -44,21 +48,42 @@ const getAllFriendsRequest = (req, res) => __awaiter(void 0, void 0, void 0, fun
         }
     }
     catch (e) {
-        console.log('Error validating user data on get all friends requests controller');
+        console.log('Error validating user data on get all friends controller');
         res.status(500).send({ message: 'Something went wrong' });
         throw new Error(e);
     }
     try {
-        const response = yield Friends_1.default.findAll({
-            where: { toWhom: validatedData.id, status: 'Pending' },
-            include: [{ model: User_1.default, as: 'fromWhoFk' }],
+        friendsData = yield Friends_1.default.findAll({
+            nest: true,
+            raw: true,
+            where: {
+                status: 'Accepted',
+                [sequelize_1.Op.or]: [{ fromWho: validatedData.id }, { toWhom: validatedData.id }],
+            },
+            include: [
+                { model: User_1.default, as: 'fromWhoFk' },
+                { model: User_1.default, as: 'toWhomFk' },
+            ],
         });
-        res.status(200).send(response);
+        friendsData.forEach((element) => {
+            let friendData;
+            if (element.fromWhoFk.idUser == validatedData.id) {
+                friendData = element.toWhomFk;
+            }
+            if (element.toWhomFk.idUser == validatedData.id) {
+                friendData = element.fromWhoFk;
+            }
+            delete element.toWhomFk;
+            delete element.fromWhoFk;
+            const friendObj = Object.assign(Object.assign({}, element), { friendData });
+            friendArray.push(friendObj);
+        });
     }
     catch (e) {
-        console.log('Error finding all friends request on get all friends requests controller');
+        console.log('Error finding all friends request on get all friends controller');
         res.status(500).send({ message: 'Something went wrong' });
         throw new Error(e);
     }
+    res.status(200).send(friendArray);
 });
-exports.default = getAllFriendsRequest;
+exports.default = getAllFriends;

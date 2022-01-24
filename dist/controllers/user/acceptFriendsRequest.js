@@ -32,33 +32,35 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const Friends_1 = __importDefault(require("../../models/Friends"));
-const User_1 = __importDefault(require("../../models/User"));
+const random_1 = __importDefault(require("../../utils/random"));
 const US = __importStar(require("../../schemas/userSchema"));
-const getAllFriendsRequest = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const acceptFriendRequest = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     let validatedData;
+    const fingerprint = (0, random_1.default)();
     try {
-        validatedData = yield US.getAllFriendsDataSchema.validateAsync(req.query);
+        validatedData = yield US.acceptFriendsSchema.validateAsync(req.query);
         if (!validatedData) {
             res.status(400).send({ message: 'Invalid inputs' });
             return;
         }
     }
     catch (e) {
-        console.log('Error validating user data on get all friends requests controller');
+        console.log('Error validating data on create user address controller');
         res.status(500).send({ message: 'Something went wrong' });
         throw new Error(e);
     }
     try {
-        const response = yield Friends_1.default.findAll({
-            where: { toWhom: validatedData.id, status: 'Pending' },
-            include: [{ model: User_1.default, as: 'fromWhoFk' }],
+        yield Friends_1.default.update({ status: 'Accepted', fingerprint }, {
+            where: {
+                idfriends: validatedData.id,
+            },
         });
-        res.status(200).send(response);
     }
     catch (e) {
-        console.log('Error finding all friends request on get all friends requests controller');
+        console.log('Error creating user address on user controller');
         res.status(500).send({ message: 'Something went wrong' });
         throw new Error(e);
     }
+    res.status(200).send({ fingerprint });
 });
-exports.default = getAllFriendsRequest;
+exports.default = acceptFriendRequest;

@@ -9,10 +9,11 @@ const friends = pg_1.sequelize.define('friends', {
         autoIncrement: true,
         type: sequelize_1.DataTypes.INTEGER,
     },
+    fingerprint: sequelize_1.DataTypes.STRING(),
     status: {
         allowNull: false,
         type: sequelize_1.DataTypes.STRING(100),
-        defaultValue: 'Pending'
+        defaultValue: 'Pending',
     },
 }, {
     tableName: 'friends',

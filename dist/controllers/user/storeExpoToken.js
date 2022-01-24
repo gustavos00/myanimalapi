@@ -41,7 +41,6 @@ const storeExpoToken = (req, res) => __awaiter(void 0, void 0, void 0, function*
         validatedData = yield US.storeExpoTokenSchema.validateAsync(req.body);
         const expoTokenIsValid = expo_server_sdk_1.default.isExpoPushToken(validatedData.expoToken);
         if (!validatedData || !expoTokenIsValid) {
-            console.log(validatedData);
             res.status(400).send({ message: 'Invalid inputs' });
             return;
         }
