@@ -116,8 +116,9 @@ export const verifyToken = async (req: Request, res: Response) => {
 
   const receipt = await sendNotifications({
     expoToken: userData?.expoToken,
-    title: 'messageTitle',
-    message: 'messageBody',
+    title: 'Friend Request',
+    message: 'Hello! Someone send you a friend request!',
+    data: { do: 'openScreen', screenName: 'friendsRequests'}
   });
 
   console.log('message receipt ' + receipt)
