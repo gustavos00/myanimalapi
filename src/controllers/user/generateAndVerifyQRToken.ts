@@ -115,7 +115,7 @@ export const verifyToken = async (req: Request, res: Response) => {
   }
 
   const receipt = await sendNotifications({
-    expoToken: 'ExponentPushToken[b4p2KKOsHcwz3aNQKKsqNl]',
+    expoToken: userData?.expoToken,
     title: 'messageTitle',
     message: 'messageBody',
   });
