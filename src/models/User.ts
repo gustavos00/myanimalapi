@@ -14,6 +14,7 @@ export interface UsersInstance extends Model {
   photoUrl: string;
   photoName: string;
   token: string;
+  expoToken?: string;
   status: string;
 
   addressIdAddress: number;
