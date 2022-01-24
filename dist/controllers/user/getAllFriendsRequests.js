@@ -51,10 +51,9 @@ const getAllFriendsRequest = (req, res) => __awaiter(void 0, void 0, void 0, fun
     }
     try {
         const response = yield Friends_1.default.findAll({
-            where: { userToWhom: validatedData.id, status: 'Pending' },
-            include: [{ model: User_1.default, as: 'UsersToWhomFK' }]
+            where: { toWhom: validatedData.id, status: 'Pending' },
+            include: [{ model: User_1.default, as: 'fromWhoFk' }],
         });
-        console.log(response);
         res.status(200).send(response);
     }
     catch (e) {

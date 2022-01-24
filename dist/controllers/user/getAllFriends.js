@@ -31,37 +31,59 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const expo_server_sdk_1 = __importDefault(require("expo-server-sdk"));
-const US = __importStar(require("../../schemas/userSchema"));
+const sequelize_1 = require("sequelize");
+const Friends_1 = __importDefault(require("../../models/Friends"));
 const User_1 = __importDefault(require("../../models/User"));
-const storeExpoToken = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const US = __importStar(require("../../schemas/userSchema"));
+const getAllFriends = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     let validatedData;
-    //Validate data
+    let friendsData;
+    let friendArray = [];
+    //TODO -> FIX ANY
     try {
-        validatedData = yield US.storeExpoTokenSchema.validateAsync(req.body);
-        const expoTokenIsValid = expo_server_sdk_1.default.isExpoPushToken(validatedData.expoToken);
-        if (!validatedData || !expoTokenIsValid) {
+        validatedData = yield US.getAllFriendsDataSchema.validateAsync(req.query);
+        if (!validatedData) {
             res.status(400).send({ message: 'Invalid inputs' });
             return;
         }
     }
     catch (e) {
-        console.log('Error validating user data on store expo token controller');
+        console.log('Error validating user data on get all friends controller');
         res.status(500).send({ message: 'Something went wrong' });
         throw new Error(e);
     }
     try {
-        yield User_1.default.update({ expoToken: validatedData.expoToken }, {
+        friendsData = yield Friends_1.default.findAll({
+            nest: true,
+            raw: true,
             where: {
-                token: validatedData.token,
+                status: 'Accepted',
+                [sequelize_1.Op.or]: [{ fromWho: validatedData.id }, { toWhom: validatedData.id }],
             },
+            include: [
+                { model: User_1.default, as: 'fromWhoFk' },
+                { model: User_1.default, as: 'toWhomFk' },
+            ],
+        });
+        friendsData.forEach((element) => {
+            let friendData;
+            if (element.fromWhoFk.idUser == validatedData.id) {
+                friendData = element.toWhomFk;
+            }
+            if (element.toWhomFk.idUser == validatedData.id) {
+                friendData = element.fromWhoFk;
+            }
+            delete element.toWhomFk;
+            delete element.fromWhoFk;
+            const friendObj = Object.assign(Object.assign({}, element), { friendData });
+            friendArray.push(friendObj);
         });
     }
     catch (e) {
-        console.log('Error finding user data on store expo token controller');
+        console.log('Error finding all friends request on get all friends controller');
         res.status(500).send({ message: 'Something went wrong' });
         throw new Error(e);
     }
-    res.status(200).send(validatedData);
+    res.status(200).send(friendArray);
 });
-exports.default = storeExpoToken;
+exports.default = getAllFriends;

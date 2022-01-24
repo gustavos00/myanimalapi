@@ -43,14 +43,8 @@ const users = pg_1.sequelize.define('users', {
 });
 users.hasMany(Animal_1.default);
 Animal_1.default.belongsTo(users);
-users.belongsToMany(users, {
-    as: 'UsersFromWho',
-    through: { model: Friends_1.default, unique: false },
-    foreignKey: 'userFromWho',
-});
-users.belongsToMany(users, {
-    as: 'UsersToWhomFK',
-    through: { model: Friends_1.default, unique: false },
-    foreignKey: 'userToWhom',
-});
+users.hasMany(Friends_1.default, { foreignKey: 'fromWho', as: 'fromWhoFk' });
+Friends_1.default.belongsTo(users, { foreignKey: 'fromWho', as: 'fromWhoFk' });
+users.hasMany(Friends_1.default, { foreignKey: 'toWhom', as: 'toWhomFk' });
+Friends_1.default.belongsTo(users, { foreignKey: 'toWhom', as: 'toWhomFk' });
 exports.default = users;

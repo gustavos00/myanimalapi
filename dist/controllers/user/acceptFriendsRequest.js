@@ -31,37 +31,36 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const expo_server_sdk_1 = __importDefault(require("expo-server-sdk"));
+const Friends_1 = __importDefault(require("../../models/Friends"));
+const random_1 = __importDefault(require("../../utils/random"));
 const US = __importStar(require("../../schemas/userSchema"));
-const User_1 = __importDefault(require("../../models/User"));
-const storeExpoToken = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const acceptFriendRequest = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     let validatedData;
-    //Validate data
+    const fingerprint = (0, random_1.default)();
     try {
-        validatedData = yield US.storeExpoTokenSchema.validateAsync(req.body);
-        const expoTokenIsValid = expo_server_sdk_1.default.isExpoPushToken(validatedData.expoToken);
-        if (!validatedData || !expoTokenIsValid) {
+        validatedData = yield US.acceptFriendsSchema.validateAsync(req.query);
+        if (!validatedData) {
             res.status(400).send({ message: 'Invalid inputs' });
             return;
         }
     }
     catch (e) {
-        console.log('Error validating user data on store expo token controller');
+        console.log('Error validating data on create user address controller');
         res.status(500).send({ message: 'Something went wrong' });
         throw new Error(e);
     }
     try {
-        yield User_1.default.update({ expoToken: validatedData.expoToken }, {
+        yield Friends_1.default.update({ status: 'Accepted', fingerprint }, {
             where: {
-                token: validatedData.token,
+                idfriends: validatedData.id,
             },
         });
     }
     catch (e) {
-        console.log('Error finding user data on store expo token controller');
+        console.log('Error creating user address on user controller');
         res.status(500).send({ message: 'Something went wrong' });
         throw new Error(e);
     }
-    res.status(200).send(validatedData);
+    res.status(200).send({ fingerprint });
 });
-exports.default = storeExpoToken;
+exports.default = acceptFriendRequest;

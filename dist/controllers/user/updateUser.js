@@ -83,12 +83,14 @@ const UpdateUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
             email: validatedData.email,
             phoneNumber: validatedData.phoneNumber,
             photoName: key,
-            photoUrl: location
+            photoUrl: location,
         };
         res.status(200).send(Object.assign(Object.assign({}, userObject), { userAddress: addressObject }));
     }
     catch (e) {
-        console.log(e);
+        console.log('Error updating user data on update user controller');
+        res.status(500).send({ message: 'Something went wrong' });
+        throw new Error(e);
     }
 });
 exports.default = UpdateUser;

@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import { sendNotifications } from '../../utils/notifications';
 
 import user from '../../models/User';
 import friends from '../../models/Friends';
@@ -54,7 +55,6 @@ export const verifyToken = async (req: Request, res: Response) => {
   let validatedData;
   let userData;
   let tokenData;
-  let friendsResponse;
 
   //Validate data
   try {
@@ -94,7 +94,7 @@ export const verifyToken = async (req: Request, res: Response) => {
     res.status(500).send({ message: 'Something went wrong' });
     throw new Error(e);
   }
-  //Creating a friend request
+
   try {
     await friends.findOrCreate({
       where: {
@@ -113,4 +113,12 @@ export const verifyToken = async (req: Request, res: Response) => {
     res.status(500).send({ message: 'Something went wrong' });
     throw new Error(e);
   }
+
+  const receipt = await sendNotifications({
+    expoToken: 'ExponentPushToken[b4p2KKOsHcwz3aNQKKsqNl]',
+    title: 'messageTitle',
+    message: 'messageBody',
+  });
+
+  console.log(receipt)
 };

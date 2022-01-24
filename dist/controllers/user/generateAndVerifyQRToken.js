@@ -35,6 +35,7 @@ exports.verifyToken = exports.generateToken = void 0;
 const User_1 = __importDefault(require("../../models/User"));
 const Friends_1 = __importDefault(require("../../models/Friends"));
 const US = __importStar(require("../../schemas/userSchema"));
+const notifications_1 = require("../../utils/notifications");
 const JWT = require('jsonwebtoken');
 const generateToken = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     let validatedData;
@@ -68,7 +69,6 @@ const verifyToken = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     let validatedData;
     let userData;
     let tokenData;
-    let friendsResponse;
     //Validate data
     try {
         validatedData = yield US.verifyTokenSchema.validateAsync(req.query);
@@ -102,16 +102,15 @@ const verifyToken = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         res.status(500).send({ message: 'Something went wrong' });
         throw new Error(e);
     }
-    //Creating a friend request
     try {
         yield Friends_1.default.findOrCreate({
             where: {
-                userToWhom: userData === null || userData === void 0 ? void 0 : userData.idUser,
-                userFromWho: validatedData.fromWho,
+                toWhom: userData === null || userData === void 0 ? void 0 : userData.idUser,
+                fromWho: validatedData.fromWho,
             },
             defaults: {
-                userToWhom: userData === null || userData === void 0 ? void 0 : userData.idUser,
-                userFromWho: validatedData.fromWho,
+                ToWhom: userData === null || userData === void 0 ? void 0 : userData.idUser,
+                FromWho: validatedData.fromWho,
             },
         });
         res.status(200).send({ message: true });
@@ -121,5 +120,11 @@ const verifyToken = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         res.status(500).send({ message: 'Something went wrong' });
         throw new Error(e);
     }
+    const receipt = yield (0, notifications_1.sendNotifications)({
+        expoToken: 'ExponentPushToken[b4p2KKOsHcwz3aNQKKsqNl]',
+        title: 'messageTitle',
+        message: 'messageBody',
+    });
+    console.log(receipt);
 });
 exports.verifyToken = verifyToken;
