@@ -32,10 +32,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.verifyToken = exports.generateToken = void 0;
+const notifications_1 = require("../../utils/notifications");
 const User_1 = __importDefault(require("../../models/User"));
 const Friends_1 = __importDefault(require("../../models/Friends"));
 const US = __importStar(require("../../schemas/userSchema"));
-const notifications_1 = require("../../utils/notifications");
 const JWT = require('jsonwebtoken');
 const generateToken = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     let validatedData;
@@ -121,7 +121,7 @@ const verifyToken = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         throw new Error(e);
     }
     const receipt = yield (0, notifications_1.sendNotifications)({
-        expoToken: 'ExponentPushToken[b4p2KKOsHcwz3aNQKKsqNl]',
+        expoToken: userData === null || userData === void 0 ? void 0 : userData.expoToken,
         title: 'messageTitle',
         message: 'messageBody',
     });
