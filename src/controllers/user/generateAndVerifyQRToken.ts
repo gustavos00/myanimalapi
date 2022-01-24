@@ -120,5 +120,5 @@ export const verifyToken = async (req: Request, res: Response) => {
     message: 'messageBody',
   });
 
-  console.log(receipt)
+  console.log('message receipt ' + receipt)
 };
