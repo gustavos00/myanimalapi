@@ -2,7 +2,7 @@ import { Expo } from 'expo-server-sdk';
 const expo = new Expo()
 
 interface sendNotificationsParams {
-  expoToken: string;
+  expoToken?: string;
   title: string
   message: string;
 }
