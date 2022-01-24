@@ -1,11 +1,14 @@
 import { Model, DataTypes } from 'sequelize';
 import { sequelize } from '../config/pg';
+import { UsersInstance } from './User';
 
 export interface FriendsInstance extends Model {
-  idfriends: number;
+  idFriends: number;
   status: string;
-  userfromWho: number;
-  usertoWhom: number;
+  fromWhoFk: UsersInstance;
+  toWhomFk: UsersInstance;
+  fromWho: number;
+  toWhom: number;
 }
 
 const friends = sequelize.define<FriendsInstance>(
