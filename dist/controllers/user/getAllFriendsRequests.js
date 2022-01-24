@@ -45,7 +45,6 @@ const getAllFriendsRequest = (req, res) => __awaiter(void 0, void 0, void 0, fun
     }
     catch (e) {
         console.log('Error validating user data on get all friends requests controller');
-
         res.status(500).send({ message: 'Something went wrong' });
         throw new Error(e);
     }

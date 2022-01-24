@@ -2,15 +2,17 @@ import { Expo } from 'expo-server-sdk';
 const expo = new Expo()
 
 interface sendNotificationsParams {
-  expoToken: string;
+  expoToken?: string;
   title: string
   message: string;
+  data: object
 }
 
 export const sendNotifications = async({
   expoToken,
   title,
   message,
+  data,
 }: sendNotificationsParams) => {
     if(!Expo.isExpoPushToken(expoToken)) {
         return console.log('Error sending expo token')
@@ -20,7 +22,7 @@ export const sendNotifications = async({
         to: expoToken,
         title,
         body: message,
-        data: { doWhat: 'test' }
+        data,
     }]
 
     const receipt = await expo.sendPushNotificationsAsync(notificationMessage)
