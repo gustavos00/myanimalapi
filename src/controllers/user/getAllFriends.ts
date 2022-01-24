@@ -1,19 +1,27 @@
 import { Request, Response } from 'express';
 import { object } from 'joi';
 import { Op } from 'sequelize';
-import friends from '../../models/Friends';
-import users from '../../models/User';
+import friends, { FriendsInstance } from '../../models/Friends';
+import users, { UsersInstance } from '../../models/User';
 import * as US from '../../schemas/userSchema';
 
 interface getAllFriendsDataProps {
   id: string;
 }
 
+interface LocalFriendsInstance {
+  idFriends: number;
+  status: string;
+  fromWhoFk?: UsersInstance;
+  toWhomFk?: UsersInstance;
+  fromWho: number;
+  toWhom: number;
+}
+
 const getAllFriends = async (req: Request, res: Response) => {
   let validatedData: getAllFriendsDataProps;
-  let friendsData: any;
-  let friendArray: any[] = [];
-  //TODO -> FIX ANY
+  let friendsData: Array<FriendsInstance> = []
+  let friendArray: Array<UsersInstance> = [];
 
   try {
     validatedData = await US.getAllFriendsDataSchema.validateAsync(
@@ -44,14 +52,14 @@ const getAllFriends = async (req: Request, res: Response) => {
       ],
     });
 
-    friendsData.forEach((element: any) => {
+    friendsData.forEach((element: LocalFriendsInstance) => {
       let friendData;
 
-      if (element.fromWhoFk.idUser == validatedData.id) {
+      if (element.fromWhoFk?.idUser.toString() == validatedData.id) {
         friendData = element.toWhomFk;
       }
 
-      if (element.toWhomFk.idUser == validatedData.id) {
+      if (element.toWhomFk?.idUser.toString() == validatedData.id) {
         friendData = element.fromWhoFk;
       }
 
@@ -63,7 +71,7 @@ const getAllFriends = async (req: Request, res: Response) => {
         friendData,
       };
 
-      friendArray.push(friendObj);
+      friendArray.push(friendObj as unknown as UsersInstance);
     });
   } catch (e: any) {
     console.log(
