@@ -1,15 +1,18 @@
+import { FriendsInstance } from './../../models/Friends';
 import { Request, Response } from 'express';
-import { Sequelize } from 'sequelize';
+import { Op } from 'sequelize';
 import friends from '../../models/Friends';
-import users from '../../models/User';
+import users, { UsersInstance } from '../../models/User';
 import * as US from '../../schemas/userSchema';
 
 interface getAllFriendsDataProps {
-  id: string;
+  id?: string;
 }
 
 const getAllFriendsRequest = async (req: Request, res: Response) => {
-  let validatedData;
+  let validatedData: getAllFriendsDataProps;
+  let friendsRequestData: Array<FriendsInstance> = [];
+  let friendArray: Array<UsersInstance> = [];
 
   try {
     validatedData = await US.getAllFriendsDataSchema.validateAsync(
@@ -29,12 +32,40 @@ const getAllFriendsRequest = async (req: Request, res: Response) => {
   }
 
   try {
-    const response = await friends.findAll({
-      where: { toWhom: validatedData.id, status: 'Pending' },
-      include: [{ model: users, as: 'fromWhoFk'}],
+    friendsRequestData = await friends.findAll({
+      nest: true,
+      raw: true,
+      where: {
+        status: 'Pending',
+        [Op.or]: [{ fromWho: validatedData.id }, { toWhom: validatedData.id }],
+      },
+      include: [
+        { model: users, as: 'fromWhoFk' },
+        { model: users, as: 'toWhomFk' },
+      ],
     });
 
-    res.status(200).send(response);
+    friendsRequestData.forEach((element: FriendsInstance) => {
+      let friendData;
+
+      if (element.fromWhoFk?.idUser.toString() == validatedData.id) {
+        friendData = element.toWhomFk;
+      }
+
+      if (element.toWhomFk?.idUser.toString() == validatedData.id) {
+        friendData = element.fromWhoFk;
+      }
+
+      delete element.toWhomFk;
+      delete element.fromWhoFk;
+
+      const friendObj = {
+        ...element,
+        friendData,
+      };
+
+      friendArray.push(friendObj as unknown as UsersInstance);
+    });
   } catch (e: any) {
     console.log(
       'Error finding all friends request on get all friends requests controller'
@@ -42,6 +73,8 @@ const getAllFriendsRequest = async (req: Request, res: Response) => {
     res.status(500).send({ message: 'Something went wrong' });
     throw new Error(e);
   }
+
+  res.status(200).send(friendArray);
 };
 
 export default getAllFriendsRequest;
