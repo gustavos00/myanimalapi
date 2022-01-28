@@ -9,15 +9,6 @@ interface getAllFriendsDataProps {
   id: string;
 }
 
-interface LocalFriendsInstance {
-  idFriends: number;
-  status: string;
-  fromWhoFk?: UsersInstance;
-  toWhomFk?: UsersInstance;
-  fromWho: number;
-  toWhom: number;
-}
-
 const getAllFriends = async (req: Request, res: Response) => {
   let validatedData: getAllFriendsDataProps;
   let friendsData: Array<FriendsInstance> = []
@@ -52,7 +43,7 @@ const getAllFriends = async (req: Request, res: Response) => {
       ],
     });
 
-    friendsData.forEach((element: LocalFriendsInstance) => {
+    friendsData.forEach((element: FriendsInstance) => {
       let friendData;
 
       if (element.fromWhoFk?.idUser.toString() == validatedData.id) {
