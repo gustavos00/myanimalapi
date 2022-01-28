@@ -122,9 +122,10 @@ const verifyToken = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     }
     const receipt = yield (0, notifications_1.sendNotifications)({
         expoToken: userData === null || userData === void 0 ? void 0 : userData.expoToken,
-        title: 'messageTitle',
-        message: 'messageBody',
+        title: 'Friend Request',
+        message: 'Hello! Someone send you a friend request!',
+        data: { do: 'openScreen', screenName: 'friendsRequests' }
     });
-    console.log(receipt);
+    console.log('message receipt ' + receipt);
 });
 exports.verifyToken = verifyToken;

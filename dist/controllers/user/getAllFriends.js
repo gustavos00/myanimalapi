@@ -37,9 +37,8 @@ const User_1 = __importDefault(require("../../models/User"));
 const US = __importStar(require("../../schemas/userSchema"));
 const getAllFriends = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     let validatedData;
-    let friendsData;
+    let friendsData = [];
     let friendArray = [];
-    //TODO -> FIX ANY
     try {
         validatedData = yield US.getAllFriendsDataSchema.validateAsync(req.query);
         if (!validatedData) {
@@ -66,11 +65,12 @@ const getAllFriends = (req, res) => __awaiter(void 0, void 0, void 0, function* 
             ],
         });
         friendsData.forEach((element) => {
+            var _a, _b;
             let friendData;
-            if (element.fromWhoFk.idUser == validatedData.id) {
+            if (((_a = element.fromWhoFk) === null || _a === void 0 ? void 0 : _a.idUser.toString()) == validatedData.id) {
                 friendData = element.toWhomFk;
             }
-            if (element.toWhomFk.idUser == validatedData.id) {
+            if (((_b = element.toWhomFk) === null || _b === void 0 ? void 0 : _b.idUser.toString()) == validatedData.id) {
                 friendData = element.fromWhoFk;
             }
             delete element.toWhomFk;
