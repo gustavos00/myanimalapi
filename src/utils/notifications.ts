@@ -15,7 +15,7 @@ export const sendNotifications = async({
   data,
 }: sendNotificationsParams) => {
     if(!Expo.isExpoPushToken(expoToken)) {
-        return console.log('Error sending expo token')
+        return console.log('Its not a expo token')
     }
 
     const notificationMessage = [{

@@ -14,12 +14,12 @@ const expo_server_sdk_1 = require("expo-server-sdk");
 const expo = new expo_server_sdk_1.Expo();
 const sendNotifications = ({ expoToken, title, message, data, }) => __awaiter(void 0, void 0, void 0, function* () {
     if (!expo_server_sdk_1.Expo.isExpoPushToken(expoToken)) {
-        return console.log('Error sending expo token');
+        return console.log('Its not a expo token');
     }
     const notificationMessage = [{
             to: expoToken,
-            title: 'title',
-            body: 'message',
+            title,
+            body: message,
             data,
         }];
     const receipt = yield expo.sendPushNotificationsAsync(notificationMessage);
