@@ -11,7 +11,7 @@ const declineFriendsRequest = async (req: Request, res: Response) => {
   let validatedData;
 
   try {
-    validatedData = await US.acceptFriendsSchema.validateAsync(
+    validatedData = await US.declineFriendsSchema.validateAsync(
       req.query as unknown as DeclineFriendsProps
     );
 
@@ -39,7 +39,7 @@ const declineFriendsRequest = async (req: Request, res: Response) => {
     throw new Error(e as string);
   }
 
-  res.status(200).send({});
+  res.status(200).send({ status: true });
 };
 
 export default declineFriendsRequest;
