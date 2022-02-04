@@ -61,3 +61,7 @@ export const acceptFriendsSchema = Joi.object({
 export const declineFriendsSchema = Joi.object({
   id: Joi.string().required().min(1),
 });
+
+export const deleteFriendSchema = Joi.object({
+  id: Joi.string().required().min(1)
+})
