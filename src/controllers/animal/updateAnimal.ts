@@ -22,7 +22,6 @@ interface MulterRequest extends Request {
 const updateAnimal = async (req: Request, res: Response) => {
   const { location, key } = (req as MulterRequest).file;
   let validatedData;
-  let updateResponse;
 
   //Validate data
   try {
@@ -63,7 +62,7 @@ const updateAnimal = async (req: Request, res: Response) => {
 
   //Updating animal
   try {
-    updateResponse = await animal.update(
+      await animal.update(
       {
         ...validatedData,
         photoUrl: location,
@@ -82,7 +81,17 @@ const updateAnimal = async (req: Request, res: Response) => {
     throw new Error(e as string);
   }
 
-  res.status(200).send(updateResponse);
+  const tempObj = {
+    ...validatedData,
+    idAnimal: validatedData.id,
+    userIdUser: validatedData.idUser,
+    photoUrl: location,
+    photoName: key,
+  }
+
+  console.log(tempObj)
+
+  res.status(200).send(tempObj);
 };
 
 export default updateAnimal
