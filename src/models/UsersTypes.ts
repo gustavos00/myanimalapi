@@ -1,15 +1,15 @@
 import { Model, DataTypes } from 'sequelize'
 import { sequelize } from '../config/pg'
-import users from './User'
+import user from './User'
 
-export interface UsersTypesInstance extends Model {
+export interface UserTypesInstance extends Model {
   idUsertype: number
 
   type: string
 }
 
-const usersTypes = sequelize.define<UsersTypesInstance>(
-  'usersTypes',
+const userTypes = sequelize.define<UserTypesInstance>(
+  'userTypes',
   {
     idUsertype: {
       primaryKey: true,
@@ -24,13 +24,10 @@ const usersTypes = sequelize.define<UsersTypesInstance>(
     },
   },
   {
-    tableName: 'usersTypes',
+    tableName: 'userTypes',
     freezeTableName: true,
     timestamps: true,
   }
 )
 
-usersTypes.hasMany(users)
-users.belongsTo(usersTypes)
-
-export default usersTypes
+export default userTypes
