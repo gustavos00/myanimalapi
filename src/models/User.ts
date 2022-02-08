@@ -2,7 +2,9 @@ import { Model, DataTypes, Sequelize } from 'sequelize';
 import { sequelize } from '../config/pg';
 
 import animal from './Animal';
+import classification from './Classification';
 import friends from './Friends';
+import reports from './Reports';
 
 export interface UsersInstance extends Model {
   idUser: number;
@@ -63,10 +65,23 @@ const users = sequelize.define<UsersInstance>(
 users.hasMany(animal);
 animal.belongsTo(users);
 
+users.hasMany(animal, {foreignKey: 'veterinarianIdVeterinarian'});
+animal.belongsTo(users, {foreignKey: 'veterinarianIdVeterinarian'});
+
 users.hasMany(friends, { foreignKey: 'fromWho', as: 'fromWhoFk' });
 friends.belongsTo(users, { foreignKey: 'fromWho', as: 'fromWhoFk' });
 
 users.hasMany(friends, { foreignKey: 'toWhom', as: 'toWhomFk' });
 friends.belongsTo(users, { foreignKey: 'toWhom', as: 'toWhomFk' });
+
+users.hasMany(classification, { foreignKey: 'madedBy', as: 'madedByFk' });
+classification.belongsTo(users, { foreignKey: 'madedBy', as: 'madedByFk' });
+
+users.hasMany(classification, { foreignKey: 'toChange', as: 'toChangeFk' });
+classification.belongsTo(users, { foreignKey: 'toChange', as: 'toChangeFk' });
+
+users.hasMany(reports)
+reports.belongsTo(users)
+
 
 export default users;
