@@ -65,8 +65,8 @@ const users = sequelize.define<UsersInstance>(
 users.hasMany(animal);
 animal.belongsTo(users);
 
-users.hasMany(animal, {foreignKey: 'veterinarianIdVeterinarian'});
-animal.belongsTo(users, {foreignKey: 'veterinarianIdVeterinarian'});
+users.hasMany(animal, {foreignKey: 'veterinarianIdVeterinarian', as: 'veterinarianFk'});
+animal.belongsTo(users, {foreignKey: 'veterinarianIdVeterinarian', as: 'veterinarianFk'});
 
 users.hasMany(friends, { foreignKey: 'fromWho', as: 'fromWhoFk' });
 friends.belongsTo(users, { foreignKey: 'fromWho', as: 'fromWhoFk' });

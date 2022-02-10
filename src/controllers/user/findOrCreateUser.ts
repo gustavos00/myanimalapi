@@ -121,6 +121,7 @@ const FindOrCreateUser = async (req: Request, res: Response) => {
         where: {
           userIdUser: userData.data.idUser,
         },
+        include: [{ model: user, as: 'veterinarianFk' }],
       });
 
       response.forEach((item) => {
@@ -177,7 +178,7 @@ const FindOrCreateUser = async (req: Request, res: Response) => {
       }
     }
   }
-  
+
   const userCompleteData = {
     ...validatedData,
     id: userData.data.idUser,
