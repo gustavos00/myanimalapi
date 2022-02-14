@@ -57,7 +57,7 @@ const UpdateUser = async (req: Request, res: Response) => {
 
     await users.update(
       { ...validatedDataWithoutEmail, photoName: key, photoLocation: location },
-      { where: { email: validatedData.email } }
+      { where: { email: validatedData.email, isVeterinarian: validatedData.isVeterinarian} }
     );
 
     const addressObject = {
