@@ -89,8 +89,6 @@ const updateAnimal = async (req: Request, res: Response) => {
     photoName: key,
   }
 
-  console.log(tempObj)
-
   res.status(200).send(tempObj);
 };
 
