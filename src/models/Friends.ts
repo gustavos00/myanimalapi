@@ -5,12 +5,11 @@ import { UsersInstance } from './User';
 export interface FriendsInstance extends Model {
   idFriends: number;
   status: string;
-  fromWhoFk?: UsersInstance;
-  toWhomFk?: UsersInstance;
-  fromWho: number;
-  toWhom: number;
+  userFriendsIdFromWhoFk?: UsersInstance;
+  userFriendsIdToWhoFk?: UsersInstance;
+  userFriendsIdFromWho: number;
+  userFriendsIdToWho: number;
 }
-
 
 const friends = sequelize.define<FriendsInstance>(
   'friends',

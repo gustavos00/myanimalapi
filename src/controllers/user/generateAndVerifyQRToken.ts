@@ -98,12 +98,12 @@ export const verifyToken = async (req: Request, res: Response) => {
   try {
     await friends.findOrCreate({
       where: {
-        toWhom: userData?.idUser,
-        fromWho: validatedData.fromWho,
+        userFriendsIdToWho: userData?.idUser,
+        userFriendsIdFromWho: validatedData.fromWho,
       },
       defaults: {
-        ToWhom: userData?.idUser,
-        FromWho: validatedData.fromWho,
+        userFriendsIdToWho: userData?.idUser,
+        userFriendsIdFromWho: validatedData.fromWho,
       },
     });
 
