@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const sequelize_1 = require("sequelize");
 const pg_1 = require("../config/pg");
 const Animal_1 = __importDefault(require("./Animal"));
+const Classification_1 = __importDefault(require("./Classification"));
 const Friends_1 = __importDefault(require("./Friends"));
 const users = pg_1.sequelize.define('users', {
     idUser: {
@@ -23,7 +24,6 @@ const users = pg_1.sequelize.define('users', {
         type: sequelize_1.DataTypes.STRING(60),
     },
     email: {
-        unique: true,
         allowNull: false,
         type: sequelize_1.DataTypes.STRING(255),
     },
@@ -36,6 +36,7 @@ const users = pg_1.sequelize.define('users', {
     photoUrl: sequelize_1.DataTypes.STRING,
     photoName: sequelize_1.DataTypes.STRING,
     status: sequelize_1.DataTypes.STRING(100),
+    isVeterinarian: sequelize_1.DataTypes.BOOLEAN,
 }, {
     tableName: 'users',
     freezeTableName: true,
@@ -43,8 +44,44 @@ const users = pg_1.sequelize.define('users', {
 });
 users.hasMany(Animal_1.default);
 Animal_1.default.belongsTo(users);
-users.hasMany(Friends_1.default, { foreignKey: 'fromWho', as: 'fromWhoFk' });
-Friends_1.default.belongsTo(users, { foreignKey: 'fromWho', as: 'fromWhoFk' });
-users.hasMany(Friends_1.default, { foreignKey: 'toWhom', as: 'toWhomFk' });
-Friends_1.default.belongsTo(users, { foreignKey: 'toWhom', as: 'toWhomFk' });
+users.hasMany(Animal_1.default, {
+    foreignKey: 'userIdVeterinarian',
+    as: 'userVeterinarianFk',
+});
+Animal_1.default.belongsTo(users, {
+    foreignKey: 'userIdVeterinarian',
+    as: 'userVeterinarianFk',
+});
+users.hasMany(Friends_1.default, {
+    foreignKey: 'userFriendsIdFromWho',
+    as: 'userFriendsIdFromWhoFk',
+});
+Friends_1.default.belongsTo(users, {
+    foreignKey: 'userFriendsIdFromWho',
+    as: 'userFriendsIdFromWhoFk',
+});
+users.hasMany(Friends_1.default, {
+    foreignKey: 'userFriendsIdToWho',
+    as: 'userFriendsIdtoWhoFk',
+});
+Friends_1.default.belongsTo(users, {
+    foreignKey: 'userFriendsIdToWho',
+    as: 'userFriendsIdtoWhoFk',
+});
+users.hasMany(Classification_1.default, {
+    foreignKey: 'userClassificationFromUser',
+    as: 'userClassificationFromUserFk',
+});
+Classification_1.default.belongsTo(users, {
+    foreignKey: 'userClassificationFromUser',
+    as: 'userClassificationFromUserFk',
+});
+users.hasMany(Classification_1.default, {
+    foreignKey: 'userClassificationToUser',
+    as: 'userClassificationToUserFk',
+});
+Classification_1.default.belongsTo(users, {
+    foreignKey: 'userClassificationToUser',
+    as: 'userClassificationToUserFk',
+});
 exports.default = users;

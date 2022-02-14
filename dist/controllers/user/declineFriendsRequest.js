@@ -36,7 +36,7 @@ const US = __importStar(require("../../schemas/userSchema"));
 const declineFriendsRequest = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     let validatedData;
     try {
-        validatedData = yield US.acceptFriendsSchema.validateAsync(req.query);
+        validatedData = yield US.declineFriendsSchema.validateAsync(req.query);
         if (!validatedData) {
             res.status(400).send({ message: 'Invalid inputs' });
             return;
@@ -59,6 +59,6 @@ const declineFriendsRequest = (req, res) => __awaiter(void 0, void 0, void 0, fu
         res.status(500).send({ message: 'Something went wrong' });
         throw new Error(e);
     }
-    res.status(200).send({});
+    res.status(200).send({ status: true });
 });
 exports.default = declineFriendsRequest;

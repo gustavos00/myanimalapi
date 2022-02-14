@@ -1,12 +1,13 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.acceptFriendsSchema = exports.storeExpoTokenSchema = exports.getAllFriendsDataSchema = exports.verifyAccessTokenSchema = exports.verifyTokenSchema = exports.generateTokenSchema = exports.statusSchema = exports.createAddressSchema = exports.UpdateUserSchema = exports.findOrCreateUserSchema = void 0;
+exports.deleteFriendSchema = exports.declineFriendsSchema = exports.acceptFriendsSchema = exports.storeExpoTokenSchema = exports.getAllFriendsDataSchema = exports.verifyAccessTokenSchema = exports.verifyTokenSchema = exports.generateTokenSchema = exports.statusSchema = exports.createAddressSchema = exports.UpdateUserSchema = exports.LoginUserSchema = void 0;
 const Joi = require('joi');
-exports.findOrCreateUserSchema = Joi.object({
+exports.LoginUserSchema = Joi.object({
     givenName: Joi.string().required().min(1).max(60),
     familyName: Joi.string().required().min(1).max(60),
     email: Joi.string().required().min(1).email(),
     salt: Joi.string().required().min(1),
+    isVeterinarian: Joi.boolean().required(),
 });
 exports.UpdateUserSchema = Joi.object({
     streetName: Joi.string().required(),
@@ -18,12 +19,14 @@ exports.UpdateUserSchema = Joi.object({
     familyName: Joi.string().required(),
     phoneNumber: Joi.string().empty('').optional(null),
     email: Joi.string().required().email(),
+    isVeterinarian: Joi.boolean().required(),
 });
 exports.createAddressSchema = Joi.object({
     streetName: Joi.string().required().min(1).max(100),
     postalCode: Joi.string().required().min(1).max(12),
     doorNumber: Joi.string().required().min(1).max(10),
     email: Joi.string().email().required(),
+    isVeterinarian: Joi.boolean().required(),
 });
 exports.statusSchema = Joi.object({
     status: Joi.string().required().min(1).max(100),
@@ -49,4 +52,10 @@ exports.storeExpoTokenSchema = Joi.object({
 });
 exports.acceptFriendsSchema = Joi.object({
     id: Joi.string().required().min(1),
+});
+exports.declineFriendsSchema = Joi.object({
+    id: Joi.string().required().min(1),
+});
+exports.deleteFriendSchema = Joi.object({
+    id: Joi.string().required().min(1)
 });

@@ -57,24 +57,27 @@ const getAllFriends = (req, res) => __awaiter(void 0, void 0, void 0, function* 
             raw: true,
             where: {
                 status: 'Accepted',
-                [sequelize_1.Op.or]: [{ fromWho: validatedData.id }, { toWhom: validatedData.id }],
+                [sequelize_1.Op.or]: [
+                    { userFriendsIdFromWho: validatedData.id },
+                    { userFriendsIdToWho: validatedData.id },
+                ],
             },
             include: [
-                { model: User_1.default, as: 'fromWhoFk' },
-                { model: User_1.default, as: 'toWhomFk' },
+                { model: User_1.default, as: 'userFriendsIdFromWhoFk' },
+                { model: User_1.default, as: 'userFriendsIdToWhoFk' },
             ],
         });
         friendsData.forEach((element) => {
             var _a, _b;
             let friendData;
-            if (((_a = element.fromWhoFk) === null || _a === void 0 ? void 0 : _a.idUser.toString()) == validatedData.id) {
-                friendData = element.toWhomFk;
+            if (((_a = element.userFriendsIdFromWhoFk) === null || _a === void 0 ? void 0 : _a.idUser.toString()) == validatedData.id) {
+                friendData = element.userFriendsIdToWhoFk;
             }
-            if (((_b = element.toWhomFk) === null || _b === void 0 ? void 0 : _b.idUser.toString()) == validatedData.id) {
-                friendData = element.fromWhoFk;
+            if (((_b = element.userFriendsIdToWhoFk) === null || _b === void 0 ? void 0 : _b.idUser.toString()) == validatedData.id) {
+                friendData = element.userFriendsIdFromWhoFk;
             }
-            delete element.toWhomFk;
-            delete element.fromWhoFk;
+            delete element.userFriendsIdToWhoFk;
+            delete element.userFriendsIdFromWhoFk;
             const friendObj = Object.assign(Object.assign({}, element), { friendData });
             friendArray.push(friendObj);
         });

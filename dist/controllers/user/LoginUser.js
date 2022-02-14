@@ -37,9 +37,10 @@ const Locality_1 = __importDefault(require("../../models/Locality"));
 const Animal_1 = __importDefault(require("../../models/Animal"));
 const User_1 = __importDefault(require("../../models/User"));
 const Address_1 = __importDefault(require("../../models/Address"));
+const User_2 = __importDefault(require("../../models/User"));
+const { Op } = require('sequelize');
 const JWT = require('jsonwebtoken');
-const FindOrCreateUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
+const LoginUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const userAnimalData = [];
     const { location, key } = req.file;
     let returnStatus;
@@ -51,7 +52,7 @@ const FindOrCreateUser = (req, res) => __awaiter(void 0, void 0, void 0, functio
     let userData;
     //Validate data
     try {
-        validatedData = yield US.findOrCreateUserSchema.validateAsync(req.body);
+        validatedData = yield US.LoginUserSchema.validateAsync(req.body);
         if (!validatedData) {
             res.status(400).send({ message: 'Invalid inputs' });
             return;
@@ -64,7 +65,10 @@ const FindOrCreateUser = (req, res) => __awaiter(void 0, void 0, void 0, functio
     }
     //Generate user token
     try {
-        token = JWT.sign(validatedData.email, process.env.JWT_SECRET);
+        token = JWT.sign({
+            email: validatedData.email,
+            isVeterinarian: validatedData.isVeterinarian,
+        }, process.env.JWT_SECRET);
     }
     catch (e) {
         console.log('Error generating user token on create user controller');
@@ -73,11 +77,12 @@ const FindOrCreateUser = (req, res) => __awaiter(void 0, void 0, void 0, functio
     }
     //Find or create user
     try {
-        const response = yield User_1.default.findOrCreate({
+        const response = yield User_2.default.findOrCreate({
             where: {
-                email: (_a = validatedData.email) !== null && _a !== void 0 ? _a : '',
+                email: validatedData.email,
+                isVeterinarian: false,
             },
-            defaults: Object.assign(Object.assign({}, validatedData), { photoUrl: location, photoName: key, token }),
+            defaults: Object.assign(Object.assign({}, validatedData), { isVeterinarian: false, photoUrl: location, photoName: key, token }),
         });
         const [data, created] = response;
         userData = {
@@ -88,9 +93,8 @@ const FindOrCreateUser = (req, res) => __awaiter(void 0, void 0, void 0, functio
         returnToken = created ? token : data.token;
     }
     catch (e) {
-        console.log('Error finding or creating user on create user controller');
-        res.status(500).send({ message: 'Something went wrong' });
-        throw new Error(e);
+        console.log(e);
+        return;
     }
     //Check if wasnt create
     if (!userData.created) {
@@ -100,6 +104,7 @@ const FindOrCreateUser = (req, res) => __awaiter(void 0, void 0, void 0, functio
                 where: {
                     userIdUser: userData.data.idUser,
                 },
+                include: [{ model: User_1.default, as: 'userVeterinarianFk' }],
             });
             response.forEach((item) => {
                 userAnimalData.push(item);
@@ -158,4 +163,4 @@ const FindOrCreateUser = (req, res) => __awaiter(void 0, void 0, void 0, functio
     }
     res.status(returnStatus).send(Object.assign(Object.assign({}, userCompleteData), { accessToken }));
 });
-exports.default = FindOrCreateUser;
+exports.default = LoginUser;

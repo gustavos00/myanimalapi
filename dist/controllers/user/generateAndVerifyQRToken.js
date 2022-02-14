@@ -105,12 +105,12 @@ const verifyToken = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     try {
         yield Friends_1.default.findOrCreate({
             where: {
-                toWhom: userData === null || userData === void 0 ? void 0 : userData.idUser,
-                fromWho: validatedData.fromWho,
+                userFriendsIdToWho: userData === null || userData === void 0 ? void 0 : userData.idUser,
+                userFriendsIdFromWho: validatedData.fromWho,
             },
             defaults: {
-                ToWhom: userData === null || userData === void 0 ? void 0 : userData.idUser,
-                FromWho: validatedData.fromWho,
+                userFriendsIdToWho: userData === null || userData === void 0 ? void 0 : userData.idUser,
+                userFriendsIdFromWho: validatedData.fromWho,
             },
         });
         res.status(200).send({ message: true });

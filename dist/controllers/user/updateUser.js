@@ -69,7 +69,7 @@ const UpdateUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
             object: validatedData,
             key: 'email',
         });
-        yield User_1.default.update(Object.assign(Object.assign({}, validatedDataWithoutEmail), { photoName: key, photoLocation: location }), { where: { email: validatedData.email } });
+        yield User_1.default.update(Object.assign(Object.assign({}, validatedDataWithoutEmail), { photoName: key, photoLocation: location }), { where: { email: validatedData.email, isVeterinarian: validatedData.isVeterinarian } });
         const addressObject = {
             doorNumber: validatedData.doorNumber,
             postalCode: validatedData.postalCode,

@@ -27,10 +27,9 @@ const storageTypes = {
                 if (err)
                     cb(err);
                 const { email, chipnumber } = req.body;
-                const key = email ? email : hash.toString('hex');
                 const filename = chipnumber
-                    ? `${key}-${file.originalname}-${chipnumber}`
-                    : `${key}-${file.originalname}`;
+                    ? `${email}-${chipnumber}`
+                    : `${email}-${hash.toString('hex')}`;
                 return cb(null, filename);
             });
         },

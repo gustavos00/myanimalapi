@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const multer = require('multer');
 const multerConfig = require('../config/multer');
-const findOrCreateUser_1 = __importDefault(require("../controllers/user/findOrCreateUser"));
+const LoginUser_1 = __importDefault(require("../controllers/user/LoginUser"));
 const getAllFriendsRequests_1 = __importDefault(require("../controllers/user/getAllFriendsRequests"));
 const storeExpoToken_1 = __importDefault(require("../controllers/user/storeExpoToken"));
 const updateUser_1 = __importDefault(require("../controllers/user/updateUser"));
@@ -17,7 +17,7 @@ const getAllFriends_1 = __importDefault(require("../controllers/user/getAllFrien
 const declineFriendsRequest_1 = __importDefault(require("../controllers/user/declineFriendsRequest"));
 const generateAndVerifyQRToken_1 = require("./../controllers/user/generateAndVerifyQRToken");
 const router = (0, express_1.Router)();
-router.post('/create', multer(multerConfig).single('userPhoto'), findOrCreateUser_1.default);
+router.post('/create', multer(multerConfig).single('userPhoto'), LoginUser_1.default);
 router.post('/update', multer(multerConfig).single('userPhoto'), updateUser_1.default);
 router.post('/createAddress', createAddress_1.default);
 router.post('/expoToken', storeExpoToken_1.default);
