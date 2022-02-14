@@ -97,6 +97,8 @@ const LoginUser = async (req: Request, res: Response) => {
   //Find or create user
   try {
     const response = await users.findOrCreate({
+      nest: true,
+      raw: true,
       where: {
         email: validatedData.email,
         isVeterinarian: false,
@@ -189,15 +191,14 @@ const LoginUser = async (req: Request, res: Response) => {
   }
 
   const userCompleteData = {
-    ...validatedData,
+    ...userData.data,
     id: userData.data.idUser,
     token: returnToken,
     accessToken,
-    photoUrl: location,
-    photoKey: key,
     animalData: userAnimalData,
     userAddress: userAddressTempObj,
   };
+
 
   //Generate access user token
   try {

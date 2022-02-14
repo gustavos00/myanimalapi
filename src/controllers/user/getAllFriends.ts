@@ -41,8 +41,8 @@ const getAllFriends = async (req: Request, res: Response) => {
         ],
       },
       include: [
+        { model: users, as: 'userFriendsIdtoWhoFk' },
         { model: users, as: 'userFriendsIdFromWhoFk' },
-        { model: users, as: 'userFriendsIdToWhoFk' },
       ],
     });
 

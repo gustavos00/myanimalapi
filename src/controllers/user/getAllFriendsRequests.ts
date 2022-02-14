@@ -40,8 +40,8 @@ const getAllFriendsRequest = async (req: Request, res: Response) => {
         [Op.or]: [{ userFriendsIdFromWho: validatedData.id }, { userFriendsIdToWho: validatedData.id }],
       },
       include: [
+        { model: users, as: 'userFriendsIdtoWhoFk' },
         { model: users, as: 'userFriendsIdFromWhoFk' },
-        { model: users, as: 'userFriendsIdToWhoFk' },
       ],
     });
 
