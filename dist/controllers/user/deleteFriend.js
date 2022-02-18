@@ -31,59 +31,37 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const sequelize_1 = require("sequelize");
-const Friends_1 = __importDefault(require("../../models/Friends"));
-const User_1 = __importDefault(require("../../models/User"));
+exports.deleteFriend = void 0;
 const US = __importStar(require("../../schemas/userSchema"));
-const getAllFriendsRequest = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const Friends_1 = __importDefault(require("../../models/Friends"));
+const deleteFriend = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     let validatedData;
-    let friendsRequestData = [];
-    let friendArray = [];
+    //Validate data
     try {
-        validatedData = yield US.getAllFriendsDataSchema.validateAsync(req.query);
+        validatedData = yield US.deleteFriendSchema.validateAsync(req.body);
         if (!validatedData) {
             res.status(400).send({ message: 'Invalid inputs' });
             return;
         }
     }
     catch (e) {
-        console.log('Error validating user data on get all friends requests controller');
+        console.log('Error validating data on create user address controller');
         res.status(500).send({ message: 'Something went wrong' });
         throw new Error(e);
     }
     try {
-        friendsRequestData = yield Friends_1.default.findAll({
-            nest: true,
-            raw: true,
+        yield Friends_1.default.destroy({
             where: {
-                status: 'Pending',
-                [sequelize_1.Op.or]: [{ userFriendsIdFromWho: validatedData.id }, { userFriendsIdToWho: validatedData.id }],
+                idfriends: validatedData.id,
             },
-            include: [
-                { model: User_1.default, as: 'userFriendsIdFromWhoFk' },
-                { model: User_1.default, as: 'userFriendsIdToWhoFk' },
-            ],
-        });
-        friendsRequestData.forEach((element) => {
-            var _a, _b;
-            let friendData;
-            if (((_a = element.userFriendsIdFromWhoFk) === null || _a === void 0 ? void 0 : _a.idUser.toString()) == validatedData.id) {
-                friendData = element.userFriendsIdToWho;
-            }
-            if (((_b = element.userFriendsIdToWhoFk) === null || _b === void 0 ? void 0 : _b.idUser.toString()) == validatedData.id) {
-                friendData = element.userFriendsIdFromWhoFk;
-            }
-            delete element.userFriendsIdToWhoFk;
-            delete element.userFriendsIdFromWhoFk;
-            const friendObj = Object.assign(Object.assign({}, element), { friendData });
-            friendArray.push(friendObj);
         });
     }
     catch (e) {
-        console.log('Error finding all friends request on get all friends requests controller');
+        console.log('Error creating user address on user controller');
         res.status(500).send({ message: 'Something went wrong' });
         throw new Error(e);
     }
-    res.status(200).send(friendArray);
+    res.status(200).send({ status: true });
 });
-exports.default = getAllFriendsRequest;
+exports.deleteFriend = deleteFriend;
+exports.default = exports.deleteFriend;

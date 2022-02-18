@@ -7,10 +7,12 @@ import locality from '../../models/Locality';
 import animal from '../../models/Animal';
 import user from '../../models/User';
 import address from '../../models/Address';
+import users from '../../models/User';
+const { Op } = require('sequelize');
 
 const JWT = require('jsonwebtoken');
 
-interface FindOrCreateUserProps {
+interface LoginUserProps {
   givenName: string;
   familyName: string;
   email: string;
@@ -49,7 +51,7 @@ interface MulterRequest extends Request {
   file: any;
 }
 
-const FindOrCreateUser = async (req: Request, res: Response) => {
+const LoginUser = async (req: Request, res: Response) => {
   const userAnimalData = [] as Array<AnimalDataProps>;
   const { location, key } = (req as MulterRequest).file;
 
@@ -63,8 +65,8 @@ const FindOrCreateUser = async (req: Request, res: Response) => {
 
   //Validate data
   try {
-    validatedData = await US.findOrCreateUserSchema.validateAsync(
-      req.body as FindOrCreateUserProps
+    validatedData = await US.LoginUserSchema.validateAsync(
+      req.body as LoginUserProps
     );
 
     if (!validatedData) {
@@ -79,7 +81,13 @@ const FindOrCreateUser = async (req: Request, res: Response) => {
 
   //Generate user token
   try {
-    token = JWT.sign(validatedData.email, process.env.JWT_SECRET as string);
+    token = JWT.sign(
+      {
+        email: validatedData.email,
+        isVeterinarian: validatedData.isVeterinarian,
+      },
+      process.env.JWT_SECRET as string
+    );
   } catch (e: any) {
     console.log('Error generating user token on create user controller');
     res.status(500).send({ message: 'Something went wrong' });
@@ -88,12 +96,16 @@ const FindOrCreateUser = async (req: Request, res: Response) => {
 
   //Find or create user
   try {
-    const response = await user.findOrCreate({
+    const response = await users.findOrCreate({
+      nest: true,
+      raw: true,
       where: {
-        email: validatedData.email ?? '',
+        email: validatedData.email,
+        isVeterinarian: false,
       },
       defaults: {
         ...validatedData,
+        isVeterinarian: false,
         photoUrl: location,
         photoName: key,
         token,
@@ -109,9 +121,8 @@ const FindOrCreateUser = async (req: Request, res: Response) => {
     returnStatus = created ? 201 : 200;
     returnToken = created ? token : data.token;
   } catch (e: any) {
-    console.log('Error finding or creating user on create user controller');
-    res.status(500).send({ message: 'Something went wrong' });
-    throw new Error(e);
+    console.log(e);
+    return;
   }
   //Check if wasnt create
   if (!userData.created) {
@@ -121,7 +132,7 @@ const FindOrCreateUser = async (req: Request, res: Response) => {
         where: {
           userIdUser: userData.data.idUser,
         },
-        include: [{ model: user, as: 'veterinarianFk' }],
+        include: [{ model: user, as: 'userVeterinarianFk' }],
       });
 
       response.forEach((item) => {
@@ -180,15 +191,14 @@ const FindOrCreateUser = async (req: Request, res: Response) => {
   }
 
   const userCompleteData = {
-    ...validatedData,
+    ...userData.data,
     id: userData.data.idUser,
     token: returnToken,
     accessToken,
-    photoUrl: location,
-    photoKey: key,
     animalData: userAnimalData,
     userAddress: userAddressTempObj,
   };
+
 
   //Generate access user token
   try {
@@ -202,4 +212,4 @@ const FindOrCreateUser = async (req: Request, res: Response) => {
   res.status(returnStatus).send({ ...userCompleteData, accessToken });
 };
 
-export default FindOrCreateUser;
+export default LoginUser;

@@ -60,7 +60,7 @@ const createAddress = (req, res) => __awaiter(void 0, void 0, void 0, function* 
         throw new Error(e);
     }
     try {
-        yield User_1.default.update({ addressIdAddress: addressResponse.idAddress }, { where: { email: validatedData.email } });
+        yield User_1.default.update({ addressIdAddress: addressResponse.idAddress }, { where: { email: validatedData.email, isVeterinarian: validatedData.isVeterinarian } });
     }
     catch (e) {
         console.log('Error updating user address fk on user controller');

@@ -63,9 +63,9 @@ const acceptFriendRequest = async (req: Request, res: Response) => {
   }
 
   const receipt = await sendNotifications({
-    expoToken:   friendsData?.fromWhoFk?.expoToken,
+    expoToken:   friendsData?.userFriendsIdFromWhoFk?.expoToken,
     title: 'Friend Request',
-    message: `Hello! ${friendsData?.toWhomFk?.givenName} accept be your friend!`,
+    message: `Hello! ${friendsData?.userFriendsIdToWhoFk?.givenName} accept be your friend!`,
     data: { do: 'openScreen', screenName: 'friendsRequests'}
   });
 

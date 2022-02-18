@@ -45,7 +45,7 @@ export const createAddress = async (req: Request, res: Response) => {
   try {
     await user.update(
       { addressIdAddress: addressResponse.idAddress },
-      { where: { email: validatedData.email } }
+      { where: { email: validatedData.email, isVeterinarian: validatedData.isVeterinarian } }
     );
   } catch (e) {
     console.log('Error updating user address fk on user controller');

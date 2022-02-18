@@ -33,6 +33,7 @@ const UpdateUser = async (req: Request, res: Response) => {
   const { location, key } = (req as MulterRequest).file;
   let validatedData;
 
+
   //Validate data
   try {
     validatedData = await US.UpdateUserSchema.validateAsync(
@@ -56,8 +57,8 @@ const UpdateUser = async (req: Request, res: Response) => {
     });
 
     await users.update(
-      { ...validatedDataWithoutEmail, photoName: key, photoLocation: location },
-      { where: { email: validatedData.email } }
+      { ...validatedDataWithoutEmail, photoName: key, photoUrl: location },
+      { where: { idUser: Number(validatedData.id)} }
     );
 
     const addressObject = {

@@ -1,13 +1,15 @@
 const Joi = require('joi');
 
-export const findOrCreateUserSchema = Joi.object({
+export const LoginUserSchema = Joi.object({
   givenName: Joi.string().required().min(1).max(60),
   familyName: Joi.string().required().min(1).max(60),
   email: Joi.string().required().min(1).email(),
   salt: Joi.string().required().min(1),
+  isVeterinarian: Joi.boolean().required(),
 });
 
 export const UpdateUserSchema = Joi.object({
+  id: Joi.string().required().min(1),
   streetName: Joi.string().required(),
   doorNumber: Joi.string().required(),
   postalCode: Joi.string().required(),
@@ -16,7 +18,6 @@ export const UpdateUserSchema = Joi.object({
   givenName: Joi.string().required(),
   familyName: Joi.string().required(),
   phoneNumber: Joi.string().empty('').optional(null),
-  email: Joi.string().required().email(),
 });
 
 export const createAddressSchema = Joi.object({
@@ -24,6 +25,7 @@ export const createAddressSchema = Joi.object({
   postalCode: Joi.string().required().min(1).max(12),
   doorNumber: Joi.string().required().min(1).max(10),
   email: Joi.string().email().required(),
+  isVeterinarian: Joi.boolean().required(),
 });
 
 export const statusSchema = Joi.object({

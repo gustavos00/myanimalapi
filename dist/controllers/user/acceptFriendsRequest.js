@@ -77,9 +77,9 @@ const acceptFriendRequest = (req, res) => __awaiter(void 0, void 0, void 0, func
         throw new Error(e);
     }
     const receipt = yield (0, notifications_1.sendNotifications)({
-        expoToken: (_a = friendsData === null || friendsData === void 0 ? void 0 : friendsData.fromWhoFk) === null || _a === void 0 ? void 0 : _a.expoToken,
+        expoToken: (_a = friendsData === null || friendsData === void 0 ? void 0 : friendsData.userFriendsIdFromWhoFk) === null || _a === void 0 ? void 0 : _a.expoToken,
         title: 'Friend Request',
-        message: `Hello! ${(_b = friendsData === null || friendsData === void 0 ? void 0 : friendsData.toWhomFk) === null || _b === void 0 ? void 0 : _b.givenName} accept be your friend!`,
+        message: `Hello! ${(_b = friendsData === null || friendsData === void 0 ? void 0 : friendsData.userFriendsIdToWhoFk) === null || _b === void 0 ? void 0 : _b.givenName} accept be your friend!`,
         data: { do: 'openScreen', screenName: 'friendsRequests' }
     });
     res.status(200).send({ fingerprint });

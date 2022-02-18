@@ -4,7 +4,6 @@ import { sequelize } from '../config/pg';
 import animal from './Animal';
 import classification from './Classification';
 import friends from './Friends';
-import reports from './Reports';
 
 export interface UsersInstance extends Model {
   idUser: number;
@@ -18,6 +17,7 @@ export interface UsersInstance extends Model {
   token: string;
   expoToken?: string;
   status: string;
+  isVeterinarian: boolean,
 
   addressIdAddress: number;
 }
@@ -41,7 +41,6 @@ const users = sequelize.define<UsersInstance>(
       type: DataTypes.STRING(60),
     },
     email: {
-      unique: true,
       allowNull: false,
       type: DataTypes.STRING(255),
     },
@@ -54,6 +53,7 @@ const users = sequelize.define<UsersInstance>(
     photoUrl: DataTypes.STRING,
     photoName: DataTypes.STRING,
     status: DataTypes.STRING(100),
+    isVeterinarian: DataTypes.BOOLEAN,
   },
   {
     tableName: 'users',
@@ -65,23 +65,49 @@ const users = sequelize.define<UsersInstance>(
 users.hasMany(animal);
 animal.belongsTo(users);
 
-users.hasMany(animal, {foreignKey: 'veterinarianIdVeterinarian', as: 'veterinarianFk'});
-animal.belongsTo(users, {foreignKey: 'veterinarianIdVeterinarian', as: 'veterinarianFk'});
+users.hasMany(animal, {
+  foreignKey: 'userIdVeterinarian',
+  as: 'userVeterinarianFk',
+});
+animal.belongsTo(users, {
+  foreignKey: 'userIdVeterinarian',
+  as: 'userVeterinarianFk',
+});
 
-users.hasMany(friends, { foreignKey: 'fromWho', as: 'fromWhoFk' });
-friends.belongsTo(users, { foreignKey: 'fromWho', as: 'fromWhoFk' });
+users.hasMany(friends, {
+  foreignKey: 'userFriendsIdFromWho',
+  as: 'userFriendsIdFromWhoFk',
+});
+friends.belongsTo(users, {
+  foreignKey: 'userFriendsIdFromWho',
+  as: 'userFriendsIdFromWhoFk',
+});
 
-users.hasMany(friends, { foreignKey: 'toWhom', as: 'toWhomFk' });
-friends.belongsTo(users, { foreignKey: 'toWhom', as: 'toWhomFk' });
+users.hasMany(friends, {
+  foreignKey: 'userFriendsIdToWho',
+  as: 'userFriendsIdtoWhoFk',
+});
+friends.belongsTo(users, {
+  foreignKey: 'userFriendsIdToWho',
+  as: 'userFriendsIdtoWhoFk',
+});
 
-users.hasMany(classification, { foreignKey: 'madedBy', as: 'madedByFk' });
-classification.belongsTo(users, { foreignKey: 'madedBy', as: 'madedByFk' });
+users.hasMany(classification, {
+  foreignKey: 'userClassificationFromUser',
+  as: 'userClassificationFromUserFk',
+});
+classification.belongsTo(users, {
+  foreignKey: 'userClassificationFromUser',
+  as: 'userClassificationFromUserFk',
+});
 
-users.hasMany(classification, { foreignKey: 'toChange', as: 'toChangeFk' });
-classification.belongsTo(users, { foreignKey: 'toChange', as: 'toChangeFk' });
-
-users.hasMany(reports)
-reports.belongsTo(users)
-
+users.hasMany(classification, {
+  foreignKey: 'userClassificationToUser',
+  as: 'userClassificationToUserFk',
+});
+classification.belongsTo(users, {
+  foreignKey: 'userClassificationToUser',
+  as: 'userClassificationToUserFk',
+});
 
 export default users;

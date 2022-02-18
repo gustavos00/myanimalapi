@@ -2,7 +2,7 @@ import { Router } from 'express';
 const multer = require('multer');
 const multerConfig = require('../config/multer');
 
-import findOrCreate from '../controllers/user/findOrCreateUser';
+import LoginUser from '../controllers/user/LoginUser';
 import getAllFriendsRequest from '../controllers/user/getAllFriendsRequests';
 import storeExpoToken from '../controllers/user/storeExpoToken';
 import UpdateUser from '../controllers/user/updateUser';
@@ -18,7 +18,7 @@ import {
 } from './../controllers/user/generateAndVerifyQRToken';
 
 const router = Router();
-router.post('/create', multer(multerConfig).single('userPhoto'), findOrCreate);
+router.post('/create', multer(multerConfig).single('userPhoto'), LoginUser);
 router.post('/update', multer(multerConfig).single('userPhoto'), UpdateUser);
 router.post('/createAddress', createAddress);
 router.post('/expoToken', storeExpoToken);

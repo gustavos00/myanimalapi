@@ -37,27 +37,27 @@ const getAllFriendsRequest = async (req: Request, res: Response) => {
       raw: true,
       where: {
         status: 'Pending',
-        [Op.or]: [{ fromWho: validatedData.id }, { toWhom: validatedData.id }],
+        [Op.or]: [{ userFriendsIdFromWho: validatedData.id }, { userFriendsIdToWho: validatedData.id }],
       },
       include: [
-        { model: users, as: 'fromWhoFk' },
-        { model: users, as: 'toWhomFk' },
+        { model: users, as: 'userFriendsIdtoWhoFk' },
+        { model: users, as: 'userFriendsIdFromWhoFk' },
       ],
     });
 
     friendsRequestData.forEach((element: FriendsInstance) => {
       let friendData;
 
-      if (element.fromWhoFk?.idUser.toString() == validatedData.id) {
-        friendData = element.toWhomFk;
+      if (element.userFriendsIdFromWhoFk?.idUser.toString() == validatedData.id) {
+        friendData = element.userFriendsIdToWho;
       }
 
-      if (element.toWhomFk?.idUser.toString() == validatedData.id) {
-        friendData = element.fromWhoFk;
+      if (element.userFriendsIdToWhoFk?.idUser.toString() == validatedData.id) {
+        friendData = element.userFriendsIdFromWhoFk;
       }
 
-      delete element.toWhomFk;
-      delete element.fromWhoFk;
+      delete element.userFriendsIdToWhoFk;
+      delete element.userFriendsIdFromWhoFk;
 
       const friendObj = {
         ...element,

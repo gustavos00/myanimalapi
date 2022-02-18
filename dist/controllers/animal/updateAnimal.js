@@ -36,7 +36,6 @@ const Animal_1 = __importDefault(require("../../models/Animal"));
 const updateAnimal = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { location, key } = req.file;
     let validatedData;
-    let updateResponse;
     //Validate data
     try {
         validatedData = yield AS.updateAnimalSchema.validateAsync(req.body);
@@ -68,7 +67,7 @@ const updateAnimal = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     }
     //Updating animal
     try {
-        updateResponse = yield Animal_1.default.update(Object.assign(Object.assign({}, validatedData), { photoUrl: location, photoName: key }), {
+        yield Animal_1.default.update(Object.assign(Object.assign({}, validatedData), { photoUrl: location, photoName: key }), {
             where: {
                 idAnimal: validatedData.id,
             },
@@ -79,6 +78,8 @@ const updateAnimal = (req, res) => __awaiter(void 0, void 0, void 0, function* (
         res.status(500).send({ message: 'Something went wrong' });
         throw new Error(e);
     }
-    res.status(200).send(updateResponse);
+    const tempObj = Object.assign(Object.assign({}, validatedData), { idAnimal: validatedData.id, userIdUser: validatedData.idUser, photoUrl: location, photoName: key });
+    console.log(tempObj);
+    res.status(200).send(tempObj);
 });
 exports.default = updateAnimal;

@@ -7,18 +7,6 @@ const aws = require('aws-sdk');
 const tmpFolder = path.resolve(__dirname, '..', '..', 'tmp', 'uploads');
 
 const storageTypes = {
-  local: multer.diskStorage({
-    destination: tmpFolder,
-    filename: (req: Request, file: any, cb: Function) => {
-      cryptoLib.randomBytes(8, (err: any, hash: any) => {
-        if (err) cb(err);
-
-        file.key = `${hash.toString('hex')}-${file.originalname}`;
-        return cb(null, file.key);
-      });
-    },
-  }),
-
   s3: multerS3({
     s3: new aws.S3(),
     bucket: 'myanimal',
@@ -29,10 +17,9 @@ const storageTypes = {
         if (err) cb(err);
 
         const { email, chipnumber }: any = req.body;
-        const key = email ? email : hash.toString('hex');
         const filename = chipnumber
-          ? `${key}-${file.originalname}-${chipnumber}`
-          : `${key}-${file.originalname}`;
+          ? `${email}-${chipnumber}`
+          : `${email}-${hash.toString('hex')}`;
 
         return cb(null, filename);
       });
