@@ -4,7 +4,7 @@ import users from '../../models/User';
 const getAllVeterinarians = async (req: Request, res: Response) => {
     let response;
   try {
-      response = users.findAll({where: {isVeterinarian: true}});
+      response = await users.findAll({where: {isVeterinarian: true}});
   } catch (e: any) {
     console.log(
       'Error getting all veterinarians on get all veterinarians controller'
@@ -13,7 +13,6 @@ const getAllVeterinarians = async (req: Request, res: Response) => {
     throw new Error(e);
   }
 
-  console.log(response)
   res.status(200).send(response)
 };
 
