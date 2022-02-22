@@ -17,7 +17,9 @@ export const UpdateUserSchema = Joi.object({
   locality: Joi.string().required(),
   givenName: Joi.string().required(),
   familyName: Joi.string().required(),
+  email: Joi.string().email().required(),
   phoneNumber: Joi.string().empty('').optional(null),
+  isVeterinarian: Joi.boolean().required(),
 });
 
 export const createAddressSchema = Joi.object({
