@@ -192,7 +192,6 @@ const LoginUser = async (req: Request, res: Response) => {
 
   const userCompleteData = {
     ...userData.data,
-    id: userData.data.idUser,
     token: returnToken,
     accessToken,
     animalData: userAnimalData,
