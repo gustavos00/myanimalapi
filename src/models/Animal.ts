@@ -39,6 +39,7 @@ const animal = sequelize.define<AnimalInstance>(
     photoUrl: DataTypes.STRING,
     birthday: DataTypes.STRING(2),
     birthdayMonth: DataTypes.STRING(2),
+    veterinarianChatFingerprint: DataTypes.STRING()
   },
   {
     tableName: 'animal',
