@@ -19,7 +19,12 @@ const eventsTypes = sequelize.define<EventsTypesInstance>(
       type: DataTypes.INTEGER,
     },
 
-    type: {
+    label: {
+      allowNull: false,
+      type: DataTypes.STRING(150),
+    },
+
+    value: {
       allowNull: false,
       type: DataTypes.STRING(150),
     },

@@ -18,7 +18,7 @@ const events = sequelize.define<EventsInstance>(
       type: DataTypes.INTEGER,
     },
 
-    eventReport: DataTypes.STRING,
+    report: DataTypes.STRING,
     date: DataTypes.DATE,
   },
   {

@@ -19,7 +19,12 @@ const eventsStatus = sequelize.define<EventsStatusInstance>(
       type: DataTypes.INTEGER,
     },
 
-    status: {
+    label: {
+      allowNull: false,
+      type: DataTypes.STRING(150),
+    },
+
+    value: {
       allowNull: false,
       type: DataTypes.STRING(150),
     },
