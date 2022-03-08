@@ -2,6 +2,8 @@ import { Model, DataTypes } from 'sequelize';
 import { sequelize } from '../config/pg';
 import { UsersInstance } from './User';
 
+import events from './Events';
+
 export interface AnimalInstance extends Model {
   idAnimal: number;
 
@@ -53,5 +55,8 @@ const animal = sequelize.define<AnimalInstance>(
     timestamps: true,
   }
 );
+
+animal.hasMany(events)
+events.belongsTo(animal)
 
 export default animal

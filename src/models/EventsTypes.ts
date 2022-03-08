@@ -1,19 +1,18 @@
-
 import { Model, DataTypes } from 'sequelize';
 import { sequelize } from '../config/pg';
-import reports from './Reports';
-import users from './User';
 
-export interface ReportsTypesInstance extends Model {
-  idReportsTypes: number;
+import events from './Events';
+
+export interface EventsTypesInstance extends Model {
+  idEventsTypes: number;
 
   type: string;
 }
 
-const reportsTypes = sequelize.define<ReportsTypesInstance>(
-  'reportsTypes',
+const eventsTypes = sequelize.define<EventsTypesInstance>(
+  'eventsTypes',
   {
-    idReportsTypes: {
+    idEventsTypes: {
       primaryKey: true,
       unique: true,
       autoIncrement: true,
@@ -26,15 +25,15 @@ const reportsTypes = sequelize.define<ReportsTypesInstance>(
     },
   },
   {
-    tableName: 'reportsTypes',
+    tableName: 'eventsTypes',
     freezeTableName: true,
     timestamps: true,
   }
 );
 
-reportsTypes.hasMany(reports)
-reports.belongsTo(reportsTypes)
+eventsTypes.hasMany(events)
+events.belongsTo(eventsTypes)
   
-export default reportsTypes;
+export default eventsTypes;
 
 
