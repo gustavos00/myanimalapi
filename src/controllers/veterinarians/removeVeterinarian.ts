@@ -2,20 +2,18 @@ import { Request, Response } from 'express';
 import animal from '../../models/Animal';
 
 import * as VS from '../../schemas/veterinarianSchema';
-import generateRandom from '../../utils/random';
 
-interface AcceptVeterinarianProps {
+interface RemoveVeterinarianProps {
   veterinarianId: number;
   animalId: number;
 }
 
-const acceptVeterinarian = async (req: Request, res: Response) => {
+const removeVeterinarian = async (req: Request, res: Response) => {
   let validatedData;
-  const fingerprint = generateRandom();
 
   try {
-    validatedData = await VS.acceptVeterinarian.validateAsync(
-      req.body as unknown as AcceptVeterinarianProps
+    validatedData = await VS.removeVeterinarian.validateAsync(
+      req.body as unknown as RemoveVeterinarianProps
     );
 
     if (!validatedData) {
@@ -29,11 +27,11 @@ const acceptVeterinarian = async (req: Request, res: Response) => {
     throw new Error(e as string);
   }
 
+  //Updating animal
   try {
     await animal.update(
       {
-        userIdVeterinarian: validatedData.veterinarianId,
-        veterinarianChatFingerprint: fingerprint,
+        userIdVeterinarian: null,
       },
       {
         where: {
@@ -42,13 +40,13 @@ const acceptVeterinarian = async (req: Request, res: Response) => {
       }
     );
   } catch (e) {
-    console.log('Error updating animal on accept veterinarian controller');
+    console.log('Error updating animal on remove veterinarian controller');
 
     res.status(500).send({ message: 'Something went wrong' });
     throw new Error(e as string);
   }
 
-  res.status(200).send({ veterinarianFingerprint: fingerprint });
+  res.status(200).send({});
 };
 
-export default acceptVeterinarian;
+export default removeVeterinarian;
