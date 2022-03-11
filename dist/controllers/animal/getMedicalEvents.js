@@ -27,70 +27,48 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __rest = (this && this.__rest) || function (s, e) {
-    var t = {};
-    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
-        t[p] = s[p];
-    if (s != null && typeof Object.getOwnPropertySymbols === "function")
-        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
-            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
-                t[p[i]] = s[p[i]];
-        }
-    return t;
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const US = __importStar(require("../../schemas/userSchema"));
-const User_1 = __importDefault(require("../../models/User"));
-const removeSpecificKey = ({ object, key }) => {
-    const _a = object, _b = key, deletedKey = _a[_b], otherKeys = __rest(_a, [typeof _b === "symbol" ? _b : _b + ""]);
-    return otherKeys;
-};
-const UpdateUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { location, key } = req.file;
+const Events_1 = __importDefault(require("../../models/Events"));
+const EventsStatus_1 = __importDefault(require("../../models/EventsStatus"));
+const EventsTypes_1 = __importDefault(require("../../models/EventsTypes"));
+const AS = __importStar(require("../../schemas/animalSchema"));
+const getMedicalEvents = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     let validatedData;
+    let response;
     //Validate data
     try {
-        validatedData = yield US.UpdateUserSchema.validateAsync(req.body);
+        validatedData = yield AS.getMedicalEvents.validateAsync(req.query);
         if (!validatedData) {
             res.status(400).send({ message: 'Invalid inputs' });
             return;
         }
     }
     catch (e) {
-        console.log('Error validating user data on update user controller');
+        console.log('Error validating data on create animal controller');
         res.status(500).send({ message: 'Something went wrong' });
         throw new Error(e);
     }
     try {
-        const validatedDataWithoutEmail = removeSpecificKey({
-            object: validatedData,
-            key: 'email',
+        response = yield Events_1.default.findAll({
+            where: { animalIdAnimal: validatedData.id },
+            include: [
+                {
+                    model: EventsStatus_1.default,
+                },
+                {
+                    model: EventsTypes_1.default,
+                },
+            ],
         });
-        yield User_1.default.update(Object.assign(Object.assign({}, validatedDataWithoutEmail), { photoName: key, photoUrl: location }), { where: { idUser: Number(validatedData.id) } });
-        const addressObject = {
-            doorNumber: validatedData.doorNumber,
-            postalCode: validatedData.postalCode,
-            streetName: validatedData.streetName,
-            parishName: validatedData.parish,
-            locationName: validatedData.locality,
-        };
-        const userObject = {
-            familyName: validatedData.familyName,
-            givenName: validatedData.givenName,
-            email: validatedData.email,
-            phoneNumber: validatedData.phoneNumber,
-            photoName: key,
-            photoUrl: location,
-        };
-        res.status(200).send(Object.assign(Object.assign({}, userObject), { userAddress: addressObject }));
+        res.status(200).send(response);
     }
     catch (e) {
-        console.log('Error updating user data on update user controller');
+        console.log('Error finding all friends request on get all friends requests controller');
         res.status(500).send({ message: 'Something went wrong' });
         throw new Error(e);
     }
 });
-exports.default = UpdateUser;
+exports.default = getMedicalEvents;

@@ -29,3 +29,7 @@ export const updateAnimalSchema = Joi.object({
 export const findMyAnimalSchema = Joi.object({
   trackNumber: Joi.string().required(),
 });
+
+export const getMedicalEvents = Joi.object({
+  id: Joi.string().required(),
+});

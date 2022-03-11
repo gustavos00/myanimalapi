@@ -5,7 +5,7 @@ export interface EventsInstance extends Model {
   idEvents: number
 
   date: string,
-  eventReport: string,
+  report: string,
 }
 
 const events = sequelize.define<EventsInstance>(
@@ -18,7 +18,7 @@ const events = sequelize.define<EventsInstance>(
       type: DataTypes.INTEGER,
     },
 
-    eventReport: DataTypes.STRING,
+    report: DataTypes.STRING,
     date: DataTypes.DATE,
   },
   {

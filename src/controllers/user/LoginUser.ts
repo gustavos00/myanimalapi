@@ -8,7 +8,6 @@ import animal, { AnimalInstance } from '../../models/Animal';
 import user from '../../models/User';
 import address from '../../models/Address';
 import users from '../../models/User';
-const { Op } = require('sequelize');
 
 const JWT = require('jsonwebtoken');
 
@@ -85,13 +84,15 @@ const LoginUser = async (req: Request, res: Response) => {
   //Find or create user
   try {
     const response = await users.findOrCreate({
+      nest: true,
+      raw: true,
       where: {
         email: validatedData.email,
-        isVeterinarian: false,
+        isVeterinarian: validatedData.isVeterinarian,
       },
       defaults: {
         ...validatedData,
-        isVeterinarian: false,
+        isVeterinarian: validatedData.isVeterinarian,
         photoUrl: location,
         photoName: key,
         token,
@@ -117,7 +118,8 @@ const LoginUser = async (req: Request, res: Response) => {
         where: {
           userIdUser: userData.data.idUser,
         },
-
+        nest: true,
+        raw: true,
         include: [{ model: user, as: 'userVeterinarianFk' }],
       });
 
@@ -125,6 +127,8 @@ const LoginUser = async (req: Request, res: Response) => {
         try {
           const addressResponse = await address.findOne({
             where: { idAddress: item.userVeterinarianFk.addressIdAddress },
+            nest: true,
+            raw: true,
             include: [
               {
                 model: parish,
@@ -184,6 +188,8 @@ const LoginUser = async (req: Request, res: Response) => {
       try {
         const addressResponse = await address.findOne({
           where: { idAddress: userData.data.addressIdAddress },
+          nest: true,
+          raw: true,
           include: [
             {
               model: parish,

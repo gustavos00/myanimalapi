@@ -6,7 +6,8 @@ import events from './Events';
 export interface EventsTypesInstance extends Model {
   idEventsTypes: number;
 
-  type: string;
+  label: string;
+  value: string;
 }
 
 const eventsTypes = sequelize.define<EventsTypesInstance>(
@@ -19,7 +20,12 @@ const eventsTypes = sequelize.define<EventsTypesInstance>(
       type: DataTypes.INTEGER,
     },
 
-    type: {
+    label: {
+      allowNull: false,
+      type: DataTypes.STRING(150),
+    },
+
+    value: {
       allowNull: false,
       type: DataTypes.STRING(150),
     },

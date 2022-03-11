@@ -35,9 +35,13 @@ exports.createAddress = void 0;
 const US = __importStar(require("../../schemas/userSchema"));
 const Address_1 = __importDefault(require("../../models/Address"));
 const User_1 = __importDefault(require("../../models/User"));
+const Parish_1 = __importDefault(require("../../models/Parish"));
+const Locality_1 = __importDefault(require("../../models/Locality"));
 const createAddress = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     let validatedData;
     let addressResponse;
+    let localityResponse;
+    let parishResponse;
     //Validate data
     try {
         validatedData = yield US.createAddressSchema.validateAsync(req.body);
@@ -52,18 +56,59 @@ const createAddress = (req, res) => __awaiter(void 0, void 0, void 0, function* 
         throw new Error(e);
     }
     try {
-        addressResponse = yield Address_1.default.create(validatedData);
+        const { locationName } = validatedData;
+        localityResponse = yield Locality_1.default.findOrCreate({
+            where: { locationName },
+            defaults: { locationName },
+        });
     }
     catch (e) {
-        console.log('Error creating user address on user controller');
+        console.log('Error creating locality on create address controller');
         res.status(500).send({ message: 'Something went wrong' });
         throw new Error(e);
     }
     try {
-        yield User_1.default.update({ addressIdAddress: addressResponse.idAddress }, { where: { email: validatedData.email, isVeterinarian: validatedData.isVeterinarian } });
+        const { parishName } = validatedData;
+        parishResponse = yield Parish_1.default.findOrCreate({
+            where: {
+                parishName,
+                localityIdLocality: 1,
+            },
+            defaults: {
+                parishName,
+                localityIdLocality: localityResponse[0].idLocality,
+            },
+        });
     }
     catch (e) {
-        console.log('Error updating user address fk on user controller');
+        console.log('Error creating parish on create address controller');
+        res.status(500).send({ message: 'Something went wrong' });
+        throw new Error(e);
+    }
+    try {
+        const { streetName, postalCode, doorNumber } = validatedData;
+        addressResponse = yield Address_1.default.create({
+            streetName,
+            postalCode,
+            doorNumber,
+            parishIdParish: parishResponse[0].idParish,
+        });
+    }
+    catch (e) {
+        console.log('Error creating user address on create address controller');
+        res.status(500).send({ message: 'Something went wrong' });
+        throw new Error(e);
+    }
+    try {
+        yield User_1.default.update({ addressIdAddress: addressResponse.idAddress }, {
+            where: {
+                email: validatedData.email,
+                isVeterinarian: validatedData.isVeterinarian,
+            },
+        });
+    }
+    catch (e) {
+        console.log('Error updating user address fk on create address controller');
         res.status(500).send({ message: 'Something went wrong' });
         throw new Error(e);
     }
