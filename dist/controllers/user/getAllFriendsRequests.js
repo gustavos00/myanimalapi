@@ -60,8 +60,8 @@ const getAllFriendsRequest = (req, res) => __awaiter(void 0, void 0, void 0, fun
                 [sequelize_1.Op.or]: [{ userFriendsIdFromWho: validatedData.id }, { userFriendsIdToWho: validatedData.id }],
             },
             include: [
+                { model: User_1.default, as: 'userFriendsIdtoWhoFk' },
                 { model: User_1.default, as: 'userFriendsIdFromWhoFk' },
-                { model: User_1.default, as: 'userFriendsIdToWhoFk' },
             ],
         });
         friendsRequestData.forEach((element) => {

@@ -6,17 +6,6 @@ const multerS3 = require('multer-s3');
 const aws = require('aws-sdk');
 const tmpFolder = path.resolve(__dirname, '..', '..', 'tmp', 'uploads');
 const storageTypes = {
-    local: multer.diskStorage({
-        destination: tmpFolder,
-        filename: (req, file, cb) => {
-            cryptoLib.randomBytes(8, (err, hash) => {
-                if (err)
-                    cb(err);
-                file.key = `${hash.toString('hex')}-${file.originalname}`;
-                return cb(null, file.key);
-            });
-        },
-    }),
     s3: multerS3({
         s3: new aws.S3(),
         bucket: 'myanimal',
@@ -39,7 +28,7 @@ module.exports = {
     dest: path.resolve(__dirname, '..', '..', 'tmp', 'uploads'),
     storage: storageTypes.s3,
     limits: {
-        fileSize: 2 * 1024 * 1024,
+        fileSize: 10 * 1024 * 1024,
     },
     fileFilter: (req, file, cb) => {
         const allowedMimes = [
@@ -47,6 +36,7 @@ module.exports = {
             'image/pjpeg',
             'image/jpg',
             'image/png',
+            'text/html'
         ];
         if (allowedMimes.includes(file.mimetype)) {
             cb(null, true);

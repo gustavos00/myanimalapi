@@ -31,54 +31,39 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const AS = __importStar(require("../../schemas/animalSchema"));
 const Animal_1 = __importDefault(require("../../models/Animal"));
-const updateAnimal = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { location, key } = req.file;
+const VS = __importStar(require("../../schemas/veterinarianSchema"));
+const random_1 = __importDefault(require("../../utils/random"));
+const acceptVeterinarian = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     let validatedData;
-    //Validate data
+    const fingerprint = (0, random_1.default)();
     try {
-        validatedData = yield AS.updateAnimalSchema.validateAsync(req.body);
+        validatedData = yield VS.acceptVeterinarian.validateAsync(req.body);
         if (!validatedData) {
             res.status(400).send({ message: 'Invalid inputs' });
             return;
         }
     }
     catch (e) {
-        console.log('Error validating data on update animal controller');
+        console.log('Error validating data on accept veterinarian controller');
         res.status(500).send({ message: 'Something went wrong' });
         throw new Error(e);
     }
-    //Checking if already exist a trackNumber but from another animal
     try {
-        const findResponse = yield Animal_1.default.findOne({
-            where: { trackNumber: validatedData.trackNumber },
-        });
-        if (validatedData.trackNumber == (findResponse === null || findResponse === void 0 ? void 0 : findResponse.trackNumber) &&
-            validatedData.id != (findResponse === null || findResponse === void 0 ? void 0 : findResponse.idAnimal)) {
-            res.status(400).send({ message: 'This track number already exist' });
-            return;
-        }
-    }
-    catch (e) {
-        console.log('Error getting owner data on update animal controller');
-        res.status(500).send({ message: 'Something went wrong' });
-        throw new Error(e);
-    }
-    //Updating animal
-    try {
-        yield Animal_1.default.update(Object.assign(Object.assign({}, validatedData), { photoUrl: location, photoName: key }), {
+        yield Animal_1.default.update({
+            userIdVeterinarian: validatedData.veterinarianId,
+            veterinarianChatFingerprint: fingerprint,
+        }, {
             where: {
-                idAnimal: validatedData.id,
+                idAnimal: validatedData.animalId,
             },
         });
     }
     catch (e) {
-        console.log('Error updating animal on update animal controller');
+        console.log('Error updating animal on accept veterinarian controller');
         res.status(500).send({ message: 'Something went wrong' });
         throw new Error(e);
     }
-    const tempObj = Object.assign(Object.assign({}, validatedData), { idAnimal: validatedData.id, userIdUser: validatedData.idUser, photoUrl: location, photoName: key });
-    res.status(200).send(tempObj);
+    res.status(200).send({ veterinarianFingerprint: fingerprint });
 });
-exports.default = updateAnimal;
+exports.default = acceptVeterinarian;

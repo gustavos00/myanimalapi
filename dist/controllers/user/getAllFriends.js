@@ -63,8 +63,8 @@ const getAllFriends = (req, res) => __awaiter(void 0, void 0, void 0, function* 
                 ],
             },
             include: [
+                { model: User_1.default, as: 'userFriendsIdtoWhoFk' },
                 { model: User_1.default, as: 'userFriendsIdFromWhoFk' },
-                { model: User_1.default, as: 'userFriendsIdToWhoFk' },
             ],
         });
         friendsData.forEach((element) => {
