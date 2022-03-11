@@ -23,6 +23,8 @@ export const UpdateUserSchema = Joi.object({
 });
 
 export const createAddressSchema = Joi.object({
+  parishName: Joi.string().required().min(1).max(100),
+  locationName: Joi.string().required().min(1).max(100),
   streetName: Joi.string().required().min(1).max(100),
   postalCode: Joi.string().required().min(1).max(12),
   doorNumber: Joi.string().required().min(1).max(10),
