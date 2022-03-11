@@ -10,6 +10,7 @@ exports.LoginUserSchema = Joi.object({
     isVeterinarian: Joi.boolean().required(),
 });
 exports.UpdateUserSchema = Joi.object({
+    id: Joi.string().required().min(1),
     streetName: Joi.string().required(),
     doorNumber: Joi.string().required(),
     postalCode: Joi.string().required(),
@@ -17,11 +18,13 @@ exports.UpdateUserSchema = Joi.object({
     locality: Joi.string().required(),
     givenName: Joi.string().required(),
     familyName: Joi.string().required(),
+    email: Joi.string().email().required(),
     phoneNumber: Joi.string().empty('').optional(null),
-    email: Joi.string().required().email(),
     isVeterinarian: Joi.boolean().required(),
 });
 exports.createAddressSchema = Joi.object({
+    parishName: Joi.string().required().min(1).max(100),
+    locationName: Joi.string().required().min(1).max(100),
     streetName: Joi.string().required().min(1).max(100),
     postalCode: Joi.string().required().min(1).max(12),
     doorNumber: Joi.string().required().min(1).max(10),

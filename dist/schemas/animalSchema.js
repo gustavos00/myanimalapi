@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.findMyAnimalSchema = exports.updateAnimalSchema = exports.deleteAnimalSchema = exports.createAnimalSchema = void 0;
+exports.getMedicalEvents = exports.findMyAnimalSchema = exports.updateAnimalSchema = exports.deleteAnimalSchema = exports.createAnimalSchema = void 0;
 const Joi = require('joi');
 exports.createAnimalSchema = Joi.object({
     name: Joi.string().required().max(250),
@@ -26,4 +26,7 @@ exports.updateAnimalSchema = Joi.object({
 });
 exports.findMyAnimalSchema = Joi.object({
     trackNumber: Joi.string().required(),
+});
+exports.getMedicalEvents = Joi.object({
+    id: Joi.string().required(),
 });

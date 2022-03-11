@@ -38,7 +38,6 @@ const Animal_1 = __importDefault(require("../../models/Animal"));
 const User_1 = __importDefault(require("../../models/User"));
 const Address_1 = __importDefault(require("../../models/Address"));
 const User_2 = __importDefault(require("../../models/User"));
-const { Op } = require('sequelize');
 const JWT = require('jsonwebtoken');
 const LoginUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const userAnimalData = [];
@@ -50,6 +49,7 @@ const LoginUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     let token;
     let accessToken;
     let userData;
+    let veterinarianAddressTempObj;
     //Validate data
     try {
         validatedData = yield US.LoginUserSchema.validateAsync(req.body);
@@ -78,11 +78,13 @@ const LoginUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     //Find or create user
     try {
         const response = yield User_2.default.findOrCreate({
+            nest: true,
+            raw: true,
             where: {
                 email: validatedData.email,
-                isVeterinarian: false,
+                isVeterinarian: validatedData.isVeterinarian,
             },
-            defaults: Object.assign(Object.assign({}, validatedData), { isVeterinarian: false, photoUrl: location, photoName: key, token }),
+            defaults: Object.assign(Object.assign({}, validatedData), { isVeterinarian: validatedData.isVeterinarian, photoUrl: location, photoName: key, token }),
         });
         const [data, created] = response;
         userData = {
@@ -96,30 +98,66 @@ const LoginUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         console.log(e);
         return;
     }
-    //Check if wasnt create
     if (!userData.created) {
-        //Find all animals from user
         try {
             const response = yield Animal_1.default.findAll({
                 where: {
                     userIdUser: userData.data.idUser,
                 },
+                nest: true,
+                raw: true,
                 include: [{ model: User_1.default, as: 'userVeterinarianFk' }],
             });
-            response.forEach((item) => {
-                userAnimalData.push(item);
-            });
+            response.forEach((item) => __awaiter(void 0, void 0, void 0, function* () {
+                try {
+                    const addressResponse = yield Address_1.default.findOne({
+                        where: { idAddress: item.userVeterinarianFk.addressIdAddress },
+                        nest: true,
+                        raw: true,
+                        include: [
+                            {
+                                model: Parish_1.default,
+                                include: [
+                                    {
+                                        model: Locality_1.default,
+                                    },
+                                ],
+                            },
+                        ],
+                    });
+                    if (addressResponse) {
+                        const { doorNumber, postalCode, streetName, parish: parishData, } = addressResponse;
+                        const { parishName, locality: localityData } = parishData;
+                        const { locationName } = localityData;
+                        veterinarianAddressTempObj = {
+                            doorNumber,
+                            postalCode,
+                            streetName,
+                            parishName,
+                            locationName,
+                        };
+                        const tempObj = Object.assign(Object.assign({}, item), { userVeterinarianFk: Object.assign(Object.assign({}, item.userVeterinarianFk), { veterinarianAddress: veterinarianAddressTempObj }) });
+                        userAnimalData.push(tempObj);
+                    }
+                }
+                catch (e) {
+                    console.log('Error finding animals veterinarians address create user controller');
+                    res.status(500).send({ message: 'Something went wrong' });
+                    throw new Error(e);
+                }
+            }));
         }
         catch (e) {
             console.log('Error finding animals from user on create user controller');
             res.status(500).send({ message: 'Something went wrong' });
             throw new Error(e);
         }
-        //Find address from user
         if (userData.data.addressIdAddress) {
             try {
                 const addressResponse = yield Address_1.default.findOne({
                     where: { idAddress: userData.data.addressIdAddress },
+                    nest: true,
+                    raw: true,
                     include: [
                         {
                             model: Parish_1.default,
@@ -151,7 +189,7 @@ const LoginUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             }
         }
     }
-    const userCompleteData = Object.assign(Object.assign({}, validatedData), { id: userData.data.idUser, token: returnToken, accessToken, photoUrl: location, photoKey: key, animalData: userAnimalData, userAddress: userAddressTempObj });
+    const userCompleteData = Object.assign(Object.assign({}, userData.data), { token: returnToken, accessToken, animalData: userAnimalData, userAddress: userAddressTempObj });
     //Generate access user token
     try {
         accessToken = JWT.sign(userCompleteData, validatedData.salt);
