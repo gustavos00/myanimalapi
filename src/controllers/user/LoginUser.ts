@@ -235,6 +235,7 @@ const LoginUser = async (req: Request, res: Response) => {
     ...userData.data,
     token: returnToken,
     accessToken,
+    salt: validatedData.salt,
     animalData: userAnimalData,
     userAddress: userAddressTempObj,
   };
@@ -248,7 +249,9 @@ const LoginUser = async (req: Request, res: Response) => {
     throw new Error(e);
   }
 
-  res.status(returnStatus).send({ ...userCompleteData, accessToken });
+  res
+    .status(returnStatus)
+    .send({ ...userCompleteData,  });
 };
 
 export default LoginUser;
