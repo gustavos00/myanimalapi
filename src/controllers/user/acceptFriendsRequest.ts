@@ -4,6 +4,7 @@ import generateRandom from '../../utils/random';
 
 import * as US from '../../schemas/userSchema';
 import { sendNotifications } from '../../utils/notifications';
+import users from '../../models/User';
 
 export interface AcceptFriendsProps {
   id: number;
@@ -13,7 +14,6 @@ const acceptFriendRequest = async (req: Request, res: Response) => {
   let validatedData;
   let friendsData;
   const fingerprint = generateRandom();
-
 
   try {
     validatedData = await US.acceptFriendsSchema.validateAsync(
@@ -41,32 +41,38 @@ const acceptFriendRequest = async (req: Request, res: Response) => {
       }
     );
   } catch (e) {
-    console.log('Error updating friend status on accept friend request controller');
+    console.log(
+      'Error updating friend status on accept friend request controller'
+    );
 
     res.status(500).send({ message: 'Something went wrong' });
     throw new Error(e as string);
   }
 
   try {
-    friendsData = await friends.findOne(
-      {
-        where: {
-          idfriends: validatedData.id,
-        },
-      }
-    );
+    friendsData = await friends.findOne({
+      where: {
+        idfriends: validatedData.id,
+      },
+      include: [
+        { model: users, as: 'userFriendsIdtoWhoFk' },
+        { model: users, as: 'userFriendsIdFromWhoFk' },
+      ],
+    });
   } catch (e) {
-    console.log('Error updating friend status on accept friend request controller');
+    console.log(
+      'Error updating friend status on accept friend request controller'
+    );
 
     res.status(500).send({ message: 'Something went wrong' });
     throw new Error(e as string);
   }
 
   const receipt = await sendNotifications({
-    expoToken:   friendsData?.userFriendsIdFromWhoFk?.expoToken,
+    expoToken: friendsData?.userFriendsIdFromWhoFk?.expoToken,
     title: 'Friend Request',
-    message: `Hello! ${friendsData?.userFriendsIdToWhoFk?.givenName} accept be your friend!`,
-    data: { do: 'openScreen', screenName: 'friendsRequests'}
+    message: `Hello! ${friendsData?.userFriendsIdtoWhoFk?.givenName} accepted your friend request!`,
+    data: { do: 'openScreen', screenName: 'friendsRequests' },
   });
 
   res.status(200).send({ fingerprint });
