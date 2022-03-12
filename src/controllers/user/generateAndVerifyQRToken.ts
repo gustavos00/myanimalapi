@@ -2,9 +2,9 @@ import { Request, Response } from 'express';
 import { sendNotifications } from '../../utils/notifications';
 
 import user from '../../models/User';
-import friends from '../../models/Friends';
 
 import * as US from '../../schemas/userSchema';
+import friends from '../../models/Friends';
 
 const JWT = require('jsonwebtoken');
 
@@ -87,7 +87,7 @@ export const verifyToken = async (req: Request, res: Response) => {
   //Finding user
   try {
     userData = await user.findOne({
-      where: { email: tokenData.email },
+      where: { email: tokenData.email, isVeterinarian: false },
     });
   } catch (e: any) {
     console.log('Error finding user by token on verifyToken controller');
@@ -118,8 +118,8 @@ export const verifyToken = async (req: Request, res: Response) => {
     expoToken: userData?.expoToken,
     title: 'Friend Request',
     message: 'Hello! Someone send you a friend request!',
-    data: { do: 'openScreen', screenName: 'friendsRequests'}
+    data: { do: 'openScreen', screenName: 'friendsRequests' },
   });
 
-  console.log('message receipt ' + receipt)
+  console.log('message receipt ' + receipt);
 };
