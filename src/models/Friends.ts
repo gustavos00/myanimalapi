@@ -6,7 +6,7 @@ export interface FriendsInstance extends Model {
   idFriends: number;
   status: string;
   userFriendsIdFromWhoFk?: UsersInstance;
-  userFriendsIdToWhoFk?: UsersInstance;
+  userFriendsIdtoWhoFk?: UsersInstance;
   userFriendsIdFromWho: number;
   userFriendsIdToWho: number;
 }

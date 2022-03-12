@@ -52,14 +52,14 @@ const getAllFriends = async (req: Request, res: Response) => {
       if (
         element.userFriendsIdFromWhoFk?.idUser.toString() == validatedData.id
       ) {
-        friendData = element.userFriendsIdToWhoFk;
+        friendData = element.userFriendsIdtoWhoFk;
       }
 
-      if (element.userFriendsIdToWhoFk?.idUser.toString() == validatedData.id) {
+      if (element.userFriendsIdtoWhoFk?.idUser.toString() == validatedData.id) {
         friendData = element.userFriendsIdFromWhoFk;
       }
 
-      delete element.userFriendsIdToWhoFk;
+      delete element.userFriendsIdtoWhoFk;
       delete element.userFriendsIdFromWhoFk;
 
       const friendObj = {
