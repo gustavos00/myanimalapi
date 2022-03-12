@@ -1,12 +1,15 @@
-
 import { Request, Response } from 'express';
 
 import * as US from '../../schemas/userSchema';
 
-import address from '../../models/Address'
+import address from '../../models/Address';
 import user from '../../models/User';
+import parish from '../../models/Parish';
+import locality from '../../models/Locality';
 
 interface AddressUserProps {
+  parish: string;
+  locality: string;
   streetName: string;
   doorNumber: string;
   postalCode: string;
@@ -15,6 +18,8 @@ interface AddressUserProps {
 export const createAddress = async (req: Request, res: Response) => {
   let validatedData;
   let addressResponse;
+  let localityResponse;
+  let parishResponse;
 
   //Validate data
   try {
@@ -34,9 +39,47 @@ export const createAddress = async (req: Request, res: Response) => {
   }
 
   try {
-    addressResponse = await address.create(validatedData);
+    const { locationName } = validatedData;
+    localityResponse = await locality.findOrCreate({
+      where: { locationName },
+      defaults: { locationName },
+    });
   } catch (e) {
-    console.log('Error creating user address on user controller');
+    console.log('Error creating locality on create address controller');
+
+    res.status(500).send({ message: 'Something went wrong' });
+    throw new Error(e as string);
+  }
+
+  try {
+    const { parishName } = validatedData;
+    parishResponse = await parish.findOrCreate({
+      where: {
+        parishName,
+        localityIdLocality: 1,
+      },
+      defaults: {
+        parishName,
+        localityIdLocality: localityResponse[0].idLocality,
+      },
+    });
+  } catch (e) {
+    console.log('Error creating parish on create address controller');
+
+    res.status(500).send({ message: 'Something went wrong' });
+    throw new Error(e as string);
+  }
+
+  try {
+    const { streetName, postalCode, doorNumber } = validatedData;
+    addressResponse = await address.create({
+      streetName,
+      postalCode,
+      doorNumber,
+      parishIdParish: parishResponse[0].idParish,
+    });
+  } catch (e) {
+    console.log('Error creating user address on create address controller');
 
     res.status(500).send({ message: 'Something went wrong' });
     throw new Error(e as string);
@@ -45,10 +88,15 @@ export const createAddress = async (req: Request, res: Response) => {
   try {
     await user.update(
       { addressIdAddress: addressResponse.idAddress },
-      { where: { email: validatedData.email } }
+      {
+        where: {
+          email: validatedData.email,
+          isVeterinarian: validatedData.isVeterinarian,
+        },
+      }
     );
   } catch (e) {
-    console.log('Error updating user address fk on user controller');
+    console.log('Error updating user address fk on create address controller');
 
     res.status(500).send({ message: 'Something went wrong' });
     throw new Error(e as string);
@@ -57,4 +105,4 @@ export const createAddress = async (req: Request, res: Response) => {
   res.status(200).send(validatedData);
 };
 
-export default createAddress
+export default createAddress;

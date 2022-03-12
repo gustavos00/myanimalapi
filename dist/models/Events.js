@@ -2,24 +2,18 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const sequelize_1 = require("sequelize");
 const pg_1 = require("../config/pg");
-const friendRequest = pg_1.sequelize.define('friendRequest', {
-    idFriendRequest: {
+const events = pg_1.sequelize.define('events', {
+    idEvents: {
         primaryKey: true,
         unique: true,
         autoIncrement: true,
         type: sequelize_1.DataTypes.INTEGER,
     },
-    fromWho: {
-        allowNull: false,
-        type: sequelize_1.DataTypes.STRING(10),
-    },
-    toWhom: {
-        allowNull: false,
-        type: sequelize_1.DataTypes.STRING(10),
-    },
+    report: sequelize_1.DataTypes.STRING,
+    date: sequelize_1.DataTypes.DATE,
 }, {
-    tableName: 'friendRequest',
+    tableName: 'events',
     freezeTableName: true,
     timestamps: true,
 });
-exports.default = friendRequest;
+exports.default = events;

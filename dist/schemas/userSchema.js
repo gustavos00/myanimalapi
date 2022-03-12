@@ -1,18 +1,35 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.verifyAccessToken = exports.verifyTokenSchema = exports.generateTokenSchema = exports.statusSchema = exports.createAddressSchema = exports.findOrCreateUserSchema = void 0;
+exports.deleteFriendSchema = exports.declineFriendsSchema = exports.acceptFriendsSchema = exports.storeExpoTokenSchema = exports.getAllFriendsDataSchema = exports.verifyAccessTokenSchema = exports.verifyTokenSchema = exports.generateTokenSchema = exports.statusSchema = exports.createAddressSchema = exports.UpdateUserSchema = exports.LoginUserSchema = void 0;
 const Joi = require('joi');
-exports.findOrCreateUserSchema = Joi.object({
+exports.LoginUserSchema = Joi.object({
     givenName: Joi.string().required().min(1).max(60),
     familyName: Joi.string().required().min(1).max(60),
     email: Joi.string().required().min(1).email(),
     salt: Joi.string().required().min(1),
+    isVeterinarian: Joi.boolean().required(),
+});
+exports.UpdateUserSchema = Joi.object({
+    id: Joi.string().required().min(1),
+    streetName: Joi.string().required(),
+    doorNumber: Joi.string().required(),
+    postalCode: Joi.string().required(),
+    parish: Joi.string().required(),
+    locality: Joi.string().required(),
+    givenName: Joi.string().required(),
+    familyName: Joi.string().required(),
+    email: Joi.string().email().required(),
+    phoneNumber: Joi.string().empty('').optional(null),
+    isVeterinarian: Joi.boolean().required(),
 });
 exports.createAddressSchema = Joi.object({
+    parishName: Joi.string().required().min(1).max(100),
+    locationName: Joi.string().required().min(1).max(100),
     streetName: Joi.string().required().min(1).max(100),
     postalCode: Joi.string().required().min(1).max(12),
     doorNumber: Joi.string().required().min(1).max(10),
     email: Joi.string().email().required(),
+    isVeterinarian: Joi.boolean().required(),
 });
 exports.statusSchema = Joi.object({
     status: Joi.string().required().min(1).max(100),
@@ -25,7 +42,23 @@ exports.verifyTokenSchema = Joi.object({
     token: Joi.string().required().min(1),
     fromWho: Joi.string().required().min(1),
 });
-exports.verifyAccessToken = Joi.object({
+exports.verifyAccessTokenSchema = Joi.object({
     token: Joi.string().required().min(1),
     salt: Joi.string().required().min(1),
+});
+exports.getAllFriendsDataSchema = Joi.object({
+    id: Joi.string().required().min(1),
+});
+exports.storeExpoTokenSchema = Joi.object({
+    expoToken: Joi.string().required().min(1),
+    token: Joi.string().required().min(1),
+});
+exports.acceptFriendsSchema = Joi.object({
+    id: Joi.string().required().min(1),
+});
+exports.declineFriendsSchema = Joi.object({
+    id: Joi.string().required().min(1),
+});
+exports.deleteFriendSchema = Joi.object({
+    id: Joi.string().required().min(1)
 });

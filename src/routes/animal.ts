@@ -2,6 +2,7 @@ import { Router } from 'express';
 import createAnimal from '../controllers/animal/createAnimal';
 import deleteAnimal from '../controllers/animal/deleteAnimal';
 import findMyAnimal from '../controllers/animal/findMyAnimal';
+import getMedicalEvents from '../controllers/animal/getMedicalEvents';
 import updateAnimal from '../controllers/animal/updateAnimal';
 findMyAnimal;
 
@@ -23,6 +24,7 @@ router.post(
 );
 router.delete('/delete/:id', deleteAnimal);
 
-router.get('/findMyAnimal/', findMyAnimal);
+router.get('/findMyAnimal', findMyAnimal);
+router.get('/medicalEvents', getMedicalEvents);
 
 export default router;

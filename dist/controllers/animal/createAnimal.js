@@ -87,7 +87,7 @@ const createAnimal = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     }
     //Create animal
     try {
-        createAnimalResponse = yield Animal_1.default.create(Object.assign(Object.assign({}, validatedData), { userIdUser: userId, imageUrl: location, imageName: key }));
+        createAnimalResponse = yield Animal_1.default.create(Object.assign(Object.assign({}, validatedData), { userIdUser: userId, photoUrl: location, photoName: key }));
     }
     catch (e) {
         console.log('Error creating animal on create animal controller');

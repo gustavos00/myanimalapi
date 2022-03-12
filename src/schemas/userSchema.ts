@@ -1,13 +1,15 @@
 const Joi = require('joi');
 
-export const findOrCreateUserSchema = Joi.object({
+export const LoginUserSchema = Joi.object({
   givenName: Joi.string().required().min(1).max(60),
   familyName: Joi.string().required().min(1).max(60),
   email: Joi.string().required().min(1).email(),
   salt: Joi.string().required().min(1),
+  isVeterinarian: Joi.boolean().required(),
 });
 
 export const UpdateUserSchema = Joi.object({
+  id: Joi.string().required().min(1),
   streetName: Joi.string().required(),
   doorNumber: Joi.string().required(),
   postalCode: Joi.string().required(),
@@ -15,15 +17,19 @@ export const UpdateUserSchema = Joi.object({
   locality: Joi.string().required(),
   givenName: Joi.string().required(),
   familyName: Joi.string().required(),
+  email: Joi.string().email().required(),
   phoneNumber: Joi.string().empty('').optional(null),
-  email: Joi.string().required().email()
+  isVeterinarian: Joi.boolean().required(),
 });
 
 export const createAddressSchema = Joi.object({
+  parishName: Joi.string().required().min(1).max(100),
+  locationName: Joi.string().required().min(1).max(100),
   streetName: Joi.string().required().min(1).max(100),
   postalCode: Joi.string().required().min(1).max(12),
   doorNumber: Joi.string().required().min(1).max(10),
   email: Joi.string().email().required(),
+  isVeterinarian: Joi.boolean().required(),
 });
 
 export const statusSchema = Joi.object({
@@ -40,7 +46,28 @@ export const verifyTokenSchema = Joi.object({
   fromWho: Joi.string().required().min(1),
 });
 
-export const verifyAccessToken = Joi.object({
+export const verifyAccessTokenSchema = Joi.object({
   token: Joi.string().required().min(1),
   salt: Joi.string().required().min(1),
 });
+
+export const getAllFriendsDataSchema = Joi.object({
+  id: Joi.string().required().min(1),
+});
+
+export const storeExpoTokenSchema = Joi.object({
+  expoToken: Joi.string().required().min(1),
+  token: Joi.string().required().min(1),
+});
+
+export const acceptFriendsSchema = Joi.object({
+  id: Joi.string().required().min(1),
+});
+
+export const declineFriendsSchema = Joi.object({
+  id: Joi.string().required().min(1),
+});
+
+export const deleteFriendSchema = Joi.object({
+  id: Joi.string().required().min(1)
+})

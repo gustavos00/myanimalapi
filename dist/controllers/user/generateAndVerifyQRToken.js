@@ -32,8 +32,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.verifyToken = exports.generateToken = void 0;
+const notifications_1 = require("../../utils/notifications");
 const User_1 = __importDefault(require("../../models/User"));
-const FriendRequest_1 = __importDefault(require("../../models/FriendRequest"));
+const Friends_1 = __importDefault(require("../../models/Friends"));
 const US = __importStar(require("../../schemas/userSchema"));
 const JWT = require('jsonwebtoken');
 const generateToken = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -68,7 +69,6 @@ const verifyToken = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     let validatedData;
     let userData;
     let tokenData;
-    let friendRequestResponse;
     //Validate data
     try {
         validatedData = yield US.verifyTokenSchema.validateAsync(req.query);
@@ -94,7 +94,7 @@ const verifyToken = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     //Finding user
     try {
         userData = yield User_1.default.findOne({
-            where: { email: tokenData.email, idUser: tokenData.id },
+            where: { email: tokenData.email },
         });
     }
     catch (e) {
@@ -102,18 +102,30 @@ const verifyToken = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         res.status(500).send({ message: 'Something went wrong' });
         throw new Error(e);
     }
-    //Creating a friend request
     try {
-        friendRequestResponse = yield FriendRequest_1.default.create({
-            fromWho: validatedData.fromWho,
-            toWhom: userData === null || userData === void 0 ? void 0 : userData.idUser,
+        yield Friends_1.default.findOrCreate({
+            where: {
+                userFriendsIdToWho: userData === null || userData === void 0 ? void 0 : userData.idUser,
+                userFriendsIdFromWho: validatedData.fromWho,
+            },
+            defaults: {
+                userFriendsIdToWho: userData === null || userData === void 0 ? void 0 : userData.idUser,
+                userFriendsIdFromWho: validatedData.fromWho,
+            },
         });
+        res.status(200).send({ message: true });
     }
     catch (e) {
-        console.log('Error finding user by token on verifyToken controller');
+        console.log('Error creating friends request on verifyToken controller');
         res.status(500).send({ message: 'Something went wrong' });
         throw new Error(e);
     }
-    res.status(200).send(friendRequestResponse);
+    const receipt = yield (0, notifications_1.sendNotifications)({
+        expoToken: userData === null || userData === void 0 ? void 0 : userData.expoToken,
+        title: 'Friend Request',
+        message: 'Hello! Someone send you a friend request!',
+        data: { do: 'openScreen', screenName: 'friendsRequests' }
+    });
+    console.log('message receipt ' + receipt);
 });
 exports.verifyToken = verifyToken;

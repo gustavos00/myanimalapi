@@ -4,13 +4,14 @@ import { Request, Response } from 'express';
 
 import parish from '../../models/Parish';
 import locality from '../../models/Locality';
-import animal from '../../models/Animal';
+import animal, { AnimalInstance } from '../../models/Animal';
 import user from '../../models/User';
 import address from '../../models/Address';
+import users from '../../models/User';
 
 const JWT = require('jsonwebtoken');
 
-interface FindOrCreateUserProps {
+interface LoginUserProps {
   givenName: string;
   familyName: string;
   email: string;
@@ -32,25 +33,12 @@ interface LocalityAddressUserProps {
   locationName: string;
 }
 
-export interface AnimalDataProps {
-  idAnimal: number;
-
-  name: string;
-  age: string;
-  breed: string;
-  trackNumber: string;
-  photoName: string;
-  photoUrl: string;
-
-  userIdUser: number;
-}
-
 interface MulterRequest extends Request {
   file: any;
 }
 
-const FindOrCreateUser = async (req: Request, res: Response) => {
-  const userAnimalData = [] as Array<AnimalDataProps>;
+const LoginUser = async (req: Request, res: Response) => {
+  const userAnimalData = [] as Array<AnimalInstance>;
   const { location, key } = (req as MulterRequest).file;
 
   let returnStatus;
@@ -60,11 +48,12 @@ const FindOrCreateUser = async (req: Request, res: Response) => {
   let token;
   let accessToken;
   let userData;
+  let veterinarianAddressTempObj;
 
   //Validate data
   try {
-    validatedData = await US.findOrCreateUserSchema.validateAsync(
-      req.body as FindOrCreateUserProps
+    validatedData = await US.LoginUserSchema.validateAsync(
+      req.body as LoginUserProps
     );
 
     if (!validatedData) {
@@ -79,7 +68,13 @@ const FindOrCreateUser = async (req: Request, res: Response) => {
 
   //Generate user token
   try {
-    token = JWT.sign(validatedData.email, process.env.JWT_SECRET as string);
+    token = JWT.sign(
+      {
+        email: validatedData.email,
+        isVeterinarian: validatedData.isVeterinarian,
+      },
+      process.env.JWT_SECRET as string
+    );
   } catch (e: any) {
     console.log('Error generating user token on create user controller');
     res.status(500).send({ message: 'Something went wrong' });
@@ -88,12 +83,16 @@ const FindOrCreateUser = async (req: Request, res: Response) => {
 
   //Find or create user
   try {
-    const response = await user.findOrCreate({
+    const response = await users.findOrCreate({
+      nest: true,
+      raw: true,
       where: {
-        email: validatedData.email ?? '',
+        email: validatedData.email,
+        isVeterinarian: validatedData.isVeterinarian,
       },
       defaults: {
         ...validatedData,
+        isVeterinarian: validatedData.isVeterinarian,
         photoUrl: location,
         photoName: key,
         token,
@@ -109,22 +108,75 @@ const FindOrCreateUser = async (req: Request, res: Response) => {
     returnStatus = created ? 201 : 200;
     returnToken = created ? token : data.token;
   } catch (e: any) {
-    console.log('Error finding or creating user on create user controller');
-    res.status(500).send({ message: 'Something went wrong' });
-    throw new Error(e);
+    console.log(e);
+    return;
   }
-  //Check if wasnt create
+
   if (!userData.created) {
-    //Find all animals from user
     try {
       const response = await animal.findAll({
         where: {
           userIdUser: userData.data.idUser,
         },
+        nest: true,
+        raw: true,
+        include: [{ model: user, as: 'userVeterinarianFk' }],
       });
 
-      response.forEach((item) => {
-        userAnimalData.push(item);
+      response.forEach(async (item) => {
+        try {
+          const addressResponse = await address.findOne({
+            where: { idAddress: item.userVeterinarianFk.addressIdAddress },
+            nest: true,
+            raw: true,
+            include: [
+              {
+                model: parish,
+                include: [
+                  {
+                    model: locality,
+                  },
+                ],
+              },
+            ],
+          });
+
+          if (addressResponse) {
+            const {
+              doorNumber,
+              postalCode,
+              streetName,
+              parish: parishData,
+            } = addressResponse as unknown as FullAddressUserProps;
+
+            const { parishName, locality: localityData } = parishData;
+            const { locationName } = localityData;
+
+            veterinarianAddressTempObj = {
+              doorNumber,
+              postalCode,
+              streetName,
+              parishName,
+              locationName,
+            };
+
+            const tempObj = {
+              ...item,
+              userVeterinarianFk: {
+                ...item.userVeterinarianFk,
+                veterinarianAddress: veterinarianAddressTempObj,
+              },
+            } as unknown as AnimalInstance;
+
+            userAnimalData.push(tempObj);
+          }
+        } catch (e: any) {
+          console.log(
+            'Error finding animals veterinarians address create user controller'
+          );
+          res.status(500).send({ message: 'Something went wrong' });
+          throw new Error(e);
+        }
       });
     } catch (e: any) {
       console.log('Error finding animals from user on create user controller');
@@ -132,11 +184,12 @@ const FindOrCreateUser = async (req: Request, res: Response) => {
       throw new Error(e);
     }
 
-    //Find address from user
     if (userData.data.addressIdAddress) {
       try {
         const addressResponse = await address.findOne({
           where: { idAddress: userData.data.addressIdAddress },
+          nest: true,
+          raw: true,
           include: [
             {
               model: parish,
@@ -176,31 +229,26 @@ const FindOrCreateUser = async (req: Request, res: Response) => {
         throw new Error(e);
       }
     }
-
-    const userCompleteData = {
-      ...validatedData,
-      id: userData.data.idUser,
-      token: returnToken,
-      accessToken,
-      photoUrl: location,
-      photoKey: key,
-      animalData: userAnimalData,
-      userAddress: userAddressTempObj,
-    };
-
-    //Generate access user token
-    try {
-      accessToken = JWT.sign(userCompleteData, validatedData.salt as string);
-    } catch (e: any) {
-      console.log(
-        'Error generating access user token on create user controller'
-      );
-      res.status(500).send({ message: 'Something went wrong' });
-      throw new Error(e);
-    }
-
-    res.status(returnStatus).send({...userCompleteData, accessToken});
   }
+
+  const userCompleteData = {
+    ...userData.data,
+    token: returnToken,
+    accessToken,
+    animalData: userAnimalData,
+    userAddress: userAddressTempObj,
+  };
+
+  //Generate access user token
+  try {
+    accessToken = JWT.sign(userCompleteData, validatedData.salt as string);
+  } catch (e: any) {
+    console.log('Error generating access user token on create user controller');
+    res.status(500).send({ message: 'Something went wrong' });
+    throw new Error(e);
+  }
+
+  res.status(returnStatus).send({ ...userCompleteData, accessToken });
 };
 
-export default FindOrCreateUser;
+export default LoginUser;

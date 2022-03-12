@@ -20,13 +20,19 @@ interface objectWithoutKeyProps {
   key: keyof object;
 }
 
+interface MulterRequest extends Request {
+  file: any;
+}
+
 const removeSpecificKey = ({ object, key }: objectWithoutKeyProps) => {
   const { [key]: deletedKey, ...otherKeys } = object;
   return otherKeys;
 };
 
 const UpdateUser = async (req: Request, res: Response) => {
+  const { location, key } = (req as MulterRequest).file;
   let validatedData;
+
 
   //Validate data
   try {
@@ -51,8 +57,8 @@ const UpdateUser = async (req: Request, res: Response) => {
     });
 
     await users.update(
-      { ...validatedDataWithoutEmail },
-      { where: { email: validatedData.email } }
+      { ...validatedDataWithoutEmail, photoName: key, photoUrl: location },
+      { where: { idUser: Number(validatedData.id)} }
     );
 
     const addressObject = {
@@ -68,11 +74,15 @@ const UpdateUser = async (req: Request, res: Response) => {
       givenName: validatedData.givenName,
       email: validatedData.email,
       phoneNumber: validatedData.phoneNumber,
+      photoName: key,
+      photoUrl: location,
     };
 
     res.status(200).send({ ...userObject, userAddress: addressObject });
-  } catch (e) {
-    console.log(e);
+  } catch (e: any) {
+    console.log('Error updating user data on update user controller');
+    res.status(500).send({ message: 'Something went wrong' });
+    throw new Error(e);
   }
 };
 

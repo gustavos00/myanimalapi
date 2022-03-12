@@ -5,23 +5,27 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const sequelize_1 = require("sequelize");
 const pg_1 = require("../config/pg");
-const User_1 = __importDefault(require("./User"));
-const usersTypes = pg_1.sequelize.define('usersTypes', {
-    idUsertype: {
+const Events_1 = __importDefault(require("./Events"));
+const eventsStatus = pg_1.sequelize.define('eventsStatus', {
+    idEventsStatus: {
         primaryKey: true,
         unique: true,
         autoIncrement: true,
         type: sequelize_1.DataTypes.INTEGER,
     },
-    type: {
+    label: {
         allowNull: false,
-        type: sequelize_1.DataTypes.STRING(50),
+        type: sequelize_1.DataTypes.STRING(150),
+    },
+    value: {
+        allowNull: false,
+        type: sequelize_1.DataTypes.STRING(150),
     },
 }, {
-    tableName: 'usersTypes',
+    tableName: 'eventsStatus',
     freezeTableName: true,
     timestamps: true,
 });
-usersTypes.hasMany(User_1.default);
-User_1.default.belongsTo(usersTypes);
-exports.default = usersTypes;
+eventsStatus.hasMany(Events_1.default);
+Events_1.default.belongsTo(eventsStatus);
+exports.default = eventsStatus;

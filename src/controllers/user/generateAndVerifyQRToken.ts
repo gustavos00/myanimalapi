@@ -1,7 +1,8 @@
 import { Request, Response } from 'express';
+import { sendNotifications } from '../../utils/notifications';
 
 import user from '../../models/User';
-import friendRequest from '../../models/FriendRequest';
+import friends from '../../models/Friends';
 
 import * as US from '../../schemas/userSchema';
 
@@ -9,10 +10,6 @@ const JWT = require('jsonwebtoken');
 
 interface GenerateToken {
   id: string;
-}
-
-interface StatusProps {
-  status: string;
 }
 
 interface VerifyToken {
@@ -58,7 +55,6 @@ export const verifyToken = async (req: Request, res: Response) => {
   let validatedData;
   let userData;
   let tokenData;
-  let friendRequestResponse;
 
   //Validate data
   try {
@@ -91,7 +87,7 @@ export const verifyToken = async (req: Request, res: Response) => {
   //Finding user
   try {
     userData = await user.findOne({
-      where: { email: tokenData.email, idUser: tokenData.id },
+      where: { email: tokenData.email },
     });
   } catch (e: any) {
     console.log('Error finding user by token on verifyToken controller');
@@ -99,18 +95,31 @@ export const verifyToken = async (req: Request, res: Response) => {
     throw new Error(e);
   }
 
-  //Creating a friend request
   try {
-    friendRequestResponse = await friendRequest.create({
-      fromWho: validatedData.fromWho,
-      toWhom: userData?.idUser,
+    await friends.findOrCreate({
+      where: {
+        userFriendsIdToWho: userData?.idUser,
+        userFriendsIdFromWho: validatedData.fromWho,
+      },
+      defaults: {
+        userFriendsIdToWho: userData?.idUser,
+        userFriendsIdFromWho: validatedData.fromWho,
+      },
     });
+
+    res.status(200).send({ message: true });
   } catch (e: any) {
-    console.log('Error finding user by token on verifyToken controller');
+    console.log('Error creating friends request on verifyToken controller');
     res.status(500).send({ message: 'Something went wrong' });
     throw new Error(e);
   }
 
-  res.status(200).send(friendRequestResponse);
-};
+  const receipt = await sendNotifications({
+    expoToken: userData?.expoToken,
+    title: 'Friend Request',
+    message: 'Hello! Someone send you a friend request!',
+    data: { do: 'openScreen', screenName: 'friendsRequests'}
+  });
 
+  console.log('message receipt ' + receipt)
+};
