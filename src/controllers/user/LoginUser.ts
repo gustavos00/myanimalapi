@@ -1,3 +1,4 @@
+import { UsersInstance } from './../../models/User';
 import * as US from '../../schemas/userSchema';
 
 import { Request, Response } from 'express';
@@ -99,14 +100,18 @@ const LoginUser = async (req: Request, res: Response) => {
       },
     });
 
+
     const [data, created] = response;
-    userData = {
-      data,
-      created,
-    };
+    const cleanUserData = created ? (data as UsersInstance).get() : data
 
     returnStatus = created ? 201 : 200;
     returnToken = created ? token : data.token;
+
+    userData = {
+      data: cleanUserData,
+      created,
+    };
+
   } catch (e: any) {
     console.log(e);
     return;
