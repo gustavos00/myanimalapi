@@ -55,6 +55,7 @@ export const verifyToken = async (req: Request, res: Response) => {
   let validatedData;
   let userData;
   let tokenData;
+  let friendRequestHasCreated;
 
   //Validate data
   try {
@@ -96,7 +97,7 @@ export const verifyToken = async (req: Request, res: Response) => {
   }
 
   try {
-    await friends.findOrCreate({
+    const response = await friends.findOrCreate({
       where: {
         userFriendsIdToWho: userData?.idUser,
         userFriendsIdFromWho: validatedData.fromWho,
@@ -107,19 +108,24 @@ export const verifyToken = async (req: Request, res: Response) => {
       },
     });
 
-    res.status(200).send({ message: true });
+    const [created] = response;
+    friendRequestHasCreated = !created;
+
+    created
+      ? res.status(200).send({ message: 'Friend relatioship already exist' })
+      : res.status(201).send({ message: true });
   } catch (e: any) {
     console.log('Error creating friends request on verifyToken controller');
     res.status(500).send({ message: 'Something went wrong' });
     throw new Error(e);
   }
 
-  const receipt = await sendNotifications({
-    expoToken: userData?.expoToken,
-    title: 'Friend Request',
-    message: 'Hello! Someone send you a friend request!',
-    data: { do: 'openScreen', screenName: 'friendsRequests' },
-  });
-
-  console.log('message receipt ' + receipt);
+  if (friendRequestHasCreated) {
+    const receipt = await sendNotifications({
+      expoToken: userData?.expoToken,
+      title: 'Friend Request',
+      message: 'Hello! Someone send you a friend request!',
+      data: { do: 'openScreen', screenName: 'friendsRequests' },
+    });
+  }
 };
