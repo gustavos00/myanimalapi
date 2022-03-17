@@ -26,25 +26,22 @@ interface UserAddressLocalityProps {
 }
 
 interface UserAddressParishProps {
-    idParish: number;
-    parishName: string;
-    localityIdLocality: number;
-    locality: object;
-  }
+  idParish: number;
+  parishName: string;
+  localityIdLocality: number;
+  locality: object;
+}
 
 const findMyAnimal = async (req: Request, res: Response) => {
   let validatedData;
   let userId;
   let responseData;
   let addressData;
-
-  //Validate data
-  const tempTrackNumber =
-    req.query.trackNumber === 'undefined' ? undefined : req.query.trackNumber;
+  let cleanResponse;
 
   try {
     validatedData = await AS.findMyAnimalSchema.validateAsync({
-      trackNumber: tempTrackNumber,
+      trackNumber: req.query.tracking,
     });
 
     if (!validatedData) {
@@ -59,6 +56,7 @@ const findMyAnimal = async (req: Request, res: Response) => {
   }
 
   try {
+    //Try find animal
     const response = await animal.findOne({
       where: validatedData,
     });
@@ -74,7 +72,8 @@ const findMyAnimal = async (req: Request, res: Response) => {
   }
 
   if (userId === undefined) {
-    res.status(200).send({ message: 'Cannot find animal owner' });
+    //Try find animal owner
+    res.status(500).send({ message: 'Cannot find animal owner' });
     return;
   }
 
@@ -83,6 +82,8 @@ const findMyAnimal = async (req: Request, res: Response) => {
       where: {
         idUser: userId,
       },
+      raw: true,
+      nest: true,
       include: [
         {
           model: address,
@@ -103,6 +104,9 @@ const findMyAnimal = async (req: Request, res: Response) => {
       ],
     });
 
+    cleanResponse = response as any;
+    addressData = cleanResponse.address;
+
     responseData = {
       email: response?.email,
       phoneNumber: response?.phoneNumber,
@@ -116,9 +120,8 @@ const findMyAnimal = async (req: Request, res: Response) => {
     throw new Error(e as string);
   }
 
-  /*NEED REVIEW
   try {
-    const { streetName, postalCode, parishName } = addressData;
+    const { streetName, postalCode } = addressData;
     const geoCoder = nodeGeocoder(options);
 
     const res = await geoCoder.geocode(`${streetName} ${postalCode}`);
@@ -127,25 +130,23 @@ const findMyAnimal = async (req: Request, res: Response) => {
       const latitude = res[0].latitude;
       const longitude = res[0].longitude;
 
-      const tempObj = {
+      responseData = {
         ...responseData,
         latitude,
         longitude,
       };
-
-      responseData = tempObj;
     } else {
-      const { parishName, locality } = parish as unknown as UserAddressParishProps;
+      const { parishName, locality } =
+        parish as unknown as UserAddressParishProps;
       const { locationName } = locality as UserAddressLocalityProps;
-      const tempObj = {
+      
+      responseData = {
         ...responseData,
         streetName,
         postalCode,
         parishName,
         locationName,
       };
-
-      responseData = tempObj;
     }
   } catch (e) {
     console.log(
@@ -154,9 +155,9 @@ const findMyAnimal = async (req: Request, res: Response) => {
 
     res.status(500).send({ message: 'Something went wrong' });
     throw new Error(e as string);
-  }*/
+  }
 
   res.status(200).send(responseData);
 };
 
-export default findMyAnimal
+export default findMyAnimal;
