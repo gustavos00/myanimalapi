@@ -23,12 +23,14 @@ router.post('/update', multer(multerConfig).single('userPhoto'), UpdateUser);
 router.post('/createAddress', createAddress);
 router.post('/expoToken', storeExpoToken);
 
-router.get('/friends/token/', generateToken);
 router.get('/friends/getPending/', getAllFriendsRequest);
 router.get('/friends/getAccepted/', getAllFriends);
-router.get('/friends/verifyToken/', verifyToken);
-router.get('/friends/accept/', acceptFriendRequest);
-router.get('/friends/decline/', declineFriendsRequest);
+
+router.post('/friends/token/', generateToken);
+router.post('/friends/verifyToken/', verifyToken);
+
+router.post('/friends/accept/', acceptFriendRequest);
+router.post('/friends/decline/', declineFriendsRequest);
 
 router.post('/access/verify/', verifyAccessToken);
 

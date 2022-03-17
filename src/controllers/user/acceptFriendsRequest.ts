@@ -17,7 +17,7 @@ const acceptFriendRequest = async (req: Request, res: Response) => {
 
   try {
     validatedData = await US.acceptFriendsSchema.validateAsync(
-      req.query as unknown as AcceptFriendsProps
+      req.body as unknown as AcceptFriendsProps
     );
 
     if (!validatedData) {
