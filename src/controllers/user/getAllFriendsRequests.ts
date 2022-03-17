@@ -39,6 +39,7 @@ const getAllFriendsRequest = async (req: Request, res: Response) => {
         status: 'Pending',
         [Op.or]: [
           { userFriendsIdToWho: validatedData.id },
+          { userFriendsIdFromWho: validatedData.id },
         ],
       },
       include: [
@@ -66,6 +67,7 @@ const getAllFriendsRequest = async (req: Request, res: Response) => {
       const friendObj = {
         ...element,
         friendData,
+        fromWhoId: element.userFriendsIdFromWho
       };
 
       friendArray.push(friendObj as unknown as UsersInstance);
