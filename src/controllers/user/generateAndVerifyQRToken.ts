@@ -24,7 +24,7 @@ export const generateToken = async (req: Request, res: Response) => {
   //Validate data
   try {
     validatedData = await US.generateTokenSchema.validateAsync(
-      req.query as unknown as GenerateToken
+      req.body as unknown as GenerateToken
     );
 
     if (!validatedData) {
@@ -48,6 +48,7 @@ export const generateToken = async (req: Request, res: Response) => {
     throw new Error(e);
   }
 
+  console.log(token);
   res.status(200).send({ token });
 };
 
@@ -60,7 +61,7 @@ export const verifyToken = async (req: Request, res: Response) => {
   //Validate data
   try {
     validatedData = await US.verifyTokenSchema.validateAsync(
-      req.query as unknown as VerifyToken
+      req.body as unknown as VerifyToken
     );
 
     if (!validatedData) {
@@ -106,14 +107,16 @@ export const verifyToken = async (req: Request, res: Response) => {
         userFriendsIdToWho: userData?.idUser,
         userFriendsIdFromWho: validatedData.fromWho,
       },
-    });
+    })
 
+    //TO DO -> NEED TO FIND WHEN IS CREATED
     const [created] = response;
     friendRequestHasCreated = !created;
+    console.log(response)
 
     created
       ? res.status(200).send({ message: 'Friend relatioship already exist' })
-      : res.status(201).send({ message: true });
+      : res.status(201).send({ message: 'created' });
   } catch (e: any) {
     console.log('Error creating friends request on verifyToken controller');
     res.status(500).send({ message: 'Something went wrong' });

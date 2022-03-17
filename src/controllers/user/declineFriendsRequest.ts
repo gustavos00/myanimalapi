@@ -12,7 +12,7 @@ const declineFriendsRequest = async (req: Request, res: Response) => {
 
   try {
     validatedData = await US.declineFriendsSchema.validateAsync(
-      req.query as unknown as DeclineFriendsProps
+      req.body as unknown as DeclineFriendsProps
     );
 
     if (!validatedData) {
