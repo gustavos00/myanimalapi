@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import events from '../../models/Events';
 import eventsStatus from '../../models/EventsStatus';
 import eventsTypes from '../../models/EventsTypes';
+import files from '../../models/Files';
 
 import * as AS from '../../schemas/animalSchema';
 
@@ -39,6 +40,9 @@ const getMedicalEvents = async (req: Request, res: Response) => {
         },
         {
           model: eventsTypes,
+        },
+        {
+          model: files,
         },
       ],
     });
