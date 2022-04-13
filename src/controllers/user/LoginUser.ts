@@ -39,7 +39,7 @@ interface MulterRequest extends Request {
 }
 
 const LoginUser = async (req: Request, res: Response) => {
-  const userAnimalData = [] as Array<AnimalInstance>;
+  let userAnimalData = [] as Array<AnimalInstance>;
   const { location, key } = (req as MulterRequest).file;
 
   let returnStatus;
@@ -98,11 +98,36 @@ const LoginUser = async (req: Request, res: Response) => {
         photoName: key,
         token,
       },
+      include: [
+        {
+          model: address,
+          include: [{ model: parish, include: [{ model: locality }] }],
+        },
+      ],
     });
 
-
     const [data, created] = response;
-    const cleanUserData = created ? (data as UsersInstance).get() : data
+    const cleanUserData = created ? (data as UsersInstance).get() : data;
+
+    if (cleanUserData.address) {
+      const {
+        doorNumber,
+        postalCode,
+        streetName,
+        parish: parishData,
+      } = cleanUserData.address as unknown as FullAddressUserProps;
+
+      const { parishName, locality: localityData } = parishData;
+      const { locationName } = localityData;
+
+      userAddressTempObj = {
+        doorNumber,
+        postalCode,
+        streetName,
+        parishName,
+        locationName,
+      };
+    }
 
     returnStatus = created ? 201 : 200;
     returnToken = created ? token : data.token;
@@ -111,7 +136,6 @@ const LoginUser = async (req: Request, res: Response) => {
       data: cleanUserData,
       created,
     };
-
   } catch (e: any) {
     console.log(e);
     return;
@@ -125,114 +149,53 @@ const LoginUser = async (req: Request, res: Response) => {
         },
         nest: true,
         raw: true,
-        include: [{ model: user, as: 'userVeterinarianFk' }],
-      });
-
-      response.forEach(async (item) => {
-        try {
-          const addressResponse = await address.findOne({
-            where: { idAddress: item.userVeterinarianFk.addressIdAddress },
-            nest: true,
-            raw: true,
+        include: [
+          {
+            model: user,
+            as: 'userVeterinarianFk',
             include: [
               {
-                model: parish,
-                include: [
-                  {
-                    model: locality,
-                  },
-                ],
+                model: address,
+                include: [{ model: parish, include: [{ model: locality }] }],
               },
             ],
-          });
-
-          if (addressResponse) {
-            const {
-              doorNumber,
-              postalCode,
-              streetName,
-              parish: parishData,
-            } = addressResponse as unknown as FullAddressUserProps;
-
-            const { parishName, locality: localityData } = parishData;
-            const { locationName } = localityData;
-
-            veterinarianAddressTempObj = {
-              doorNumber,
-              postalCode,
-              streetName,
-              parishName,
-              locationName,
-            };
-
-            const tempObj = {
-              ...item,
-              userVeterinarianFk: {
-                ...item.userVeterinarianFk,
-                veterinarianAddress: veterinarianAddressTempObj,
-              },
-            } as unknown as AnimalInstance;
-
-            userAnimalData.push(tempObj);
-          }
-        } catch (e: any) {
-          console.log(
-            'Error finding animals veterinarians address create user controller'
-          );
-          res.status(500).send({ message: 'Something went wrong' });
-          throw new Error(e);
-        }
+          },
+        ],
       });
+
+      for (const element of response) {
+        const {
+          doorNumber,
+          postalCode,
+          streetName,
+          parish: parishData,
+        } = element.userVeterinarianFk
+          .address as unknown as FullAddressUserProps;
+
+        const { parishName, locality: localityData } = parishData;
+        const { locationName } = localityData;
+        veterinarianAddressTempObj = {
+          doorNumber,
+          postalCode,
+          streetName,
+          parishName,
+          locationName,
+        };
+
+        const tempObj = {
+          ...element,
+          userVeterinarianFk: {
+            ...element.userVeterinarianFk,
+            veterinarianAddress: veterinarianAddressTempObj,
+          },
+        } as unknown as AnimalInstance;
+
+        userAnimalData.push(tempObj);
+      }
     } catch (e: any) {
       console.log('Error finding animals from user on create user controller');
       res.status(500).send({ message: 'Something went wrong' });
       throw new Error(e);
-    }
-
-    if (userData.data.addressIdAddress) {
-      try {
-        const addressResponse = await address.findOne({
-          where: { idAddress: userData.data.addressIdAddress },
-          nest: true,
-          raw: true,
-          include: [
-            {
-              model: parish,
-              include: [
-                {
-                  model: locality,
-                },
-              ],
-            },
-          ],
-        });
-
-        if (addressResponse) {
-          const {
-            doorNumber,
-            postalCode,
-            streetName,
-            parish: parishData,
-          } = addressResponse as unknown as FullAddressUserProps;
-
-          const { parishName, locality: localityData } = parishData;
-          const { locationName } = localityData;
-
-          userAddressTempObj = {
-            doorNumber,
-            postalCode,
-            streetName,
-            parishName,
-            locationName,
-          };
-        }
-      } catch (e: any) {
-        console.log(
-          'Error finding animals from user on create user controller'
-        );
-        res.status(500).send({ message: 'Something went wrong' });
-        throw new Error(e);
-      }
     }
   }
 
@@ -254,9 +217,7 @@ const LoginUser = async (req: Request, res: Response) => {
     throw new Error(e);
   }
 
-  res
-    .status(returnStatus)
-    .send({ ...userCompleteData,  });
+  res.status(returnStatus).send({ ...userCompleteData });
 };
 
 export default LoginUser;

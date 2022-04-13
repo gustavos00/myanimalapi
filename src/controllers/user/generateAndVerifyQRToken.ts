@@ -48,7 +48,6 @@ export const generateToken = async (req: Request, res: Response) => {
     throw new Error(e);
   }
 
-  console.log(token);
   res.status(200).send({ token });
 };
 
@@ -112,7 +111,6 @@ export const verifyToken = async (req: Request, res: Response) => {
     //TO DO -> NEED TO FIND WHEN IS CREATED
     const [created] = response;
     friendRequestHasCreated = !created;
-    console.log(response)
 
     created
       ? res.status(200).send({ message: 'Friend relatioship already exist' })
