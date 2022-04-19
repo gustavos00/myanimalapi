@@ -24,7 +24,7 @@ const getMedicalEvents = async (req: Request, res: Response) => {
       return;
     }
   } catch (e) {
-    console.log('Error validating data on create animal controller');
+    console.log('Error validating data on get medical events controller');
 
     res.status(500).send({ message: 'Something went wrong' });
     throw new Error(e as string);
@@ -45,7 +45,7 @@ const getMedicalEvents = async (req: Request, res: Response) => {
     res.status(200).send(response);
   } catch (e: any) {
     console.log(
-      'Error finding all friends request on get all friends requests controller'
+      'Error finding all friends request on get medical events controller'
     );
     res.status(500).send({ message: 'Something went wrong' });
     throw new Error(e);
