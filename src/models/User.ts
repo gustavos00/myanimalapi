@@ -1,3 +1,4 @@
+import { AddressInstance } from './Address';
 import { Model, DataTypes, Sequelize } from 'sequelize';
 import { sequelize } from '../config/pg';
 
@@ -17,9 +18,11 @@ export interface UsersInstance extends Model {
   token: string;
   expoToken?: string;
   status: string;
-  isVeterinarian: boolean,
+  isVeterinarian: boolean;
+  veterinarianStatus: boolean;
 
   addressIdAddress: number;
+  address?: AddressInstance;
 }
 
 const users = sequelize.define<UsersInstance>(
@@ -69,6 +72,7 @@ users.hasMany(animal, {
   foreignKey: 'userIdVeterinarian',
   as: 'userVeterinarianFk',
 });
+
 animal.belongsTo(users, {
   foreignKey: 'userIdVeterinarian',
   as: 'userVeterinarianFk',
@@ -78,6 +82,7 @@ users.hasMany(friends, {
   foreignKey: 'userFriendsIdFromWho',
   as: 'userFriendsIdFromWhoFk',
 });
+
 friends.belongsTo(users, {
   foreignKey: 'userFriendsIdFromWho',
   as: 'userFriendsIdFromWhoFk',
@@ -87,6 +92,7 @@ users.hasMany(friends, {
   foreignKey: 'userFriendsIdToWho',
   as: 'userFriendsIdtoWhoFk',
 });
+
 friends.belongsTo(users, {
   foreignKey: 'userFriendsIdToWho',
   as: 'userFriendsIdtoWhoFk',
@@ -96,6 +102,7 @@ users.hasMany(classification, {
   foreignKey: 'userClassificationFromUser',
   as: 'userClassificationFromUserFk',
 });
+
 classification.belongsTo(users, {
   foreignKey: 'userClassificationFromUser',
   as: 'userClassificationFromUserFk',
@@ -105,6 +112,7 @@ users.hasMany(classification, {
   foreignKey: 'userClassificationToUser',
   as: 'userClassificationToUserFk',
 });
+
 classification.belongsTo(users, {
   foreignKey: 'userClassificationToUser',
   as: 'userClassificationToUserFk',
