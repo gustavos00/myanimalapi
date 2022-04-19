@@ -33,6 +33,7 @@ const getVeterinarianAnimals = async (req: Request, res: Response) => {
       nest: true,
       where: {
         userIdVeterinarian: validatedData.id,
+        veterinarianAcceptedRequest: true
       },
       include: [{ model: users }],
     });
