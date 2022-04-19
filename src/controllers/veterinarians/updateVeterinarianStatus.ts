@@ -2,19 +2,21 @@ import * as VS from '../../schemas/veterinarianSchema';
 
 import { Request, Response } from 'express';
 
-import events from '../../models/Events';
+import animal from '../../models/Animal';
 
-interface UpdateEventProps {
+interface UpdateVeterinarianStatusProps {
   idEvents: number;
 }
 
-const updateEvent = async (req: Request, res: Response) => {
+const updateVeterinarianStatus = async (req: Request, res: Response) => {
   let validatedData;
+  console.log(req.query);
+  console.log(req.body);
 
   //Validate data
   try {
-    validatedData = await VS.updateEvent.validateAsync(
-      req.body as UpdateEventProps
+    validatedData = await VS.updateVeterinarianStatus.validateAsync(
+      req.body as UpdateVeterinarianStatusProps
     );
 
     if (!validatedData) {
@@ -28,15 +30,12 @@ const updateEvent = async (req: Request, res: Response) => {
   }
 
   try {
-    events.update(
+    animal.update(
       {
-        report: validatedData.report,
-        eventsStatusIdEventsStatus: validatedData.eventsStatusId,
-        eventsTypeIdEventsTypes: validatedData.eventsTypesId,
-        animalIdAnimal: validatedData.animalId
+        veterinarianAcceptedRequest: true,
       },
       {
-        where: { idEvents: validatedData.idEvents },
+        where: { idAnimal: validatedData.id },
       }
     );
   } catch (e: any) {
@@ -48,4 +47,4 @@ const updateEvent = async (req: Request, res: Response) => {
   res.status(200).send({ data: validatedData });
 };
 
-export default updateEvent;
+export default updateVeterinarianStatus;

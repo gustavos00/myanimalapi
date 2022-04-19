@@ -1,17 +1,17 @@
 import { Request, Response } from 'express';
 
 import * as VS from '../../schemas/veterinarianSchema';
-import animal from '../../models/Animal';
 import users from '../../models/User';
+import animal from '../../models/Animal';
 
 interface getAllFriendsDataProps {
   id?: string;
 }
 
-const getVeterinarianAnimals = async (req: Request, res: Response) => {
+const getNotAcceptedOwners = async (req: Request, res: Response) => {
   let validatedData;
   try {
-    validatedData = await VS.getVeterinarianAnimalsSchema.validateAsync(
+    validatedData = await VS.getNotAcceptedOwnersSchema.validateAsync(
       req.query as unknown as getAllFriendsDataProps
     );
 
@@ -28,12 +28,18 @@ const getVeterinarianAnimals = async (req: Request, res: Response) => {
   }
 
   try {
-    const response = await users.findAll({
+    const response = await animal.findAll({
       raw: true,
+      nest: true,
       where: {
         userIdVeterinarian: validatedData.id,
-        veterinarianStatus: 'pending',
+        veterinarianAcceptedRequest: false,
       },
+      include: [{ model: users }],
+    });
+    console.log({
+      userIdVeterinarian: validatedData.id,
+      veterinarianAcceptedRequest: false,
     });
     res.status(200).send(response);
   } catch (e: any) {
@@ -45,4 +51,4 @@ const getVeterinarianAnimals = async (req: Request, res: Response) => {
   }
 };
 
-export default getVeterinarianAnimals;
+export default getNotAcceptedOwners;
