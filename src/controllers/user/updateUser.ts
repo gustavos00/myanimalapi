@@ -2,6 +2,7 @@ import * as US from '../../schemas/userSchema';
 
 import { Request, Response } from 'express';
 import users from '../../models/User';
+import address from '../../models/Address';
 
 interface UpdateUserProps {
   streetName: string;
@@ -33,7 +34,6 @@ const UpdateUser = async (req: Request, res: Response) => {
   const { location, key } = (req as MulterRequest).file;
   let validatedData;
 
-
   //Validate data
   try {
     validatedData = await US.UpdateUserSchema.validateAsync(
@@ -56,34 +56,41 @@ const UpdateUser = async (req: Request, res: Response) => {
       key: 'email' as never,
     });
 
-    await users.update(
+    const response = await users.update(
       { ...validatedDataWithoutEmail, photoName: key, photoUrl: location },
-      { where: { idUser: Number(validatedData.id)} }
+      { where: { idUser: Number(validatedData.id) } }
     );
-
-    const addressObject = {
-      doorNumber: validatedData.doorNumber,
-      postalCode: validatedData.postalCode,
-      streetName: validatedData.streetName,
-      parishName: validatedData.parish,
-      locationName: validatedData.locality,
-    };
-
-    const userObject = {
-      familyName: validatedData.familyName,
-      givenName: validatedData.givenName,
-      email: validatedData.email,
-      phoneNumber: validatedData.phoneNumber,
-      photoName: key,
-      photoUrl: location,
-    };
-
-    res.status(200).send({ ...userObject, userAddress: addressObject });
   } catch (e: any) {
     console.log('Error updating user data on update user controller');
     res.status(500).send({ message: 'Something went wrong' });
     throw new Error(e);
   }
+
+  const addressObject = {
+    doorNumber: validatedData.doorNumber,
+    postalCode: validatedData.postalCode,
+    streetName: validatedData.streetName,
+    parishName: validatedData.parish,
+    locationName: validatedData.locality,
+  };
+
+  // const foundItem = await address.findOne({ where: { idAddress: 1 } });
+  // if (!foundItem) {
+  //   // Item not found, create a new one
+  //   const item = await address.create({});
+  //   return { item, created: true };
+  // }
+  // // Found an item, update it
+  // const item = await address.update({}, { where: { idAddress: 1 } });
+
+  res
+    .status(200)
+    .send({
+      ...validatedData,
+      photoName: key,
+      photoUrl: location,
+      userAddress: addressObject,
+    });
 };
 
 export default UpdateUser;

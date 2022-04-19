@@ -10,17 +10,14 @@ export const LoginUserSchema = Joi.object({
 
 export const UpdateUserSchema = Joi.object({
   id: Joi.string().required().min(1),
-  streetName: Joi.string().required(),
-  doorNumber: Joi.string().required(),
-  postalCode: Joi.string().required(),
-  parish: Joi.string().required(),
-  locality: Joi.string().required(),
+  idAddress: Joi.string(),
   givenName: Joi.string().required(),
   familyName: Joi.string().required(),
   email: Joi.string().email().required(),
   phoneNumber: Joi.string().empty('').optional(null),
   isVeterinarian: Joi.boolean().required(),
 });
+//TO DO -> ADD A ADDRESS OBJECT WITH SPECIFIC KEYS
 
 export const createAddressSchema = Joi.object({
   parishName: Joi.string().required().min(1).max(100),

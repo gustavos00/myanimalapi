@@ -121,6 +121,7 @@ const LoginUser = async (req: Request, res: Response) => {
       const { locationName } = localityData;
 
       userAddressTempObj = {
+        idAddress: cleanUserData.address.idAddress,
         doorNumber,
         postalCode,
         streetName,

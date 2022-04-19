@@ -7,6 +7,7 @@ import getAllVeterinarians from '../controllers/veterinarians/getAllVeterinarian
 import getVeterinarianAnimals from '../controllers/veterinarians/getVeterinarianAnimals';
 import getAllEvents from '../controllers/veterinarians/getAllEvents';
 import updateEvent from '../controllers/veterinarians/updateEvents';
+import getAllEventsProps from '../controllers/veterinarians/getAllEventsProps';
 import createEvent from '../controllers/veterinarians/createEvent';
 import getAllEventsProps from '../controllers/veterinarians/getAllEventsProps';
 import getNotAcceptedOwners from '../controllers/veterinarians/getAllUnacceptedRequestOwners';
@@ -16,6 +17,8 @@ router.get('/get', getAllVeterinarians);
 router.get('/getAnimals', getVeterinarianAnimals);
 router.get('/getEvents', getAllEvents);
 router.get('/getEventsProps', getAllEventsProps);
+
+router.post('/updateEvent', updateEvent);
 router.get('/getNotAcceptedOwners', getNotAcceptedOwners);
 
 router.post('/updateVeterinarianStatus', updateVeterinarianStatus);
