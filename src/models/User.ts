@@ -19,8 +19,6 @@ export interface UsersInstance extends Model {
   expoToken?: string;
   status: string;
   isVeterinarian: boolean;
-
-
   addressIdAddress: number;
   address?: AddressInstance;
 }
