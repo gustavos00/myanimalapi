@@ -1,4 +1,4 @@
-import { UsersInstance } from './../../models/User';
+import { UsersInstance } from '../../models/User';
 import * as US from '../../schemas/userSchema';
 
 import { Request, Response } from 'express';

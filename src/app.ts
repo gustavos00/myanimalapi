@@ -1,7 +1,4 @@
-import express, {
-  Request,
-  Response
-} from 'express';
+import express, { Request, Response } from 'express';
 
 import rateLimit from 'express-rate-limit';
 import dotenv from 'dotenv';
@@ -10,6 +7,7 @@ import cors from 'cors';
 
 import { sequelize } from './config/pg';
 import routes from './routes/index';
+import animal from './models/Animal';
 
 const server = express();
 server.use(cors());

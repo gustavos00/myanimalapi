@@ -55,8 +55,8 @@ const findMyAnimal = async (req: Request, res: Response) => {
     throw new Error(e as string);
   }
 
+  //Try find animal
   try {
-    //Try find animal
     const response = await animal.findOne({
       where: validatedData,
     });
@@ -108,12 +108,13 @@ const findMyAnimal = async (req: Request, res: Response) => {
     addressData = cleanResponse.address;
 
     responseData = {
+      name: `${response?.givenName} ${response?.familyName}`,
       email: response?.email,
       phoneNumber: response?.phoneNumber,
     };
   } catch (e) {
     console.log(
-      'Error finding owner id on animal table on findMyAnimal animal controller'
+      'Error finding owner address on animal table on findMyAnimal animal controller'
     );
 
     res.status(500).send({ message: 'Something went wrong' });
@@ -126,7 +127,7 @@ const findMyAnimal = async (req: Request, res: Response) => {
 
     const res = await geoCoder.geocode(`${streetName} ${postalCode}`);
 
-    if (res) {
+    if (res.length === 1) {
       const latitude = res[0].latitude;
       const longitude = res[0].longitude;
 
@@ -136,14 +137,13 @@ const findMyAnimal = async (req: Request, res: Response) => {
         longitude,
       };
     } else {
-      const { parishName, locality } =
-        parish as unknown as UserAddressParishProps;
+      const { parishName, locality } = addressData.parish;
       const { locationName } = locality as UserAddressLocalityProps;
-      
       responseData = {
         ...responseData,
-        streetName,
-        postalCode,
+        doorNumber: addressData.doorNumber,
+        streetName: addressData.streetName,
+        postalCode: addressData.postalCode,
         parishName,
         locationName,
       };

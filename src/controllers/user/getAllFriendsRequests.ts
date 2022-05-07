@@ -1,4 +1,4 @@
-import { FriendsInstance } from './../../models/Friends';
+import { FriendsInstance } from '../../models/Friends';
 import { Request, Response } from 'express';
 import { Op } from 'sequelize';
 import friends from '../../models/Friends';

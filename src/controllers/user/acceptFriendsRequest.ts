@@ -68,7 +68,7 @@ const acceptFriendRequest = async (req: Request, res: Response) => {
     throw new Error(e as string);
   }
 
-  const receipt = await sendNotifications({
+  await sendNotifications({
     expoToken: friendsData?.userFriendsIdFromWhoFk?.expoToken,
     title: 'Friend Request',
     message: `Hello! ${friendsData?.userFriendsIdtoWhoFk?.givenName} accepted your friend request!`,

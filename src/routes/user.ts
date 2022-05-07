@@ -7,7 +7,7 @@ import getAllFriendsRequest from '../controllers/user/getAllFriendsRequests';
 import storeExpoToken from '../controllers/user/storeExpoToken';
 import UpdateUser from '../controllers/user/updateUser';
 import verifyAccessToken from '../controllers/user/verifyAccessToken';
-import createAddress from './../controllers/user/createAddress';
+import createAddress from '../controllers/user/createAddress';
 import acceptFriendRequest from '../controllers/user/acceptFriendsRequest';
 import getAllFriends from '../controllers/user/getAllFriends';
 import declineFriendsRequest from '../controllers/user/declineFriendsRequest';
@@ -15,7 +15,7 @@ import declineFriendsRequest from '../controllers/user/declineFriendsRequest';
 import {
   generateToken,
   verifyToken,
-} from './../controllers/user/generateAndVerifyQRToken';
+} from '../controllers/user/generateAndVerifyQRToken';
 
 const router = Router();
 router.post('/create', multer(multerConfig).single('userPhoto'), LoginUser);

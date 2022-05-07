@@ -108,11 +108,9 @@ export const verifyToken = async (req: Request, res: Response) => {
       },
     })
 
-    //TO DO -> NEED TO FIND WHEN IS CREATED
-    const [created] = response;
-    friendRequestHasCreated = !created;
+    friendRequestHasCreated = !response[1];
 
-    created
+    friendRequestHasCreated
       ? res.status(200).send({ message: 'Friend relatioship already exist' })
       : res.status(201).send({ message: 'created' });
   } catch (e: any) {

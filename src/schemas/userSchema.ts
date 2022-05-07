@@ -17,7 +17,6 @@ export const UpdateUserSchema = Joi.object({
   phoneNumber: Joi.string().empty('').optional(null),
   isVeterinarian: Joi.boolean().required(),
 });
-//TO DO -> ADD A ADDRESS OBJECT WITH SPECIFIC KEYS
 
 export const createAddressSchema = Joi.object({
   parishName: Joi.string().required().min(1).max(100),

@@ -1,4 +1,4 @@
-import { UsersInstance } from './../../models/User';
+import { UsersInstance } from '../../models/User';
 import { Request, Response } from 'express';
 import address from '../../models/Address';
 import locality from '../../models/Locality';
@@ -40,7 +40,7 @@ const getAllVeterinarians = async (req: Request, res: Response) => {
     throw new Error(e);
   }
 
-  for (const element of response) { //convert to foreach and promisses
+  for (const element of response) {
     if (element.addressIdAddress) {
       try {
         const addressResponse = await address.findOne({
