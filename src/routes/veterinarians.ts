@@ -17,6 +17,7 @@ router.get('/get', getAllVeterinarians);
 router.get('/getAnimals', getVeterinarianAnimals);
 router.get('/getEvents', getAllEvents);
 router.get('/getEventsProps', getAllEventsProps);
+router.get('/getNotAcceptedOwners', getNotAcceptedOwners);
 
 router.post('/updateEvent', updateEvent);
 router.get('/getNotAcceptedOwners', getNotAcceptedOwners);
@@ -28,3 +29,4 @@ router.post('/accept', acceptVeterinarian);
 router.post('/remove', removeVeterinarian);
 
 export default router;
+  

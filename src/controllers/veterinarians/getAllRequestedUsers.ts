@@ -8,7 +8,7 @@ interface getAllFriendsDataProps {
   id?: string;
 }
 
-const getVeterinarianAnimals = async (req: Request, res: Response) => {
+const getNotAcceptedOwners = async (req: Request, res: Response) => {
   let validatedData;
   try {
     validatedData = await VS.getVeterinarianAnimalsSchema.validateAsync(
@@ -26,13 +26,16 @@ const getVeterinarianAnimals = async (req: Request, res: Response) => {
     res.status(500).send({ message: 'Something went wrong' });
     throw new Error(e);
   }
+  console.log(validatedData.id)
 
   try {
-    const response = await users.findAll({
+    const response = await animal.findAll({
       raw: true,
+      nest: true,
+      include: [{model: users}],
       where: {
         userIdVeterinarian: validatedData.id,
-        veterinarianStatus: 'pending',
+        veterinarianAcceptedRequest: false,
       },
     });
     res.status(200).send(response);
@@ -45,4 +48,4 @@ const getVeterinarianAnimals = async (req: Request, res: Response) => {
   }
 };
 
-export default getVeterinarianAnimals;
+export default getNotAcceptedOwners;

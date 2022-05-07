@@ -37,7 +37,7 @@ const deleteAnimal = async (req: Request, res: Response) => {
     });
 
     if (!response) {
-      res.status(200).send({ message: 'Animal dont exist' });
+      res.status(400).send({ message: 'Animal dont exist' });
       return;
     }
   } catch (e) {

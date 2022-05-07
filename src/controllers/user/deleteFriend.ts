@@ -21,7 +21,7 @@ export const deleteFriend = async (req: Request, res: Response) => {
       return;
     }
   } catch (e) {
-    console.log('Error validating data on create user address controller');
+    console.log('Error validating data on delete friend controller');
 
     res.status(500).send({ message: 'Something went wrong' });
     throw new Error(e as string);
@@ -34,7 +34,7 @@ export const deleteFriend = async (req: Request, res: Response) => {
       },
     });
   } catch (e) {
-    console.log('Error creating user address on user controller');
+    console.log('Error on delete friend controller');
 
     res.status(500).send({ message: 'Something went wrong' });
     throw new Error(e as string);

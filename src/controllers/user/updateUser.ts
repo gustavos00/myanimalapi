@@ -56,7 +56,7 @@ const UpdateUser = async (req: Request, res: Response) => {
       key: 'email' as never,
     });
 
-    const response = await users.update(
+    await users.update(
       { ...validatedDataWithoutEmail, photoName: key, photoUrl: location },
       { where: { idUser: Number(validatedData.id) } }
     );
@@ -74,23 +74,32 @@ const UpdateUser = async (req: Request, res: Response) => {
     locationName: validatedData.locality,
   };
 
-  // const foundItem = await address.findOne({ where: { idAddress: 1 } });
-  // if (!foundItem) {
-  //   // Item not found, create a new one
-  //   const item = await address.create({});
+  // const foundAddress = await address.findOne({
+  //   where: { idAddress: validatedData.idAddress },
+  // });
+  // if (!foundAddress) {
+  //   const item = await address.create({
+  //     doorNumber: validatedData.doorNumber,
+  //     postalCode: validatedData.postalCode,
+  //     streetName: validatedData.streetName,
+  //   });
   //   return { item, created: true };
   // }
-  // // Found an item, update it
-  // const item = await address.update({}, { where: { idAddress: 1 } });
+  // await address.update(
+  //   {
+  //     doorNumber: validatedData.doorNumber,
+  //     postalCode: validatedData.postalCode,
+  //     streetName: validatedData.streetName,
+  //   },
+  //   { where: { idAddress: validatedData.idAddress } }
+  // );
 
-  res
-    .status(200)
-    .send({
-      ...validatedData,
-      photoName: key,
-      photoUrl: location,
-      userAddress: addressObject,
-    });
+  res.status(200).send({
+    ...validatedData,
+    photoName: key,
+    photoUrl: location,
+    userAddress: addressObject,
+  });
 };
 
 export default UpdateUser;

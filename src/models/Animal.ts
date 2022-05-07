@@ -13,11 +13,12 @@ export interface AnimalInstance extends Model {
   trackNumber: string;
   photoName: string;
   photoUrl: string;
-  birthday: string,
-  birthdayMonth: string,
+  birthday: string;
+  birthdayMonth: string;
 
-  userVeterinarianFk: UsersInstance
+  userVeterinarianFk: UsersInstance;
   veterinarianChatFingerprint: string;
+  veterinarianAcceptedRequest: boolean | false;
 
   userIdUser: number;
 }
@@ -47,7 +48,11 @@ const animal = sequelize.define<AnimalInstance>(
     photoUrl: DataTypes.STRING,
     birthday: DataTypes.STRING(2),
     birthdayMonth: DataTypes.STRING(2),
-    veterinarianChatFingerprint: DataTypes.STRING()
+    veterinarianChatFingerprint: DataTypes.STRING(),
+    veterinarianAcceptedRequest: {
+      type: DataTypes.BOOLEAN(),
+      defaultValue: false,
+    },
   },
   {
     tableName: 'animal',
@@ -56,7 +61,7 @@ const animal = sequelize.define<AnimalInstance>(
   }
 );
 
-animal.hasMany(events)
-events.belongsTo(animal)
+animal.hasMany(events);
+events.belongsTo(animal);
 
-export default animal
+export default animal;

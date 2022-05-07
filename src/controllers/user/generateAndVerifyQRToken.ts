@@ -107,12 +107,11 @@ export const verifyToken = async (req: Request, res: Response) => {
         userFriendsIdFromWho: validatedData.fromWho,
       },
     });
-
-    friendRequestHasCreated = created;
+    friendRequestHasCreated = !response[1];
 
     friendRequestHasCreated
-      ? res.status(201).send({ message: 'created' })
-      : res.status(200).send({ message: 'Friend relatioship already exist' });
+      ? res.status(200).send({ message: 'Friend relatioship already exist' })
+      : res.status(201).send({ message: 'created' });
   } catch (e: any) {
     console.log('Error creating friends request on verifyToken controller');
     res.status(500).send({ message: 'Something went wrong' });
