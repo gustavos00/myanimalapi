@@ -97,7 +97,7 @@ export const verifyToken = async (req: Request, res: Response) => {
   }
 
   try {
-    const [row, created] = await friends.findOrCreate({
+    const response = await friends.findOrCreate({
       where: {
         userFriendsIdToWho: userData?.idUser,
         userFriendsIdFromWho: validatedData.fromWho,

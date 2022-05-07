@@ -9,7 +9,6 @@ import getAllEvents from '../controllers/veterinarians/getAllEvents';
 import updateEvent from '../controllers/veterinarians/updateEvents';
 import getAllEventsProps from '../controllers/veterinarians/getAllEventsProps';
 import createEvent from '../controllers/veterinarians/createEvent';
-import getAllEventsProps from '../controllers/veterinarians/getAllEventsProps';
 import getNotAcceptedOwners from '../controllers/veterinarians/getAllUnacceptedRequestOwners';
 
 const router = Router();
