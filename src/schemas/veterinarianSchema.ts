@@ -30,6 +30,7 @@ export const createEvent = Joi.object({
   eventsStatusId: Joi.string(),
   eventsTypesId: Joi.string(),
   animalId: Joi.string(),
+  files: Joi.any()
 });
 
 export const getNotAcceptedOwnersSchema = Joi.object({

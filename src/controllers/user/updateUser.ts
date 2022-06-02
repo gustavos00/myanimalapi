@@ -92,7 +92,7 @@ const UpdateUser = async (req: Request, res: Response) => {
         {
           parishName: validatedData.parishName,
         },
-        { where: { parishName: validatedData.parishName} }
+        { where: { parishName: validatedData.parishName } }
       );
     }
   } catch (e) {
