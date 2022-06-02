@@ -10,7 +10,6 @@ interface CreateEventProps {
 
 const createEvent = async (req: Request, res: Response) => {
   let validatedData;
-  console.log(req.body)
 
   //Validate data
   try {

@@ -10,7 +10,14 @@ export const LoginUserSchema = Joi.object({
 
 export const UpdateUserSchema = Joi.object({
   id: Joi.string().required().min(1),
+
   idAddress: Joi.string(),
+  parishName: Joi.string().min(1).max(100),
+  locationName: Joi.string().min(1).max(100),
+  streetName: Joi.string().min(1).max(100),
+  postalCode: Joi.string().min(1).max(12),
+  doorNumber: Joi.string().min(1).max(10),
+
   givenName: Joi.string().required(),
   familyName: Joi.string().required(),
   email: Joi.string().email().required(),
@@ -18,7 +25,7 @@ export const UpdateUserSchema = Joi.object({
   isVeterinarian: Joi.boolean().required(),
 });
 
-export const createAddressSchema = Joi.object({
+export const createAddressSchema = Joi.object({               
   parishName: Joi.string().required().min(1).max(100),
   locationName: Joi.string().required().min(1).max(100),
   streetName: Joi.string().required().min(1).max(100),
