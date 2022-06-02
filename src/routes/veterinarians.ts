@@ -1,4 +1,6 @@
 import { Router } from 'express';
+const multer = require('multer');
+const multerConfig = require('../config/multer');
 
 import updateVeterinarianStatus from './../controllers/veterinarians/updateVeterinarianStatus';
 import removeVeterinarian from './../controllers/veterinarians/removeVeterinarian';
@@ -23,9 +25,12 @@ router.get('/getNotAcceptedOwners', getNotAcceptedOwners);
 
 router.post('/updateVeterinarianStatus', updateVeterinarianStatus);
 router.post('/updateEvent', updateEvent);
-router.post('/createEvent', createEvent);
+router.post(
+  '/createEvent',
+  multer(multerConfig).array('files', 10),
+  createEvent
+);
 router.post('/accept', acceptVeterinarian);
 router.post('/remove', removeVeterinarian);
 
 export default router;
-  

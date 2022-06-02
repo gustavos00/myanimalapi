@@ -47,8 +47,8 @@ const files = sequelize.define<FilesInstance>(
   }
 );
 
-files.hasMany(events);
-events.belongsTo(files);
+events.hasMany(files)
+files.belongsTo(events)
 
 
 export default files;

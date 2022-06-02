@@ -39,9 +39,9 @@ module.exports = {
       'image/pjpeg',
       'image/jpg',
       'image/png',
-      'text/html'
+      'text/html',
+      'application/pdf'
     ];
-
     if (allowedMimes.includes(file.mimetype)) {
       cb(null, true);
     } else {

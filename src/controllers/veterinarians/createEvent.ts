@@ -2,14 +2,21 @@ import * as VS from '../../schemas/veterinarianSchema';
 
 import { Request, Response } from 'express';
 
-import events from '../../models/Events';
+import events, { EventsInstance } from '../../models/Events';
+import files from '../../models/Files';
 
 interface CreateEventProps {
   idEvents: number;
 }
 
+interface MulterRequest extends Request {
+  files: any;
+}
+
 const createEvent = async (req: Request, res: Response) => {
   let validatedData;
+  let newEvent: EventsInstance;
+  console.log(req.files);
 
   //Validate data
   try {
@@ -28,19 +35,37 @@ const createEvent = async (req: Request, res: Response) => {
   }
 
   try {
-    const response = await events.create({
+    newEvent = await events.create({
       report: validatedData.report,
       eventsStatusIdEventsStatus: validatedData.eventsStatusId,
       eventsTypeIdEventsTypes: validatedData.eventsTypesId,
       animalIdAnimal: validatedData.animalId,
     });
-
-    res.status(200).send(response);
   } catch (e: any) {
     console.log('Error creating event on create event controller');
     res.status(500).send({ message: 'Something went wrong' });
     throw new Error(e);
   }
+
+  try {
+    const filesDocuments = (req as MulterRequest).files;
+    console.log(req.files)
+    filesDocuments.forEach(async (element : any) => {
+      const response = files.create({
+        name: element.fieldname,
+        file: element.location,
+        label: element.fieldname,
+        function: '123',
+        eventIdEvent: newEvent.idEvents,
+      });
+    });
+  } catch (e: any) {
+    console.log('Error creating files on create event controller');
+    res.status(500).send({ message: 'Something went wrong' });
+    throw new Error(e);
+  }
+
+  res.status(200).send(newEvent);
 };
 
 export default createEvent;

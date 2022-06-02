@@ -8,6 +8,8 @@ import cors from 'cors';
 import { sequelize } from './config/pg';
 import routes from './routes/index';
 import animal from './models/Animal';
+import events from './models/Events';
+import files from './models/Files';
 
 const server = express();
 server.use(cors());
