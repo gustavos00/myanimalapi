@@ -16,7 +16,6 @@ interface MulterRequest extends Request {
 const createEvent = async (req: Request, res: Response) => {
   let validatedData;
   let newEvent: EventsInstance;
-  console.log(req.files);
 
   //Validate data
   try {
@@ -35,8 +34,10 @@ const createEvent = async (req: Request, res: Response) => {
   }
 
   try {
+    console.log(validatedData.date)
     newEvent = await events.create({
       report: validatedData.report,
+      date: validatedData.date,
       eventsStatusIdEventsStatus: validatedData.eventsStatusId,
       eventsTypeIdEventsTypes: validatedData.eventsTypesId,
       animalIdAnimal: validatedData.animalId,
@@ -49,14 +50,13 @@ const createEvent = async (req: Request, res: Response) => {
 
   try {
     const filesDocuments = (req as MulterRequest).files;
-    console.log(req.files)
-    filesDocuments.forEach(async (element : any) => {
-      const response = files.create({
-        name: element.fieldname,
+    filesDocuments.forEach(async (element: any) => {
+      files.create({
+        name: element.originalname,
         file: element.location,
-        label: element.fieldname,
-        function: '123',
-        eventIdEvent: newEvent.idEvents,
+        label: element.originalname,
+        function: '',
+        eventIdEvents: newEvent.idEvents,
       });
     });
   } catch (e: any) {

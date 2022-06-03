@@ -15,13 +15,17 @@ const storageTypes = {
     key: (req: Request, file: any, cb: Function) => {
       cryptoLib.randomBytes(4, (err: any, hash: any) => {
         if (err) cb(err);
+        if (file.originalname) {
+          const filename = `${file.originalname}-${hash.toString('hex')}`;
+          return cb(null, filename);
+        } else {
+          const { email, chipnumber }: any = req.body;
+          const filename = chipnumber
+            ? `${email}-${chipnumber}`
+            : `${email}-${hash.toString('hex')}`;
 
-        const { email, chipnumber }: any = req.body;
-        const filename = chipnumber
-          ? `${email}-${chipnumber}`
-          : `${email}-${hash.toString('hex')}`;
-
-        return cb(null, filename);
+          return cb(null, filename);
+        }
       });
     },
   }),
@@ -40,7 +44,7 @@ module.exports = {
       'image/jpg',
       'image/png',
       'text/html',
-      'application/pdf'
+      'application/pdf',
     ];
     if (allowedMimes.includes(file.mimetype)) {
       cb(null, true);

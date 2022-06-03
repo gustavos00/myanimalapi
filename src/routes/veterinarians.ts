@@ -12,6 +12,7 @@ import updateEvent from '../controllers/veterinarians/updateEvents';
 import getAllEventsProps from '../controllers/veterinarians/getAllEventsProps';
 import createEvent from '../controllers/veterinarians/createEvent';
 import getNotAcceptedOwners from '../controllers/veterinarians/getAllUnacceptedRequestOwners';
+import deleteEvent from '../controllers/veterinarians/deleteEvent';
 
 const router = Router();
 router.get('/get', getAllVeterinarians);
@@ -25,6 +26,7 @@ router.get('/getNotAcceptedOwners', getNotAcceptedOwners);
 
 router.post('/updateVeterinarianStatus', updateVeterinarianStatus);
 router.post('/updateEvent', updateEvent);
+router.post('/deleteEvent', deleteEvent);
 router.post(
   '/createEvent',
   multer(multerConfig).array('files', 10),

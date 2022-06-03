@@ -41,7 +41,6 @@ interface MulterRequest extends Request {
 const LoginUser = async (req: Request, res: Response) => {
   let userAnimalData = [] as Array<AnimalInstance>;
   const { location, key } = (req as MulterRequest).file;
-  console.log(location)
 
   let returnStatus;
   let returnToken;
