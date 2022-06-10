@@ -11,7 +11,6 @@ const parish = pg_1.sequelize.define('parish', {
     },
     parishName: {
         allowNull: false,
-        unique: true,
         type: sequelize_1.DataTypes.STRING(100),
     },
 }, {

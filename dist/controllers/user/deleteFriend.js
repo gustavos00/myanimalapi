@@ -45,7 +45,7 @@ const deleteFriend = (req, res) => __awaiter(void 0, void 0, void 0, function* (
         }
     }
     catch (e) {
-        console.log('Error validating data on create user address controller');
+        console.log('Error validating data on delete friend controller');
         res.status(500).send({ message: 'Something went wrong' });
         throw new Error(e);
     }
@@ -57,7 +57,7 @@ const deleteFriend = (req, res) => __awaiter(void 0, void 0, void 0, function* (
         });
     }
     catch (e) {
-        console.log('Error creating user address on user controller');
+        console.log('Error on delete friend controller');
         res.status(500).send({ message: 'Something went wrong' });
         throw new Error(e);
     }

@@ -32,7 +32,7 @@ const getAllVeterinarians = (req, res) => __awaiter(void 0, void 0, void 0, func
         res.status(500).send({ message: 'Something went wrong' });
         throw new Error(e);
     }
-    for (const element of response) { //convert to foreach and promisses
+    for (const element of response) {
         if (element.addressIdAddress) {
             try {
                 const addressResponse = yield Address_1.default.findOne({

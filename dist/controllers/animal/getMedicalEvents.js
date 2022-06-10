@@ -34,6 +34,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const Events_1 = __importDefault(require("../../models/Events"));
 const EventsStatus_1 = __importDefault(require("../../models/EventsStatus"));
 const EventsTypes_1 = __importDefault(require("../../models/EventsTypes"));
+const Files_1 = __importDefault(require("../../models/Files"));
 const AS = __importStar(require("../../schemas/animalSchema"));
 const getMedicalEvents = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     let validatedData;
@@ -47,7 +48,7 @@ const getMedicalEvents = (req, res) => __awaiter(void 0, void 0, void 0, functio
         }
     }
     catch (e) {
-        console.log('Error validating data on create animal controller');
+        console.log('Error validating data on get medical events controller');
         res.status(500).send({ message: 'Something went wrong' });
         throw new Error(e);
     }
@@ -61,12 +62,15 @@ const getMedicalEvents = (req, res) => __awaiter(void 0, void 0, void 0, functio
                 {
                     model: EventsTypes_1.default,
                 },
+                {
+                    model: Files_1.default,
+                },
             ],
         });
         res.status(200).send(response);
     }
     catch (e) {
-        console.log('Error finding all friends request on get all friends requests controller');
+        console.log('Error finding all friends request on get medical events controller');
         res.status(500).send({ message: 'Something went wrong' });
         throw new Error(e);
     }

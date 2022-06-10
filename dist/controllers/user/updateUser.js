@@ -44,6 +44,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const US = __importStar(require("../../schemas/userSchema"));
 const User_1 = __importDefault(require("../../models/User"));
+const Address_1 = __importDefault(require("../../models/Address"));
+const Parish_1 = __importDefault(require("../../models/Parish"));
 const removeSpecificKey = ({ object, key }) => {
     const _a = object, _b = key, deletedKey = _a[_b], otherKeys = __rest(_a, [typeof _b === "symbol" ? _b : _b + ""]);
     return otherKeys;
@@ -51,6 +53,9 @@ const removeSpecificKey = ({ object, key }) => {
 const UpdateUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { location, key } = req.file;
     let validatedData;
+    let addressId;
+    let parishId;
+    let localityId;
     //Validate data
     try {
         validatedData = yield US.UpdateUserSchema.validateAsync(req.body);
@@ -64,33 +69,85 @@ const UpdateUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         res.status(500).send({ message: 'Something went wrong' });
         throw new Error(e);
     }
+    //ADDRESS
+    try {
+        if (JSON.parse(validatedData.idAddress) === null) {
+            const item = yield Address_1.default.create({
+                doorNumber: validatedData.doorNumber,
+                postalCode: validatedData.postalCode,
+                streetName: validatedData.streetName,
+            });
+            addressId = item.idAddress;
+        }
+        else {
+            yield Address_1.default.update({
+                doorNumber: validatedData.doorNumber,
+                postalCode: validatedData.postalCode,
+                streetName: validatedData.streetName,
+            }, { where: { idAddress: validatedData.idAddress } });
+        }
+    }
+    catch (e) {
+        console.log(e);
+    }
+    //PARISH
+    try {
+        if (JSON.parse(validatedData.parishName) === null) {
+            const item = yield Parish_1.default.create({
+                parishName: validatedData.parishName,
+            });
+            parishId = item.idParish;
+        }
+        else {
+            const response = yield Parish_1.default.update({
+                parishName: validatedData.parishName,
+            }, { where: { parishName: validatedData.parishName } });
+        }
+    }
+    catch (e) {
+        console.log(e);
+    }
     try {
         const validatedDataWithoutEmail = removeSpecificKey({
             object: validatedData,
             key: 'email',
         });
-        yield User_1.default.update(Object.assign(Object.assign({}, validatedDataWithoutEmail), { photoName: key, photoUrl: location }), { where: { idUser: Number(validatedData.id) } });
-        const addressObject = {
-            doorNumber: validatedData.doorNumber,
-            postalCode: validatedData.postalCode,
-            streetName: validatedData.streetName,
-            parishName: validatedData.parish,
-            locationName: validatedData.locality,
-        };
-        const userObject = {
-            familyName: validatedData.familyName,
-            givenName: validatedData.givenName,
-            email: validatedData.email,
-            phoneNumber: validatedData.phoneNumber,
-            photoName: key,
-            photoUrl: location,
-        };
-        res.status(200).send(Object.assign(Object.assign({}, userObject), { userAddress: addressObject }));
+        yield User_1.default.update(Object.assign(Object.assign({}, validatedDataWithoutEmail), { photoName: key, photoUrl: location, addressIdAddress: addressId }), { where: { idUser: Number(validatedData.id) } });
     }
     catch (e) {
         console.log('Error updating user data on update user controller');
         res.status(500).send({ message: 'Something went wrong' });
         throw new Error(e);
     }
+    const addressObject = {
+        doorNumber: validatedData.doorNumber,
+        postalCode: validatedData.postalCode,
+        streetName: validatedData.streetName,
+        parishName: validatedData.parish,
+        locationName: validatedData.locality,
+    };
+    //verify if all data exist
+    // try {
+    //   if(JSON.parse(validatedData.idAddress) === null) {
+    //     const item = await address.create({
+    //       doorNumber: validatedData.doorNumber,
+    //       postalCode: validatedData.postalCode,
+    //       streetName: validatedData.streetName,
+    //     });
+    //     //UPDATE USER
+    //   } else {
+    //     await address.update(
+    //       {
+    //         doorNumber: validatedData.doorNumber,
+    //         postalCode: validatedData.postalCode,
+    //         streetName: validatedData.streetName,
+    //       },
+    //       { where: { idAddress: validatedData.idAddress } }
+    //     );
+    //   }
+    // } catch(e) {
+    //   console.log(e)
+    // }
+    res.status(200).send(Object.assign(Object.assign({}, validatedData), { photoName: key, photoUrl: location, userAddress: addressObject }));
 });
 exports.default = UpdateUser;

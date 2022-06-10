@@ -46,11 +46,10 @@ const findMyAnimal = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     let userId;
     let responseData;
     let addressData;
-    //Validate data
-    const tempTrackNumber = req.query.trackNumber === 'undefined' ? undefined : req.query.trackNumber;
+    let cleanResponse;
     try {
         validatedData = yield AS.findMyAnimalSchema.validateAsync({
-            trackNumber: tempTrackNumber,
+            trackNumber: req.query.tracking,
         });
         if (!validatedData) {
             res.status(400).send({ message: 'Invalid inputs' });
@@ -62,6 +61,7 @@ const findMyAnimal = (req, res) => __awaiter(void 0, void 0, void 0, function* (
         res.status(500).send({ message: 'Something went wrong' });
         throw new Error(e);
     }
+    //Try find animal
     try {
         const response = yield Animal_1.default.findOne({
             where: validatedData,
@@ -74,7 +74,8 @@ const findMyAnimal = (req, res) => __awaiter(void 0, void 0, void 0, function* (
         throw new Error(e);
     }
     if (userId === undefined) {
-        res.status(200).send({ message: 'Cannot find animal owner' });
+        //Try find animal owner
+        res.status(500).send({ message: 'Cannot find animal owner' });
         return;
     }
     try {
@@ -82,6 +83,8 @@ const findMyAnimal = (req, res) => __awaiter(void 0, void 0, void 0, function* (
             where: {
                 idUser: userId,
             },
+            raw: true,
+            nest: true,
             include: [
                 {
                     model: Address_1.default,
@@ -101,55 +104,41 @@ const findMyAnimal = (req, res) => __awaiter(void 0, void 0, void 0, function* (
                 },
             ],
         });
+        cleanResponse = response;
+        addressData = cleanResponse.address;
         responseData = {
+            name: `${response === null || response === void 0 ? void 0 : response.givenName} ${response === null || response === void 0 ? void 0 : response.familyName}`,
             email: response === null || response === void 0 ? void 0 : response.email,
             phoneNumber: response === null || response === void 0 ? void 0 : response.phoneNumber,
         };
     }
     catch (e) {
-        console.log('Error finding owner id on animal table on findMyAnimal animal controller');
+        console.log('Error finding owner address on animal table on findMyAnimal animal controller');
         res.status(500).send({ message: 'Something went wrong' });
         throw new Error(e);
     }
-    /*NEED REVIEW
     try {
-      const { streetName, postalCode, parishName } = addressData;
-      const geoCoder = nodeGeocoder(options);
-  
-      const res = await geoCoder.geocode(`${streetName} ${postalCode}`);
-  
-      if (res) {
-        const latitude = res[0].latitude;
-        const longitude = res[0].longitude;
-  
-        const tempObj = {
-          ...responseData,
-          latitude,
-          longitude,
-        };
-  
-        responseData = tempObj;
-      } else {
-        const { parishName, locality } = parish as unknown as UserAddressParishProps;
-        const { locationName } = locality as UserAddressLocalityProps;
-        const tempObj = {
-          ...responseData,
-          streetName,
-          postalCode,
-          parishName,
-          locationName,
-        };
-  
-        responseData = tempObj;
-      }
-    } catch (e) {
-      console.log(
-        'Error getting address geographic coordinates on findMyAnimal animal controller'
-      );
-  
-      res.status(500).send({ message: 'Something went wrong' });
-      throw new Error(e as string);
-    }*/
+        const { streetName, postalCode } = addressData;
+        const geoCoder = nodeGeocoder(options);
+        const res = yield geoCoder.geocode(`${streetName} ${postalCode}`);
+        if (res.length === 1) {
+            const latitude = res[0].latitude;
+            const longitude = res[0].longitude;
+            responseData = Object.assign(Object.assign({}, responseData), { latitude,
+                longitude });
+        }
+        else {
+            const { parishName, locality } = addressData.parish;
+            const { locationName } = locality;
+            responseData = Object.assign(Object.assign({}, responseData), { doorNumber: addressData.doorNumber, streetName: addressData.streetName, postalCode: addressData.postalCode, parishName,
+                locationName });
+        }
+    }
+    catch (e) {
+        console.log('Error getting address geographic coordinates on findMyAnimal animal controller');
+        res.status(500).send({ message: 'Something went wrong' });
+        throw new Error(e);
+    }
     res.status(200).send(responseData);
 });
 exports.default = findMyAnimal;

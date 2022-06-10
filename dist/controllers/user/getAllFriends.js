@@ -71,12 +71,12 @@ const getAllFriends = (req, res) => __awaiter(void 0, void 0, void 0, function* 
             var _a, _b;
             let friendData;
             if (((_a = element.userFriendsIdFromWhoFk) === null || _a === void 0 ? void 0 : _a.idUser.toString()) == validatedData.id) {
-                friendData = element.userFriendsIdToWhoFk;
+                friendData = element.userFriendsIdtoWhoFk;
             }
-            if (((_b = element.userFriendsIdToWhoFk) === null || _b === void 0 ? void 0 : _b.idUser.toString()) == validatedData.id) {
+            if (((_b = element.userFriendsIdtoWhoFk) === null || _b === void 0 ? void 0 : _b.idUser.toString()) == validatedData.id) {
                 friendData = element.userFriendsIdFromWhoFk;
             }
-            delete element.userFriendsIdToWhoFk;
+            delete element.userFriendsIdtoWhoFk;
             delete element.userFriendsIdFromWhoFk;
             const friendObj = Object.assign(Object.assign({}, element), { friendData });
             friendArray.push(friendObj);

@@ -16,12 +16,14 @@ const sendNotifications = ({ expoToken, title, message, data, }) => __awaiter(vo
     if (!expo_server_sdk_1.Expo.isExpoPushToken(expoToken)) {
         return console.log('Its not a expo token');
     }
-    const notificationMessage = [{
+    const notificationMessage = [
+        {
             to: expoToken,
             title,
             body: message,
             data,
-        }];
+        },
+    ];
     const receipt = yield expo.sendPushNotificationsAsync(notificationMessage);
     return receipt;
 });

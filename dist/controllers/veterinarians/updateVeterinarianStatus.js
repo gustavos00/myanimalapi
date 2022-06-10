@@ -31,62 +31,37 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const sequelize_1 = require("sequelize");
-const Friends_1 = __importDefault(require("../../models/Friends"));
-const User_1 = __importDefault(require("../../models/User"));
-const US = __importStar(require("../../schemas/userSchema"));
-const getAllFriendsRequest = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const VS = __importStar(require("../../schemas/veterinarianSchema"));
+const Animal_1 = __importDefault(require("../../models/Animal"));
+const updateVeterinarianStatus = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     let validatedData;
-    let friendsRequestData = [];
-    let friendArray = [];
+    console.log(req.query);
+    console.log(req.body);
+    //Validate data
     try {
-        validatedData = yield US.getAllFriendsDataSchema.validateAsync(req.query);
+        validatedData = yield VS.updateVeterinarianStatus.validateAsync(req.body);
         if (!validatedData) {
             res.status(400).send({ message: 'Invalid inputs' });
             return;
         }
     }
     catch (e) {
-        console.log('Error validating user data on get all friends requests controller');
+        console.log('Error validating user data on update event controller');
         res.status(500).send({ message: 'Something went wrong' });
         throw new Error(e);
     }
     try {
-        friendsRequestData = yield Friends_1.default.findAll({
-            nest: true,
-            raw: true,
-            where: {
-                status: 'Pending',
-                [sequelize_1.Op.or]: [
-                    { userFriendsIdToWho: validatedData.id },
-                    { userFriendsIdFromWho: validatedData.id },
-                ],
-            },
-            include: [
-                { model: User_1.default, as: 'userFriendsIdtoWhoFk' },
-                { model: User_1.default, as: 'userFriendsIdFromWhoFk' },
-            ],
-        });
-        friendsRequestData.forEach((element) => {
-            var _a, _b;
-            let friendData;
-            if (((_a = element.userFriendsIdFromWhoFk) === null || _a === void 0 ? void 0 : _a.idUser.toString()) == validatedData.id) {
-                friendData = element.userFriendsIdtoWhoFk;
-            }
-            if (((_b = element.userFriendsIdtoWhoFk) === null || _b === void 0 ? void 0 : _b.idUser.toString()) == validatedData.id) {
-                friendData = element.userFriendsIdFromWhoFk;
-            }
-            delete element.userFriendsIdtoWhoFk;
-            delete element.userFriendsIdFromWhoFk;
-            const friendObj = Object.assign(Object.assign({}, element), { friendData, fromWhoId: element.userFriendsIdFromWho });
-            friendArray.push(friendObj);
+        Animal_1.default.update({
+            veterinarianAcceptedRequest: true,
+        }, {
+            where: { idAnimal: validatedData.id },
         });
     }
     catch (e) {
-        console.log('Error finding all friends request on get all friends requests controller');
+        console.log('Error updating user data on update event controller');
         res.status(500).send({ message: 'Something went wrong' });
         throw new Error(e);
     }
-    res.status(200).send(friendArray);
+    res.status(200).send({ data: validatedData });
 });
-exports.default = getAllFriendsRequest;
+exports.default = updateVeterinarianStatus;

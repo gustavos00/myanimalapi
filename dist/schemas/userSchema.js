@@ -11,11 +11,12 @@ exports.LoginUserSchema = Joi.object({
 });
 exports.UpdateUserSchema = Joi.object({
     id: Joi.string().required().min(1),
-    streetName: Joi.string().required(),
-    doorNumber: Joi.string().required(),
-    postalCode: Joi.string().required(),
-    parish: Joi.string().required(),
-    locality: Joi.string().required(),
+    idAddress: Joi.string(),
+    parishName: Joi.string().min(1).max(100),
+    locationName: Joi.string().min(1).max(100),
+    streetName: Joi.string().min(1).max(100),
+    postalCode: Joi.string().min(1).max(12),
+    doorNumber: Joi.string().min(1).max(10),
     givenName: Joi.string().required(),
     familyName: Joi.string().required(),
     email: Joi.string().email().required(),

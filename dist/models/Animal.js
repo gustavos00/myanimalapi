@@ -27,7 +27,11 @@ const animal = pg_1.sequelize.define('animal', {
     photoUrl: sequelize_1.DataTypes.STRING,
     birthday: sequelize_1.DataTypes.STRING(2),
     birthdayMonth: sequelize_1.DataTypes.STRING(2),
-    veterinarianChatFingerprint: sequelize_1.DataTypes.STRING()
+    veterinarianChatFingerprint: sequelize_1.DataTypes.STRING(),
+    veterinarianAcceptedRequest: {
+        type: sequelize_1.DataTypes.BOOLEAN(),
+        defaultValue: false,
+    },
 }, {
     tableName: 'animal',
     freezeTableName: true,

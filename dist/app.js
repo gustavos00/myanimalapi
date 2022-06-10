@@ -23,6 +23,7 @@ server.use((0, express_rate_limit_1.default)({
     message: 'You are doing so many requests from the same IP, try again in 10 minutos.',
     headers: true,
 }));
+//sequelize.sync({force: true})
 dotenv_1.default.config();
 server.listen(process.env.PORT);
 console.log(` 🚀 Server running at http://localhost:${process.env.PORT}/api/ 🚀 `);

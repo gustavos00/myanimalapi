@@ -36,14 +36,14 @@ const US = __importStar(require("../../schemas/userSchema"));
 const declineFriendsRequest = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     let validatedData;
     try {
-        validatedData = yield US.declineFriendsSchema.validateAsync(req.query);
+        validatedData = yield US.declineFriendsSchema.validateAsync(req.body);
         if (!validatedData) {
             res.status(400).send({ message: 'Invalid inputs' });
             return;
         }
     }
     catch (e) {
-        console.log('Error validating data on create user address controller');
+        console.log('Error validating data on decline friend request controller');
         res.status(500).send({ message: 'Something went wrong' });
         throw new Error(e);
     }
@@ -55,7 +55,7 @@ const declineFriendsRequest = (req, res) => __awaiter(void 0, void 0, void 0, fu
         });
     }
     catch (e) {
-        console.log('Error creating user address on user controller');
+        console.log('Error on decline friend request on user controller');
         res.status(500).send({ message: 'Something went wrong' });
         throw new Error(e);
     }

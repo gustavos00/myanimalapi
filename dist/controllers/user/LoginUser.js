@@ -40,7 +40,7 @@ const Address_1 = __importDefault(require("../../models/Address"));
 const User_2 = __importDefault(require("../../models/User"));
 const JWT = require('jsonwebtoken');
 const LoginUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const userAnimalData = [];
+    let userAnimalData = [];
     const { location, key } = req.file;
     let returnStatus;
     let returnToken;
@@ -85,14 +85,34 @@ const LoginUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                 isVeterinarian: validatedData.isVeterinarian,
             },
             defaults: Object.assign(Object.assign({}, validatedData), { isVeterinarian: validatedData.isVeterinarian, photoUrl: location, photoName: key, token }),
+            include: [
+                {
+                    model: Address_1.default,
+                    include: [{ model: Parish_1.default, include: [{ model: Locality_1.default }] }],
+                },
+            ],
         });
         const [data, created] = response;
-        userData = {
-            data,
-            created,
-        };
+        const cleanUserData = created ? data.get() : data;
+        if (cleanUserData.address) {
+            const { doorNumber, postalCode, streetName, parish: parishData, } = cleanUserData.address;
+            const { parishName, locality: localityData } = parishData;
+            const { locationName } = localityData;
+            userAddressTempObj = {
+                idAddress: cleanUserData.address.idAddress,
+                doorNumber,
+                postalCode,
+                streetName,
+                parishName,
+                locationName,
+            };
+        }
         returnStatus = created ? 201 : 200;
         returnToken = created ? token : data.token;
+        userData = {
+            data: cleanUserData,
+            created,
+        };
     }
     catch (e) {
         console.log(e);
@@ -106,90 +126,42 @@ const LoginUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                 },
                 nest: true,
                 raw: true,
-                include: [{ model: User_1.default, as: 'userVeterinarianFk' }],
-            });
-            response.forEach((item) => __awaiter(void 0, void 0, void 0, function* () {
-                try {
-                    const addressResponse = yield Address_1.default.findOne({
-                        where: { idAddress: item.userVeterinarianFk.addressIdAddress },
-                        nest: true,
-                        raw: true,
+                include: [
+                    {
+                        model: User_1.default,
+                        as: 'userVeterinarianFk',
                         include: [
                             {
-                                model: Parish_1.default,
-                                include: [
-                                    {
-                                        model: Locality_1.default,
-                                    },
-                                ],
+                                model: Address_1.default,
+                                include: [{ model: Parish_1.default, include: [{ model: Locality_1.default }] }],
                             },
                         ],
-                    });
-                    if (addressResponse) {
-                        const { doorNumber, postalCode, streetName, parish: parishData, } = addressResponse;
-                        const { parishName, locality: localityData } = parishData;
-                        const { locationName } = localityData;
-                        veterinarianAddressTempObj = {
-                            doorNumber,
-                            postalCode,
-                            streetName,
-                            parishName,
-                            locationName,
-                        };
-                        const tempObj = Object.assign(Object.assign({}, item), { userVeterinarianFk: Object.assign(Object.assign({}, item.userVeterinarianFk), { veterinarianAddress: veterinarianAddressTempObj }) });
-                        userAnimalData.push(tempObj);
-                    }
-                }
-                catch (e) {
-                    console.log('Error finding animals veterinarians address create user controller');
-                    res.status(500).send({ message: 'Something went wrong' });
-                    throw new Error(e);
-                }
-            }));
+                    },
+                ],
+            });
+            for (const element of response) {
+                const { doorNumber, postalCode, streetName, parish: parishData, } = element.userVeterinarianFk
+                    .address;
+                const { parishName, locality: localityData } = parishData;
+                const { locationName } = localityData;
+                veterinarianAddressTempObj = {
+                    doorNumber,
+                    postalCode,
+                    streetName,
+                    parishName,
+                    locationName,
+                };
+                const tempObj = Object.assign(Object.assign({}, element), { userVeterinarianFk: Object.assign(Object.assign({}, element.userVeterinarianFk), { veterinarianAddress: veterinarianAddressTempObj }) });
+                userAnimalData.push(tempObj);
+            }
         }
         catch (e) {
             console.log('Error finding animals from user on create user controller');
             res.status(500).send({ message: 'Something went wrong' });
             throw new Error(e);
         }
-        if (userData.data.addressIdAddress) {
-            try {
-                const addressResponse = yield Address_1.default.findOne({
-                    where: { idAddress: userData.data.addressIdAddress },
-                    nest: true,
-                    raw: true,
-                    include: [
-                        {
-                            model: Parish_1.default,
-                            include: [
-                                {
-                                    model: Locality_1.default,
-                                },
-                            ],
-                        },
-                    ],
-                });
-                if (addressResponse) {
-                    const { doorNumber, postalCode, streetName, parish: parishData, } = addressResponse;
-                    const { parishName, locality: localityData } = parishData;
-                    const { locationName } = localityData;
-                    userAddressTempObj = {
-                        doorNumber,
-                        postalCode,
-                        streetName,
-                        parishName,
-                        locationName,
-                    };
-                }
-            }
-            catch (e) {
-                console.log('Error finding animals from user on create user controller');
-                res.status(500).send({ message: 'Something went wrong' });
-                throw new Error(e);
-            }
-        }
     }
-    const userCompleteData = Object.assign(Object.assign({}, userData.data), { token: returnToken, accessToken, animalData: userAnimalData, userAddress: userAddressTempObj });
+    const userCompleteData = Object.assign(Object.assign({}, userData.data), { token: returnToken, accessToken, salt: validatedData.salt, animalData: userAnimalData, userAddress: userAddressTempObj });
     //Generate access user token
     try {
         accessToken = JWT.sign(userCompleteData, validatedData.salt);
@@ -199,6 +171,6 @@ const LoginUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         res.status(500).send({ message: 'Something went wrong' });
         throw new Error(e);
     }
-    res.status(returnStatus).send(Object.assign(Object.assign({}, userCompleteData), { accessToken }));
+    res.status(returnStatus).send(Object.assign({}, userCompleteData));
 });
 exports.default = LoginUser;

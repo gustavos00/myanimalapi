@@ -56,7 +56,7 @@ const deleteAnimal = (req, res) => __awaiter(void 0, void 0, void 0, function* (
             },
         });
         if (!response) {
-            res.status(200).send({ message: 'Animal dont exist' });
+            res.status(400).send({ message: 'Animal dont exist' });
             return;
         }
     }

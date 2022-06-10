@@ -35,13 +35,14 @@ const Friends_1 = __importDefault(require("../../models/Friends"));
 const random_1 = __importDefault(require("../../utils/random"));
 const US = __importStar(require("../../schemas/userSchema"));
 const notifications_1 = require("../../utils/notifications");
+const User_1 = __importDefault(require("../../models/User"));
 const acceptFriendRequest = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b;
     let validatedData;
     let friendsData;
     const fingerprint = (0, random_1.default)();
     try {
-        validatedData = yield US.acceptFriendsSchema.validateAsync(req.query);
+        validatedData = yield US.acceptFriendsSchema.validateAsync(req.body);
         if (!validatedData) {
             res.status(400).send({ message: 'Invalid inputs' });
             return;
@@ -69,6 +70,10 @@ const acceptFriendRequest = (req, res) => __awaiter(void 0, void 0, void 0, func
             where: {
                 idfriends: validatedData.id,
             },
+            include: [
+                { model: User_1.default, as: 'userFriendsIdtoWhoFk' },
+                { model: User_1.default, as: 'userFriendsIdFromWhoFk' },
+            ],
         });
     }
     catch (e) {
@@ -76,11 +81,11 @@ const acceptFriendRequest = (req, res) => __awaiter(void 0, void 0, void 0, func
         res.status(500).send({ message: 'Something went wrong' });
         throw new Error(e);
     }
-    const receipt = yield (0, notifications_1.sendNotifications)({
+    yield (0, notifications_1.sendNotifications)({
         expoToken: (_a = friendsData === null || friendsData === void 0 ? void 0 : friendsData.userFriendsIdFromWhoFk) === null || _a === void 0 ? void 0 : _a.expoToken,
         title: 'Friend Request',
-        message: `Hello! ${(_b = friendsData === null || friendsData === void 0 ? void 0 : friendsData.userFriendsIdToWhoFk) === null || _b === void 0 ? void 0 : _b.givenName} accept be your friend!`,
-        data: { do: 'openScreen', screenName: 'friendsRequests' }
+        message: `Hello! ${(_b = friendsData === null || friendsData === void 0 ? void 0 : friendsData.userFriendsIdtoWhoFk) === null || _b === void 0 ? void 0 : _b.givenName} accepted your friend request!`,
+        data: { do: 'openScreen', screenName: 'friendsRequests' },
     });
     res.status(200).send({ fingerprint });
 });
